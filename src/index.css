@@ -1,0 +1,249 @@
+@import "tailwindcss";
+@import "sonner/dist/styles.css";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: var(--font-sans);
+    --font-sans: 'Geist Variable', sans-serif;
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Light is the default theme and mirrors shotuno-web's brand tokens.
+   :host is required: the content script mounts this stylesheet inside a shadow
+   root, where :root matches nothing and every token would resolve to unset. */
+:root, :host {
+    --background: #f3f7f8;
+    --foreground: #1a1f24;
+    --card: #ffffff;
+    --card-foreground: #1a1f24;
+    --popover: #ffffff;
+    --popover-foreground: #1a1f24;
+    --primary: #0b3d3a;
+    --primary-foreground: #f4f7f9;
+    --secondary: #e8eef2;
+    --secondary-foreground: #0b3d3a;
+    --muted: #e8eef2;
+    --muted-foreground: rgba(26, 31, 36, 0.68);
+    --accent: rgba(11, 61, 58, 0.08);
+    --accent-foreground: #0b3d3a;
+    --destructive: #e85d4c;
+    --border: rgba(26, 31, 36, 0.12);
+    --input: rgba(26, 31, 36, 0.14);
+    --ring: #0b3d3a;
+    --radius: 0.75rem;
+    --chart-1: #0b3d3a;
+    --chart-2: #e85d4c;
+    --chart-3: #1a1f24;
+    --chart-4: #5a7a77;
+    --chart-5: #e8eef2;
+    --sidebar: #ffffff;
+    --sidebar-foreground: #1a1f24;
+    --sidebar-primary: #0b3d3a;
+    --sidebar-primary-foreground: #f4f7f9;
+    --sidebar-accent: #e8eef2;
+    --sidebar-accent-foreground: #0b3d3a;
+    --sidebar-border: rgba(26, 31, 36, 0.12);
+    --sidebar-ring: #0b3d3a;
+}
+
+/*
+  Content-script isolation: page CSS inherits into the shadow host (font, color,
+  line-height, letter-spacing, …). Cut that chain so the editor never inherits
+  the host page. Custom properties (--*) are NOT reset by `all`.
+*/
+:host {
+    all: initial;
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    z-index: 2147483647 !important;
+    pointer-events: none !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    font-family: var(--font-sans), system-ui, -apple-system, sans-serif !important;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+    line-height: 1.5 !important;
+    letter-spacing: normal !important;
+    word-spacing: normal !important;
+    text-transform: none !important;
+    text-indent: 0 !important;
+    text-align: left !important;
+    text-shadow: none !important;
+    color: var(--foreground) !important;
+    background: transparent !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#shotuno-app-container {
+    all: initial;
+    display: block;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    pointer-events: none;
+    font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-align: left;
+    text-shadow: none;
+    color: var(--foreground);
+    background: transparent;
+    -webkit-font-smoothing: antialiased;
+}
+
+#shotuno-app-container *,
+#shotuno-app-container *::before,
+#shotuno-app-container *::after {
+    box-sizing: border-box;
+}
+
+.dark {
+    --background: oklch(0.13 0.01 260);
+    --foreground: oklch(0.98 0 0);
+    --card: oklch(0.16 0.01 260);
+    --card-foreground: oklch(0.98 0 0);
+    --popover: oklch(0.16 0.01 260);
+    --popover-foreground: oklch(0.98 0 0);
+    --primary: oklch(0.65 0.18 270);
+    --primary-foreground: oklch(0.99 0 0);
+    --secondary: oklch(0.22 0.02 260);
+    --secondary-foreground: oklch(0.98 0 0);
+    --muted: oklch(0.22 0.02 260);
+    --muted-foreground: oklch(0.7 0.01 260);
+    --accent: oklch(0.22 0.02 260);
+    --accent-foreground: oklch(0.98 0 0);
+    --destructive: oklch(0.6 0.15 20);
+    --border: oklch(0.22 0.02 260);
+    --input: oklch(0.22 0.02 260);
+    --ring: oklch(0.65 0.18 270);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --sidebar: oklch(0.16 0.01 260);
+    --sidebar-foreground: oklch(0.98 0 0);
+    --sidebar-primary: oklch(0.65 0.18 270);
+    --sidebar-primary-foreground: oklch(0.99 0 0);
+    --sidebar-accent: oklch(0.22 0.02 260);
+    --sidebar-accent-foreground: oklch(0.98 0 0);
+    --sidebar-border: oklch(0.22 0.02 260);
+    --sidebar-ring: oklch(0.65 0.18 270);
+}
+
+
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(150, 150, 150, 0.3);
+  border-radius: 6px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(150, 150, 150, 0.6);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  /* Extension pages use body; content script uses :host / #shotuno-app-container
+     so the tab's page styles are never the source of text/font. */
+  :host, #shotuno-app-container, body {
+    @apply text-foreground font-sans;
+    }
+  body {
+    @apply bg-background;
+    }
+  html {
+    @apply font-sans;
+    }
+  /* Tailwind v4's preflight leaves interactive elements on the arrow cursor.
+     :where() keeps this at zero specificity so any cursor-* utility still wins
+     and drag handles keep their own cursor. */
+  :where(
+    button:not(:disabled),
+    summary,
+    a[href],
+    label[for],
+    select:not(:disabled),
+    input:not(:disabled):is([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"]),
+    [role="button"]:not([aria-disabled="true"]),
+    [role="menuitem"],
+    [role="menuitemcheckbox"],
+    [role="menuitemradio"],
+    [role="option"],
+    [role="tab"],
+    [role="slider"],
+    [role="switch"]:not([aria-disabled="true"]),
+    [role="checkbox"]:not([aria-disabled="true"]),
+    [role="radio"]:not([aria-disabled="true"])
+  ) {
+    @apply cursor-pointer;
+    }
+}
