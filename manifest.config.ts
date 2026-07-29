@@ -11,18 +11,14 @@ function originPattern(url: string): string {
 
 export default defineManifest(async (env) => {
   const vars = loadEnv(env.mode, process.cwd(), '')
-  const apiUrl = vars.VITE_API_URL || 'http://localhost:3000'
   const webUrl = vars.VITE_WEB_URL || 'http://localhost:3001'
-  const isProd = env.mode === 'production'
-  const oauthClientId =
-    vars.VITE_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
 
-  // captureVisibleTab needs host access on the page being captured. activeTab only
-  // covers the brief user-gesture from the popup/side panel — not float-btn / area crop.
-  const hostPermissions = ['<all_urls>', originPattern(apiUrl), originPattern(webUrl)]
-  const externalMatches = isProd
-    ? [originPattern(webUrl)]
-    : [originPattern(webUrl), 'http://127.0.0.1:3001/*']
+  // captureVisibleTab needs host access on the page being captured.
+  const hostPermissions = [
+    '<all_urls>',
+    originPattern(webUrl),
+    'https://*.ingest.sentry.io/*',
+  ]
 
   return {
     manifest_version: 3,
@@ -50,21 +46,9 @@ export default defineManifest(async (env) => {
       'unlimitedStorage',
       'downloads',
       'scripting',
-      'identity',
       'sidePanel',
-      'cookies',
     ],
     host_permissions: hostPermissions,
-    externally_connectable: {
-      matches: externalMatches,
-    },
-    oauth2: {
-      client_id: oauthClientId,
-      scopes: [
-        'https://www.googleapis.com/auth/userinfo.email',
-        'https://www.googleapis.com/auth/userinfo.profile',
-      ],
-    },
     background: {
       service_worker: 'src/background/index.ts',
       type: 'module',

@@ -12,10 +12,18 @@ interface ShapeToolMenuProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSelect: (tool: ToolType) => void;
+  onAddSticker?: (emoji: string) => void;
   isVertical?: boolean;
 }
 
-export function ShapeToolMenu({ activeTool, open, onOpenChange, onSelect, isVertical }: ShapeToolMenuProps) {
+export function ShapeToolMenu({
+  activeTool,
+  open,
+  onOpenChange,
+  onSelect,
+  onAddSticker,
+  isVertical,
+}: ShapeToolMenuProps) {
   const isShape = SHAPE_TOOLS.includes(activeTool);
   const ActiveIcon =
     activeTool === 'circle' ? Circle : activeTool === 'triangle' ? Triangle : Square;
@@ -84,7 +92,10 @@ export function ShapeToolMenu({ activeTool, open, onOpenChange, onSelect, isVert
             </Button>
           ))}
           <div className="h-px bg-border/40 my-0.5" />
-          <StickerPicker onPicked={() => onOpenChange(false)} />
+          <StickerPicker
+            onPicked={() => onOpenChange(false)}
+            onAddSticker={onAddSticker}
+          />
         </div>
       )}
     </div>

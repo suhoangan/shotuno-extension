@@ -1,41 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-import { Maximize, Crop, AlignVerticalSpaceAround, Images, FolderOpen, Pin, LogIn } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { Maximize, Crop, AlignVerticalSpaceAround, Images, FolderOpen, Pin } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Separator } from '../components/ui/separator';
-import { UserAvatarMenu } from '../components/UserAvatarMenu';
-import { bindAuthStorageListener, useAuthStore } from '../store/authStore';
-import { API_BASE, webUrl } from '../lib/api';
+import { BuyMeCoffeeLink } from '../components/BuyMeCoffeeLink';
 
 export default function App() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
-  const { isAuthenticated, user, logout, hydrateFromChrome } = useAuthStore();
 
-  useEffect(() => {
-    hydrateFromChrome();
-    const unbind = bindAuthStorageListener();
-    // Popup can open before cookie/tab sync finishes — retry once shortly after.
-    const retry = window.setTimeout(() => hydrateFromChrome(), 400);
-    return () => {
-      unbind();
-      window.clearTimeout(retry);
-    };
-  }, [hydrateFromChrome]);
-
-  const handleLogout = async () => {
-    try {
-      await fetch(`${API_BASE}/auth/logout`, { method: 'POST' });
-    } catch {
-      /* ignore */
-    }
-    logout();
-  };
-
-  const openWebLogin = () => {
-    window.open(webUrl('/login'), '_blank');
-  };
-
-  const handleCapture = async (type: 'visible' | 'area' | 'full' | 'pin_area') => {
+  const startCapture = async (type: 'visible' | 'area' | 'full' | 'pin_area') => {
     setError(null);
     try {
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -115,21 +88,7 @@ export default function App() {
 
   return (
     <div className="w-64 p-4 bg-background text-foreground font-sans flex flex-col gap-3">
-      <div className="flex items-center justify-between gap-2 mb-1">
-        <h2 className="text-lg font-semibold text-foreground">Capture Mode</h2>
-        {isAuthenticated && user ? (
-          <UserAvatarMenu
-            name={user.name}
-            email={user.email}
-            onLogout={handleLogout}
-          />
-        ) : (
-          <Button variant="outline" size="sm" className="h-7 gap-1 px-2 text-xs" onClick={openWebLogin}>
-            <LogIn className="size-3.5 shrink-0" aria-hidden />
-            Log in
-          </Button>
-        )}
-      </div>
+      <h2 className="text-lg font-semibold text-foreground mb-1">Capture Mode</h2>
 
       {error && (
         <p className="text-xs text-destructive leading-snug rounded-md border border-destructive/30 bg-destructive/10 px-2 py-1.5">
@@ -138,7 +97,7 @@ export default function App() {
       )}
 
       <button
-        onClick={() => void handleCapture('pin_area')}
+        onClick={() => void startCapture('pin_area')}
         className="flex items-center gap-3 p-3 rounded-lg bg-card text-foreground hover:bg-accent transition-colors text-left ring-1 ring-primary/30"
       >
         <Pin size={18} className="text-primary" />
@@ -149,7 +108,7 @@ export default function App() {
       </button>
 
       <button
-        onClick={() => void handleCapture('visible')}
+        onClick={() => void startCapture('visible')}
         className="flex items-center gap-3 p-3 rounded-lg bg-card text-foreground hover:bg-accent transition-colors text-left"
       >
         <Maximize size={18} className="text-primary" />
@@ -160,7 +119,7 @@ export default function App() {
       </button>
 
       <button
-        onClick={() => void handleCapture('area')}
+        onClick={() => void startCapture('area')}
         className="flex items-center gap-3 p-3 rounded-lg bg-card text-foreground hover:bg-accent transition-colors text-left"
       >
         <Crop size={18} className="text-primary" />
@@ -171,7 +130,7 @@ export default function App() {
       </button>
 
       <button
-        onClick={() => void handleCapture('full')}
+        onClick={() => void startCapture('full')}
         className="flex items-center gap-3 p-3 rounded-lg bg-card text-foreground hover:bg-accent transition-colors text-left"
       >
         <AlignVerticalSpaceAround size={18} className="text-primary" />
@@ -209,6 +168,8 @@ export default function App() {
           <span className="text-[10px] text-muted-foreground font-normal">Edit a file from your desktop</span>
         </div>
       </Button>
+
+      <BuyMeCoffeeLink className="w-full justify-center mt-1" />
     </div>
   );
 }

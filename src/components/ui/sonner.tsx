@@ -5,8 +5,11 @@ type ToasterProps = React.ComponentProps<typeof Sonner>
 const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
-      className="toaster group"
+      className="toaster group pointer-events-auto"
       toastOptions={{
+        classNames: {
+          toast: "pointer-events-auto",
+        },
         style: {
           backgroundColor: '#0f172a',
           color: '#f8fafc',
@@ -16,7 +19,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         }
       }}
       {...props}
-      duration={1500}
+      duration={2000}
     />
   )
 }

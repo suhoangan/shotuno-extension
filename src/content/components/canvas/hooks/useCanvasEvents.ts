@@ -10,46 +10,25 @@ interface UseCanvasEventsProps {
 }
 
 export function useCanvasEvents({ bounds, editingText }: UseCanvasEventsProps) {
-  const { 
-    selectedShapeIds, setSelectedShapeIds, 
-    addShape, saveHistory, setActiveTool 
+  const {
+    selectedShapeIds, setSelectedShapeIds,
+    addShape, saveHistory, setActiveTool,
   } = useEditorStore();
 
-  // Handle Delete key
+  // Delete / Backspace — tool hotkeys live in Toolbar (Pro-gated).
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Shadow DOM retargets e.target to the host — use composedPath.
       if (isEditableKeyboardTarget(e)) return;
-      
+
       if ((e.key === 'Delete' || e.key === 'Backspace') && selectedShapeIds.length > 0 && !editingText) {
         useEditorStore.getState().setShapes(useEditorStore.getState().shapes.filter((s: any) => !selectedShapeIds.includes(s.id)));
         setSelectedShapeIds([]);
         saveHistory();
-        return;
       }
-
-      if (editingText) return;
-
-      const key = e.key.toLowerCase();
-      if (key === 'v') setActiveTool('select');
-      else if (key === 'h' && !e.shiftKey) setActiveTool('pan');
-      else if (key === 'h' && e.shiftKey) setActiveTool('highlight');
-      else if (key === 'a') setActiveTool('arrow');
-      else if (key === 't') setActiveTool('text');
-      else if (key === 'b') setActiveTool('brush');
-      else if (key === 'c' && !e.shiftKey) setActiveTool('counter');
-      else if (key === 'c' && e.shiftKey) setActiveTool('crop');
-      else if (key === 'm') setActiveTool('measure');
-      else if (key === 'e') setActiveTool('ocr');
-      else if (key === 'r') setActiveTool('rect');
-      else if (key === 'o') setActiveTool('circle');
-      else if (key === 'y') setActiveTool('triangle');
-      else if (key === 's') setActiveTool('blur');
-      else if (key === 'z') setActiveTool('magnifier');
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedShapeIds, editingText, setSelectedShapeIds, saveHistory, setActiveTool]);
+  }, [selectedShapeIds, editingText, setSelectedShapeIds, saveHistory]);
 
   useEffect(() => {
     const handleImageFile = (file: File) => {
@@ -65,7 +44,7 @@ export function useCanvasEvents({ bounds, editingText }: UseCanvasEventsProps) {
           let h = img.height;
           const maxDim = 600;
           if (w > maxDim || h > maxDim) {
-            if (w > h) { h = (maxDim / w) * h; w = maxDim; } 
+            if (w > h) { h = (maxDim / w) * h; w = maxDim; }
             else { w = (maxDim / h) * w; h = maxDim; }
           }
           const style = imageShapeStyleFromTool(useEditorStore.getState().toolSettings);
@@ -103,7 +82,7 @@ export function useCanvasEvents({ bounds, editingText }: UseCanvasEventsProps) {
     };
 
     window.addEventListener('paste', handlePaste);
-    
+
     return () => {
       window.removeEventListener('paste', handlePaste);
     };

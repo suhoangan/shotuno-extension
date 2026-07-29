@@ -20,6 +20,9 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error('Shotuno ErrorBoundary:', error, info.componentStack);
+    void import('../lib/telemetry').then(({ captureException }) => {
+      captureException(error, { component_stack: info.componentStack ?? undefined });
+    });
   }
 
   render() {

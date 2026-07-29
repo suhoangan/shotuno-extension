@@ -182,51 +182,52 @@ export function StyleToolbar() {
       )}
 
       {showStrokeWidth && (
-        <div
-          className={borderStyleLocked ? 'pointer-events-none opacity-40' : undefined}
-          aria-disabled={borderStyleLocked || undefined}
-          title={borderStyleLocked ? 'Enable Border to change size' : undefined}
-        >
-          <StrokeWidthControl
-            value={strokeWidth}
-            color={selectedColor}
-            showPreview={!isBlur}
-            onChange={(newWidth) => {
-              if (borderStyleLocked) return;
-              setStrokeWidth(newWidth, persistOpts);
-              const imageWidth = toImageAnnotationSize(newWidth);
-              if (appliesTo('text')) {
-                const fontSize = textFontSizeFromStrokeWidth(imageWidth);
-                if (selectedShapeIds.length === 0) return;
-                selectedShapeIds.forEach((id) => {
-                  const s = shapes.find((sh) => sh.id === id);
-                  if (!s || s.type !== 'text') {
-                    updateShape(id, { strokeWidth: imageWidth });
-                    return;
-                  }
-                  const oldFont = s.fontSize || 20;
-                  const oldH = s.height || textDefaultHeight(oldFont);
-                  const newH = textDefaultHeight(fontSize);
-                  const ratio = oldFont > 0 ? fontSize / oldFont : 1;
-                  const hRatio = oldH > 0 ? newH / oldH : ratio;
-                  const patch: Record<string, unknown> = {
-                    strokeWidth: imageWidth,
-                    fontSize,
-                    height: newH,
-                  };
-                  if (s.tailX !== undefined && s.tailY !== undefined) {
-                    patch.tailX = s.tailX * ratio;
-                    patch.tailY = s.tailY * hRatio;
-                  }
-                  updateShape(id, patch);
-                });
-                saveHistory();
-              } else {
-                applyToSelection({ strokeWidth: imageWidth });
-              }
-            }}
-          />
-        </div>
+        <>
+          {showColorPicker && <div className="h-4 w-px shrink-0 bg-border/40" />}
+          <div
+            className={borderStyleLocked ? 'pointer-events-none opacity-40' : undefined}
+            aria-disabled={borderStyleLocked || undefined}
+            title={borderStyleLocked ? 'Enable Border to change size' : undefined}
+          >
+            <StrokeWidthControl
+              value={strokeWidth}
+              onChange={(newWidth) => {
+                if (borderStyleLocked) return;
+                setStrokeWidth(newWidth, persistOpts);
+                const imageWidth = toImageAnnotationSize(newWidth);
+                if (appliesTo('text')) {
+                  const fontSize = textFontSizeFromStrokeWidth(imageWidth);
+                  if (selectedShapeIds.length === 0) return;
+                  selectedShapeIds.forEach((id) => {
+                    const s = shapes.find((sh) => sh.id === id);
+                    if (!s || s.type !== 'text') {
+                      updateShape(id, { strokeWidth: imageWidth });
+                      return;
+                    }
+                    const oldFont = s.fontSize || 20;
+                    const oldH = s.height || textDefaultHeight(oldFont);
+                    const newH = textDefaultHeight(fontSize);
+                    const ratio = oldFont > 0 ? fontSize / oldFont : 1;
+                    const hRatio = oldH > 0 ? newH / oldH : ratio;
+                    const patch: Record<string, unknown> = {
+                      strokeWidth: imageWidth,
+                      fontSize,
+                      height: newH,
+                    };
+                    if (s.tailX !== undefined && s.tailY !== undefined) {
+                      patch.tailX = s.tailX * ratio;
+                      patch.tailY = s.tailY * hRatio;
+                    }
+                    updateShape(id, patch);
+                  });
+                  saveHistory();
+                } else {
+                  applyToSelection({ strokeWidth: imageWidth });
+                }
+              }}
+            />
+          </div>
+        </>
       )}
     </div>
   );

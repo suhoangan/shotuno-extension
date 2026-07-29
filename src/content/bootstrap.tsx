@@ -4,12 +4,11 @@ import fontsCss from '../fonts.css?inline';
 import tailwindCss from '../index.css?inline';
 import { initializeAIInjector } from './utils/aiInjector';
 import { hydrateEditorPrefs } from '../store/editorPrefs';
-import { bindAuthStorageListener, useAuthStore } from '../store/authStore';
+import { initTelemetry } from '../lib/telemetry';
 
 initializeAIInjector();
 hydrateEditorPrefs();
-useAuthStore.getState().hydrateFromChrome();
-bindAuthStorageListener();
+void initTelemetry();
 
 const ROOT_ID = 'shotuno-root';
 

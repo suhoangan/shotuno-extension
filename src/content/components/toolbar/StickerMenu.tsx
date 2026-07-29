@@ -4,13 +4,19 @@ const STICKER_EMOJIS = ['🔥', '✅', '❌', '💡', '💯', '⭐', '❤️', '
 
 interface StickerPickerProps {
   onPicked?: () => void;
+  /** When set, parent handles add (e.g. Pro gate). Otherwise dispatches add-sticker. */
+  onAddSticker?: (emoji: string) => void;
 }
 
 /** Emoji grid — used inside ShapeToolMenu (and anywhere else stickers are offered). */
-export function StickerPicker({ onPicked }: StickerPickerProps) {
+export function StickerPicker({ onPicked, onAddSticker }: StickerPickerProps) {
   const { setActiveTool } = useEditorStore();
 
   const handleAddSticker = (emoji: string) => {
+    if (onAddSticker) {
+      onAddSticker(emoji);
+      return;
+    }
     document.dispatchEvent(new CustomEvent('add-sticker', { detail: emoji }));
     setActiveTool('select');
     onPicked?.();
@@ -24,8 +30,12 @@ export function StickerPicker({ onPicked }: StickerPickerProps) {
           <button
             key={emoji}
             type="button"
-            draggable
+            draggable={!onAddSticker}
             onDragStart={(e) => {
+              if (onAddSticker) {
+                e.preventDefault();
+                return;
+              }
               e.dataTransfer.setData('text/emoji', emoji);
               e.dataTransfer.effectAllowed = 'copy';
             }}

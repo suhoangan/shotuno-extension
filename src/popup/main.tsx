@@ -3,9 +3,9 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import '../fonts.css';
 import '../index.css';
-import { useAuthStore } from '../store/authStore';
+import { initTelemetry } from '../lib/telemetry';
 
-useAuthStore.getState().hydrateFromChrome();
+void initTelemetry();
 
 const container = document.getElementById('root');
 if (container) {
