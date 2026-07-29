@@ -48,7 +48,7 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Light is the default theme and mirrors shotuno-web's brand tokens.
+/* Light is the default theme and mirrors the shotuno-web brand tokens.
    :host is required: the content script mounts this stylesheet inside a shadow
    root, where :root matches nothing and every token would resolve to unset. */
 :root, :host {
