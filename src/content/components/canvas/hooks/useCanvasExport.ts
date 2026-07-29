@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { useEditorStore } from '../../../../store/useEditorStore';
+import { exportHardLoading, useHardLoadingStore } from '../../../../store/useHardLoadingStore';
 import { saveGalleryImage } from '../../../../lib/galleryDb';
 import { copyImageAndTextToClipboard } from '../../../utils/clipboardUtils';
 import { exportStageToPng } from '../exportStageToPng';
@@ -27,6 +28,9 @@ export function useCanvasExport(stageRef: React.RefObject<any>) {
       if (now - lastSaveTime < 2000) return;
       lastSaveTime = now;
       useEditorStore.getState().setSelectedShapeIds([]);
+
+      const { showHardLoading, hideHardLoading } = useHardLoadingStore.getState();
+      showHardLoading(exportHardLoading(type));
 
       // Start clipboard write while user activation is still valid.
       // Image Promise resolves after the deferred stage export finishes.
@@ -84,7 +88,7 @@ export function useCanvasExport(stageRef: React.RefObject<any>) {
           }
 
           if (type === 'ai') {
-            if (aiProvider && aiProvider !== 'Cursor' && aiProvider !== 'Copy') {
+            if (aiProvider && aiProvider !== 'Copy') {
               await chrome.storage.local.set({
                 pendingAIInjection: {
                   provider: aiProvider,
@@ -101,9 +105,7 @@ export function useCanvasExport(stageRef: React.RefObject<any>) {
               return;
             }
 
-            if (aiProvider === 'Cursor') {
-              toast.success('Copied! Open Cursor Composer and press Ctrl+V');
-            } else if (aiProvider === 'Copy') {
+            if (aiProvider === 'Copy') {
               toast.success('Image and prompt copied to clipboard!');
             } else {
               const tip =
@@ -119,6 +121,8 @@ export function useCanvasExport(stageRef: React.RefObject<any>) {
           rejectBlob(err);
           console.error('Export failed', err);
           toast.error('Export failed');
+        } finally {
+          hideHardLoading();
         }
       }, 50);
       timeouts.add(timeoutId);
@@ -130,6 +134,7 @@ export function useCanvasExport(stageRef: React.RefObject<any>) {
       document.removeEventListener('export-canvas', handleExport);
       timeouts.forEach(clearTimeout);
       timeouts.clear();
+      useHardLoadingStore.getState().hideHardLoading();
     };
   }, [stageRef]);
 }

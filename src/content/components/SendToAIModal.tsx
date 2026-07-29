@@ -106,20 +106,6 @@ export default function SendToAIModal({ isOpen, onClose }: SendToAIModalProps) {
                   <span className="text-xs text-muted-foreground group-hover:text-primary-foreground/80 font-normal">Google</span>
                 </div>
               </Button>
-              
-              <Button 
-                variant="outline" 
-                onClick={() => handleSend('Cursor')} 
-                className="h-auto p-3 justify-start bg-accent border-border hover:bg-accent hover:text-accent-foreground hover:border-border group"
-              >
-                <div className="w-8 h-8 rounded-full bg-card flex items-center justify-center group-hover:bg-background shrink-0 mr-3">
-                  <Code size={18} className="text-foreground group-hover:text-foreground" />
-                </div>
-                <div className="flex flex-col items-start text-left">
-                  <span className="font-semibold text-foreground text-sm">Cursor IDE</span>
-                  <span className="text-xs text-muted-foreground group-hover:text-foreground font-normal">Copy for Composer</span>
-                </div>
-              </Button>
             </div>
             
             <Button 
