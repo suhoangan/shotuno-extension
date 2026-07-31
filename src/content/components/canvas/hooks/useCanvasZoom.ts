@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { getRenderScale, MAX_ZOOM, MIN_ZOOM, WHEEL_ZOOM_STEP } from '../renderScale';
 
 export function useCanvasZoom(
   containerRef: React.RefObject<HTMLDivElement | null>, 
@@ -43,18 +44,35 @@ export function useCanvasZoom(
     const container = containerRef.current;
     if (!container) return;
 
+    let frame = 0;
+    let pendingFactor = 1;
+
+    const applyZoom = () => {
+      frame = 0;
+      const factor = pendingFactor;
+      pendingFactor = 1;
+      setScale((prev) => Math.min(Math.max(MIN_ZOOM, prev * factor), MAX_ZOOM));
+    };
+
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
-      setScale(prev => {
-        const scaleBy = 1.1;
-        const newScale = e.deltaY < 0 ? prev * scaleBy : prev / scaleBy;
-        return Math.min(Math.max(0.1, newScale), 5);
-      });
+      // A single wheel gesture fires dozens of events and every stage resize reallocates
+      // each layer's canvas, so collapse the whole gesture into one resize per frame.
+      pendingFactor *= e.deltaY < 0 ? WHEEL_ZOOM_STEP : 1 / WHEEL_ZOOM_STEP;
+      if (!frame) frame = requestAnimationFrame(applyZoom);
     };
 
     container.addEventListener('wheel', handleWheel, { passive: false });
-    return () => container.removeEventListener('wheel', handleWheel);
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, [containerRef]);
 
-  return { scale, setScale, fitScale };
+  const renderScale = useMemo(
+    () => getRenderScale(bounds.width, bounds.height, scale),
+    [bounds.width, bounds.height, scale],
+  );
+
+  return { scale, setScale, fitScale, renderScale };
 }

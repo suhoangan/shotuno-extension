@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Chrome Web Store zip artifacts
+store-listing/*.zip
+store-listing/assets/*.png
+store-listing/assets/*.jpg
+store-listing/assets/*.jpeg
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

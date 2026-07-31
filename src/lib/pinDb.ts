@@ -1,3 +1,5 @@
+import { createPrefetchedFileCache } from './prefetchedFileCache';
+
 export const PINS_STORAGE_KEY = 'shotuno_pins';
 
 export type PinImage = {
@@ -141,35 +143,5 @@ export async function startPinAreaCapture(tabId?: number): Promise<void> {
 
 /** Prefetch pin files for sync drag-and-drop into SaaS inputs. */
 export function createPinFileCache() {
-  const cache = new Map<string, File>();
-  const pending = new Map<string, Promise<File | null>>();
-
-  const prefetch = (id: string, filename = `pin-${id}.png`) => {
-    if (cache.has(id) || pending.has(id)) return;
-    const p = getPinFullImage(id)
-      .then(async (dataUrl) => {
-        if (!dataUrl) return null;
-        const res = await fetch(dataUrl);
-        const blob = await res.blob();
-        const file = new File([blob], filename, { type: blob.type || 'image/png' });
-        cache.set(id, file);
-        return file;
-      })
-      .finally(() => pending.delete(id));
-    pending.set(id, p);
-  };
-
-  const attachFilesToDataTransfer = (dt: DataTransfer, ids: string[]) => {
-    let added = 0;
-    for (const id of ids) {
-      const file = cache.get(id);
-      if (file) {
-        dt.items.add(file);
-        added += 1;
-      }
-    }
-    return added;
-  };
-
-  return { prefetch, attachFilesToDataTransfer };
+  return createPrefetchedFileCache(getPinFullImage);
 }

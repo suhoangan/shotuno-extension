@@ -3,6 +3,7 @@ import { PINS_STORAGE_KEY, type PinImage } from '../lib/pinDb';
 import { ensureImageExt, stampedImageName } from '../lib/imageNames';
 import { handlePinImportMessage } from './pin-import-handlers';
 import { makePinThumbnail } from './pin-thumbnail';
+import { PIN_RETENTION_MS, partitionExpired } from './retention';
 
 const MAX_PINS = 40;
 
@@ -57,7 +58,10 @@ export function handlePinMessage(
           timestamp: Date.now(),
           filename: name,
         };
-        const updated = [pin, ...current].slice(0, MAX_PINS);
+        // Drop lapsed pins here too, so someone who keeps pinning without ever opening the
+        // side panel still gets their old blobs collected.
+        const { kept: live } = partitionExpired(current, PIN_RETENTION_MS);
+        const updated = [pin, ...live].slice(0, MAX_PINS);
         const kept = new Set(updated.map((p) => p.id));
         current.forEach((p) => {
           if (!kept.has(p.id)) void idbDel(`pin_full_${p.id}`);
@@ -83,8 +87,15 @@ export function handlePinMessage(
   if (message.type === 'SYNC_PINS') {
     chrome.storage.local.get([PINS_STORAGE_KEY], (result) => {
       const images = (result[PINS_STORAGE_KEY] as PinImage[] | undefined) || [];
-      images.sort((a, b) => b.timestamp - a.timestamp);
-      sendResponse({ success: true, images });
+      const { kept, expired } = partitionExpired(images, PIN_RETENTION_MS);
+      kept.sort((a, b) => b.timestamp - a.timestamp);
+
+      if (!expired.length) {
+        sendResponse({ success: true, images: kept });
+        return;
+      }
+      expired.forEach((p) => void idbDel(`pin_full_${p.id}`));
+      writePins(kept, sendResponse);
     });
     return true;
   }

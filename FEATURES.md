@@ -19,7 +19,7 @@
 - Capture → annotate → export in one flow
 - Side panel library (Pins + Downloads) for reuse and drag onto web pages
 - **Free forever. No account.** Optional tip via Buy me a coffee (web `/#buy-me-a-coffee` → Gumroad / VietQR)
-- Offline extension: all tools always on; no Nest/API calls; Sentry for errors when configured
+- Offline extension: all tools always on; no Nest/API calls; no crash reporting / analytics
 - Admin feature flags on the website are unused by the extension
 
 ---
@@ -42,7 +42,7 @@
 
 - Product is free; no Pro paywall
 - Extension CTAs open `WEB/#buy-me-a-coffee`
-- Web section: Support $5+ (Gumroad `zzgfgk`) + Quét VietQR (placeholder until QR is provided)
+- Web section: Support $5+ (Gumroad `zzgfgk`) + Quét VietQR (Techcombank)
 
 ---
 

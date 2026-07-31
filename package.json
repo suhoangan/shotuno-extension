@@ -1,11 +1,12 @@
 {
   "name": "shotuno-extension",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "package:store": "node scripts/package-store.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
@@ -15,7 +16,6 @@
     "@base-ui/react": "^1.6.0",
     "@fontsource-variable/geist": "^5.3.0",
     "@radix-ui/react-alert-dialog": "^1.1.21",
-    "@sentry/browser": "^10.68.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "idb-keyval": "^6.3.0",

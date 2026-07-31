@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { LucideIcon } from 'lucide-react';
+import { Crown } from 'lucide-react';
 import type { ToolType } from '../../../store/useEditorStore';
 import { Button } from '../../../components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/tooltip';
@@ -13,9 +14,10 @@ interface ToolButtonProps {
   icon: IconComponent;
   label: string;
   onSelect: (tool: ToolType) => void;
+  isPro?: boolean;
 }
 
-export function ToolButton({ tool, activeTool, icon: Icon, label, onSelect }: ToolButtonProps) {
+export function ToolButton({ tool, activeTool, icon: Icon, label, onSelect, isPro }: ToolButtonProps) {
   return (
     <Tooltip>
       <TooltipTrigger
@@ -32,10 +34,17 @@ export function ToolButton({ tool, activeTool, icon: Icon, label, onSelect }: To
           />
         }
       >
-        <Icon size={ICON} />
+        <div className="relative">
+          <Icon size={ICON} />
+          {isPro && (
+            <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 rounded-full p-0.5 shadow-sm">
+              <Crown size={10} fill="currentColor" />
+            </div>
+          )}
+        </div>
       </TooltipTrigger>
       <TooltipContent side="bottom" sideOffset={8} className="z-[99999999]">
-        {label}
+        {label} {isPro && <span className="ml-1 text-yellow-500 font-bold">PRO</span>}
       </TooltipContent>
     </Tooltip>
   );

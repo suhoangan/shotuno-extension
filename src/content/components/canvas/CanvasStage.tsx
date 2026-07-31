@@ -23,7 +23,8 @@ interface CanvasStageProps {
   stageRef: React.RefObject<any>;
   image: HTMLImageElement;
   bounds: StageBounds;
-  scale: number;
+  /** Rasterisation density, not the visual zoom — see `renderScale.ts`. */
+  renderScale: number;
   shapes: Shape[];
   selectedShapeIds: string[];
   selectedColor: string;
@@ -54,7 +55,7 @@ interface CanvasStageProps {
 
 export function CanvasStage(props: CanvasStageProps) {
   const {
-    stageRef, image, bounds, scale, shapes, selectedShapeIds, selectedColor, strokeWidth,
+    stageRef, image, bounds, renderScale, shapes, selectedShapeIds, selectedColor, strokeWidth,
     smartMeasureBounds, borderEnabled, borderStyle, borderPadding, borderPaddingSize, borderPaddingPreset, includeUrl, includeDate,
     urlPosition, watermarkEnabled, watermarkText, watermarkMode, watermarkImageUrl, selectionBox, editingText, setEditingText,
     isPanning, activeTool, handleMouseDown, handleMouseMove, handleMouseUp, onTextDblClick,
@@ -67,14 +68,18 @@ export function CanvasStage(props: CanvasStageProps) {
   const wmH = watermarkImg && watermarkImg.width
     ? (watermarkImg.height / watermarkImg.width) * wmW
     : 0;
+  // Konva allocates a scene + hit canvas pair per layer regardless of `listening`, so an
+  // empty watermark layer still costs a full stage-sized bitmap. Only mount it when used.
+  const showWatermark = watermarkEnabled
+    && (watermarkMode === 'text' ? Boolean(watermarkText) : Boolean(watermarkImg));
 
   return (
     <Stage
       ref={stageRef}
-      width={bounds.width * scale}
-      height={bounds.height * scale}
-      scaleX={scale}
-      scaleY={scale}
+      width={bounds.width * renderScale}
+      height={bounds.height * renderScale}
+      scaleX={renderScale}
+      scaleY={renderScale}
       offsetX={bounds.x}
       offsetY={bounds.y}
       onMouseDown={handleMouseDown}
@@ -157,35 +162,35 @@ export function CanvasStage(props: CanvasStageProps) {
             editingTextId={editingText?.id || null}
             onTextDblClick={onTextDblClick}
             bgImage={image}
-            allShapes={shapes}
             activeTool={activeTool}
             isSelected={selectedShapeIds.includes(shape.id)}
           />
         ))}
       </Layer>
 
-      <Layer listening={false}>
-        {watermarkEnabled && watermarkMode === 'text' && watermarkText && (
-          <TiledTextWatermark
-            text={watermarkText}
-            x={bounds.content.x}
-            y={bounds.content.y}
-            width={bounds.content.width}
-            height={bounds.content.height}
-          />
-        )}
-        {watermarkEnabled && watermarkMode === 'image' && watermarkImg && (
-          <KonvaImage
-            image={watermarkImg}
-            listening={false}
-            opacity={WATERMARK_OPACITY}
-            width={wmW}
-            height={wmH}
-            x={bounds.content.x + bounds.content.width - wmW - WATERMARK_PAD}
-            y={bounds.content.y + bounds.content.height - wmH - WATERMARK_PAD}
-          />
-        )}
-      </Layer>
+      {showWatermark && (
+        <Layer listening={false}>
+          {watermarkMode === 'text' ? (
+            <TiledTextWatermark
+              text={watermarkText}
+              x={bounds.content.x}
+              y={bounds.content.y}
+              width={bounds.content.width}
+              height={bounds.content.height}
+            />
+          ) : (
+            <KonvaImage
+              image={watermarkImg ?? undefined}
+              listening={false}
+              opacity={WATERMARK_OPACITY}
+              width={wmW}
+              height={wmH}
+              x={bounds.content.x + bounds.content.width - wmW - WATERMARK_PAD}
+              y={bounds.content.y + bounds.content.height - wmH - WATERMARK_PAD}
+            />
+          )}
+        </Layer>
+      )}
 
       <Layer>
         <SelectionBox {...selectionBox} />

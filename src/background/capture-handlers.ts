@@ -1,3 +1,5 @@
+import { captureFullSizeScreenshot } from './captureFullSizeScreenshot';
+
 type CaptureSender = { tab?: { id?: number; windowId?: number } };
 
 async function resolveTargetTabId(
@@ -99,7 +101,14 @@ export function handleCaptureMessage(
         }
 
         if (captureType === 'full') {
-          await sendCaptureToTab(tabId, { type: 'START_FULL_PAGE_CAPTURE' });
+          // Prefer DevTools-style CDP full-size capture; fall back to scroll-stitch.
+          await new Promise((r) => setTimeout(r, 300));
+          try {
+            const dataUrl = await captureFullSizeScreenshot(tabId);
+            await sendCaptureToTab(tabId, { type: 'TOGGLE_EDITOR', payload: dataUrl });
+          } catch {
+            await sendCaptureToTab(tabId, { type: 'START_FULL_PAGE_CAPTURE' });
+          }
           sendResponse({ success: true });
           return;
         }

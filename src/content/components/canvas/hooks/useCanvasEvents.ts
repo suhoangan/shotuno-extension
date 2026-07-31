@@ -3,6 +3,7 @@ import { useEditorStore } from '../../../../store/useEditorStore';
 import { imageShapeStyleFromTool } from '../../../../store/editorDefaults';
 import { toImageAnnotationSize } from '../annotationSize';
 import { isEditableKeyboardTarget } from '../isEditableKeyboardTarget';
+import { limitImageResolution } from '../../../../lib/limitImageResolution';
 
 interface UseCanvasEventsProps {
   bounds: { x: number; y: number; width: number; height: number };
@@ -34,35 +35,36 @@ export function useCanvasEvents({ bounds, editingText }: UseCanvasEventsProps) {
     const handleImageFile = (file: File) => {
       if (!file.type.startsWith('image/')) return;
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         const src = e.target?.result as string;
         if (!src) return;
-        const img = new window.Image();
-        img.src = src;
-        img.onload = () => {
-          let w = img.width;
-          let h = img.height;
-          const maxDim = 600;
-          if (w > maxDim || h > maxDim) {
-            if (w > h) { h = (maxDim / w) * h; w = maxDim; }
-            else { w = (maxDim / h) * w; h = maxDim; }
-          }
-          const style = imageShapeStyleFromTool(useEditorStore.getState().toolSettings);
-          addShape({
-            id: Date.now().toString(),
-            type: 'image',
-            x: bounds.x + 50,
-            y: bounds.y + 50,
-            width: w,
-            height: h,
-            src,
-            color: style.color,
-            strokeWidth: toImageAnnotationSize(style.strokeWidth),
-            isSolid: style.isSolid,
-          });
-          saveHistory();
-          setActiveTool('select');
-        };
+        // Pasted at most 600px wide, so keeping the pasted source at full resolution just
+        // pins a large data URL in the store for as long as any undo step references it.
+        const sized = await limitImageResolution(src).catch(() => null);
+        if (!sized) return;
+
+        let w = sized.width;
+        let h = sized.height;
+        const maxDim = 600;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) { h = (maxDim / w) * h; w = maxDim; }
+          else { w = (maxDim / h) * w; h = maxDim; }
+        }
+        const style = imageShapeStyleFromTool(useEditorStore.getState().toolSettings);
+        addShape({
+          id: Date.now().toString(),
+          type: 'image',
+          x: bounds.x + 50,
+          y: bounds.y + 50,
+          width: w,
+          height: h,
+          src: sized.dataUrl,
+          color: style.color,
+          strokeWidth: toImageAnnotationSize(style.strokeWidth),
+          isSolid: style.isSolid,
+        });
+        saveHistory();
+        setActiveTool('select');
       };
       reader.readAsDataURL(file);
     };

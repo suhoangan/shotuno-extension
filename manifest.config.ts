@@ -9,24 +9,41 @@ function originPattern(url: string): string {
   }
 }
 
+function isPublicWebOrigin(url: string): boolean {
+  try {
+    const parsed = new URL(url)
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return false
+    const host = parsed.hostname.toLowerCase()
+    return host !== 'localhost' && host !== '127.0.0.1' && !host.endsWith('.local')
+  } catch {
+    return false
+  }
+}
+
 export default defineManifest(async (env) => {
   const vars = loadEnv(env.mode, process.cwd(), '')
-  const webUrl = vars.VITE_WEB_URL || 'http://localhost:3001'
+  const webUrl = vars.VITE_WEB_URL || ''
+  const isProd = env.mode === 'production'
 
   // captureVisibleTab needs host access on the page being captured.
-  const hostPermissions = [
-    '<all_urls>',
-    originPattern(webUrl),
-    'https://*.ingest.sentry.io/*',
-  ]
+  const hostPermissions = new Set<string>(['<all_urls>'])
+
+  if (webUrl && (!isProd || isPublicWebOrigin(webUrl))) {
+    hostPermissions.add(originPattern(webUrl))
+  }
 
   return {
     manifest_version: 3,
     name: 'Shotuno',
+    short_name: 'Shotuno',
     version: '1.0.0',
-    description: 'Capture and annotate screenshots natively in the browser.',
+    description:
+      'Capture visible, area, or full-page screenshots and annotate them in-tab - arrows, blur, OCR, pins, and more.',
+    ...(webUrl && isPublicWebOrigin(webUrl)
+      ? { homepage_url: webUrl.replace(/\/$/, '') }
+      : {}),
     action: {
-      default_title: 'Shotuno',
+      default_title: 'Shotuno - Capture & annotate',
       default_popup: 'src/popup/index.html',
       default_icon: 'icon-32.png',
     },
@@ -39,6 +56,8 @@ export default defineManifest(async (env) => {
       '128': 'icon-128.png',
     },
     options_page: 'src/onboarding/index.html',
+    // Side Panel API requires Chrome 114+
+    minimum_chrome_version: '114',
     permissions: [
       'activeTab',
       'tabs',
@@ -47,8 +66,10 @@ export default defineManifest(async (env) => {
       'downloads',
       'scripting',
       'sidePanel',
+      // DevTools-style full-page capture (Page.captureScreenshot beyond viewport).
+      'debugger',
     ],
-    host_permissions: hostPermissions,
+    host_permissions: [...hostPermissions],
     background: {
       service_worker: 'src/background/index.ts',
       type: 'module',

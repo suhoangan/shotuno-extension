@@ -52,3 +52,10 @@ export function captureVisibleTab(): Promise<string> {
     });
   });
 }
+
+/** Wait for Shotuno UI to unmount/paint before captureVisibleTab so overlays are not in the shot. */
+export async function settleThenCaptureVisibleTab(): Promise<string> {
+  await new Promise((r) => setTimeout(r, 120));
+  await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
+  return captureVisibleTab();
+}

@@ -8,9 +8,16 @@ interface ExportActionsProps {
   onDownload: () => void;
   onClose: () => void;
   isVertical?: boolean;
+  busy?: boolean;
 }
 
-export function ExportActions({ onCopy, onDownload, onClose, isVertical }: ExportActionsProps) {
+export function ExportActions({
+  onCopy,
+  onDownload,
+  onClose,
+  isVertical,
+  busy = false,
+}: ExportActionsProps) {
   return (
     <>
       <Tooltip>
@@ -20,6 +27,7 @@ export function ExportActions({ onCopy, onDownload, onClose, isVertical }: Expor
               variant="ghost"
               size="icon"
               onClick={onCopy}
+              disabled={busy}
               className="h-8 w-8 text-muted-foreground hover:bg-accent hover:text-foreground"
             />
           }
@@ -35,6 +43,7 @@ export function ExportActions({ onCopy, onDownload, onClose, isVertical }: Expor
             <Button
               size="icon"
               onClick={onDownload}
+              disabled={busy}
               className={`h-8 w-8 text-muted-foreground hover:bg-primary hover:text-primary-foreground bg-card ${isVertical ? 'mt-1' : 'ml-1'}`}
             />
           }
@@ -50,6 +59,7 @@ export function ExportActions({ onCopy, onDownload, onClose, isVertical }: Expor
             <Button
               size="icon"
               onClick={onClose}
+              disabled={busy}
               className={`h-8 w-8 bg-destructive hover:bg-destructive/80 text-primary-foreground shadow ${isVertical ? 'mt-1' : 'ml-1'}`}
             />
           }

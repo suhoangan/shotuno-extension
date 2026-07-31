@@ -136,7 +136,7 @@ export default function App() {
         <AlignVerticalSpaceAround size={18} className="text-primary" />
         <div className="flex flex-col">
           <span className="font-medium text-sm">Full Page</span>
-          <span className="text-xs text-muted-foreground">Scroll and capture everything</span>
+          <span className="text-xs text-muted-foreground">Like DevTools full-size screenshot</span>
         </div>
       </button>
 

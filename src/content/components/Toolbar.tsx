@@ -27,21 +27,33 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '../../components/ui/alert-dialog';
 import { toolProFeatureId } from '../../lib/entitlements/proFeatures';
-import { BuyMeCoffeeLink } from '../../components/BuyMeCoffeeLink';
 import { requestEndTextEdit } from './canvas/commitTextEdit';
 import { useProGate } from './hooks/useProGate';
 import { useToolHotkeys } from './hooks/useToolHotkeys';
+import { useHardLoadingStore } from '../../store/useHardLoadingStore';
+import { Crown } from 'lucide-react';
 
 function ToolDivider() {
   return <Separator orientation="vertical" className="h-6 w-px mx-1 bg-border/40" />;
 }
+
+function ProBadge({ show }: { show: boolean }) {
+  if (!show) return null;
+  return (
+    <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 rounded-full p-0.5 shadow-sm z-50 pointer-events-none">
+      <Crown size={10} fill="currentColor" />
+    </div>
+  );
+}
+
 export default function Toolbar({ onClose }: { onClose: () => void }) {
   const {
     activeTool, setActiveTool, setSelectedColor, setStrokeWidth,
     selectedShapeIds, setSelectedShapeIds, saveHistory, setShapes,
     setIsSolid, setIsTwoWay, setIsLine, setBlurType, undo, redo, history, historyStep, shapes,
   } = useEditorStore();
-  const { runPro } = useProGate();
+  const { runPro, showSubscriptionPopup, setShowSubscriptionPopup, subscriptionMessage, creditsRemaining } = useProGate();
+  const exportBusy = useHardLoadingStore((s) => s.loading != null);
   const [filename, setFilename] = useState(`Screenshot_${new Date().toISOString().slice(0, 10)}`);
   const [showShapeMenu, setShowShapeMenu] = useState(false);
   const [showDeleteMenu, setShowDeleteMenu] = useState(false);
@@ -51,6 +63,16 @@ export default function Toolbar({ onClose }: { onClose: () => void }) {
   const [isClearAllOpen, setIsClearAllOpen] = useState(false);
 
   const lastClickRef = useRef<Record<string, number>>({});
+  const [isUserFreeTier, setIsUserFreeTier] = useState(true);
+
+  useEffect(() => {
+    chrome.storage.local.get('authUser').then(({ authUser }) => {
+      if (authUser?.entitlements?.planTier && authUser.entitlements.planTier !== 'FREE') {
+        setIsUserFreeTier(false);
+      }
+    });
+  }, []);
+
   const throttle = (key: string, delay: number, callback: () => void) => {
     return (e?: React.MouseEvent) => {
       if (e) e.preventDefault();
@@ -171,13 +193,16 @@ export default function Toolbar({ onClose }: { onClose: () => void }) {
                   />
                 }
               >
-                <Wand2 size={ICON} />
+                <div className="relative">
+                  <Wand2 size={ICON} />
+                  <ProBadge show={isUserFreeTier && !!toolProFeatureId('smart_blur')} />
+                </div>
               </TooltipTrigger>
               <TooltipContent side="bottom" sideOffset={8}>Smart Blur Sensitive Data</TooltipContent>
             </Tooltip>
-            <ToolButton tool="magnifier" activeTool={activeTool} icon={Search} label="Magnifier (Z)" onSelect={handleToolSelect} />
-            <ToolButton tool="ocr" activeTool={activeTool} icon={ScanText} label="Extract Text (E)" onSelect={handleToolSelect} />
-            <ToolButton tool="measure" activeTool={activeTool} icon={Ruler} label="Measure / Distance (M)" onSelect={handleToolSelect} />
+            <ToolButton tool="magnifier" activeTool={activeTool} icon={Search} label="Magnifier (Z)" onSelect={handleToolSelect} isPro={isUserFreeTier && !!toolProFeatureId('magnifier')} />
+            <ToolButton tool="ocr" activeTool={activeTool} icon={ScanText} label="Extract Text (E)" onSelect={handleToolSelect} isPro={isUserFreeTier && !!toolProFeatureId('ocr')} />
+            <ToolButton tool="measure" activeTool={activeTool} icon={Ruler} label="Measure / Distance (M)" onSelect={handleToolSelect} isPro={isUserFreeTier && !!toolProFeatureId('measure')} />
 
           <ToolDivider />
 
@@ -212,7 +237,10 @@ export default function Toolbar({ onClose }: { onClose: () => void }) {
                   />
                 }
               >
-                <Scaling size={ICON} />
+                <div className="relative">
+                  <Scaling size={ICON} />
+                  <ProBadge show={isUserFreeTier && !!toolProFeatureId('resize')} />
+                </div>
               </TooltipTrigger>
               <TooltipContent side="bottom" sideOffset={8}>Resize Image</TooltipContent>
             </Tooltip>
@@ -230,7 +258,10 @@ export default function Toolbar({ onClose }: { onClose: () => void }) {
                   />
                 }
               >
-                <Sparkles size={ICON} />
+                <div className="relative">
+                  <Sparkles size={ICON} />
+                  <ProBadge show={isUserFreeTier && !!toolProFeatureId('send_to_ai')} />
+                </div>
               </TooltipTrigger>
               <TooltipContent side="bottom" sideOffset={8}>Smart Parse</TooltipContent>
             </Tooltip>
@@ -254,6 +285,7 @@ export default function Toolbar({ onClose }: { onClose: () => void }) {
             onCopy={() => handleSave('copy')}
             onDownload={() => handleSave('download')}
             onClose={throttle('close', 500, onClose)}
+            busy={exportBusy}
           />
         </div>
         <StyleToolbar />
@@ -268,11 +300,34 @@ export default function Toolbar({ onClose }: { onClose: () => void }) {
           />
           <span className="text-muted-foreground pr-1.5">.png</span>
         </div>
+      <div className="fixed bottom-6 right-4 z-[9999999] pointer-events-auto">
+        {creditsRemaining !== null && (
+          <div className="bg-primary/90 text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+            {creditsRemaining} Credits Remaining
+          </div>
+        )}
       </div>
 
-      <div className="fixed bottom-6 right-4 z-[9999999] pointer-events-auto">
-        <BuyMeCoffeeLink className={`${CHROME} border-0 shadow-sm`} />
-      </div>
+      <AlertDialog open={showSubscriptionPopup} onOpenChange={setShowSubscriptionPopup}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Subscription Required</AlertDialogTitle>
+            <AlertDialogDescription>
+              {subscriptionMessage}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Wait and continue use free feature</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                window.open('https://shotuno.suhoangan.com/#pricing', '_blank');
+              }}
+            >
+              See Pro Benefits
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <SendToAIModal isOpen={isAIModalOpen} onClose={() => setIsAIModalOpen(false)} />
 

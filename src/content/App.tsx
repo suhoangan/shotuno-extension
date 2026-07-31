@@ -3,11 +3,14 @@ import CanvasEditor from './components/CanvasEditor';
 import Toolbar from './components/Toolbar';
 import AreaCaptureOverlay from './components/AreaCaptureOverlay';
 import FullPageCaptureOverlay from './components/FullPageCaptureOverlay';
+import { HardLoadingHost } from './components/HardLoadingHost';
 import { Toaster } from '../components/ui/sonner';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { useEditorStore } from '../store/useEditorStore';
+import { useHardLoadingStore } from '../store/useHardLoadingStore';
 import { savePinImage } from '../lib/pinDb';
-import { captureVisibleTab, cropVisibleCapture } from './utils/areaCapture';
+import { cropVisibleCapture, settleThenCaptureVisibleTab } from './utils/areaCapture';
+import { limitImageResolution } from '../lib/limitImageResolution';
 import { toast } from 'sonner';
 
 export type BootstrapMessage =
@@ -40,17 +43,34 @@ export default function App({
 }) {
   const [screenshot, setScreenshot] = useState<string | null>(() => screenshotFromBootstrap(bootstrap));
   const [captureMode, setCaptureMode] = useState<CaptureMode>(() => captureModeFromBootstrap(bootstrap));
+  const hardLoading = useHardLoadingStore((s) => s.loading);
 
-  const openScreenshot = (dataUrl: string | null) => {
-    if (dataUrl) useEditorStore.getState().reset();
-    setScreenshot(dataUrl);
+  /**
+   * Single entry point for every screenshot — tab capture, area crop, full page, and the
+   * popup's "Open image". Capping here rather than in `CanvasEditor` keeps the URL and the
+   * decoded image in the same coordinate space, which Smart Blur and OCR both depend on.
+   */
+  const openScreenshot = async (dataUrl: string | null) => {
     setCaptureMode(null);
+    if (!dataUrl) {
+      setScreenshot(null);
+      return;
+    }
+    const { showHardLoading, hideHardLoading } = useHardLoadingStore.getState();
+    showHardLoading({ title: 'Preparing image…', message: 'Optimizing for the editor' });
+    try {
+      useEditorStore.getState().reset();
+      const { dataUrl: sized } = await limitImageResolution(dataUrl);
+      setScreenshot(sized);
+    } finally {
+      hideHardLoading();
+    }
   };
 
   useEffect(() => {
     if (!bootstrap) return;
     if (bootstrap.type === 'TOGGLE_EDITOR') {
-      openScreenshot(bootstrap.payload ?? null);
+      void openScreenshot(bootstrap.payload ?? null);
     } else if (bootstrap.type === 'START_AREA_SELECTION') {
       setCaptureMode('area');
     } else if (bootstrap.type === 'START_PIN_AREA_SELECTION') {
@@ -63,15 +83,19 @@ export default function App({
   useEffect(() => {
     const onReplace = (e: Event) => {
       const dataUrl = (e as CustomEvent<{ dataUrl?: string }>).detail?.dataUrl;
-      if (dataUrl) openScreenshot(dataUrl);
+      if (dataUrl) void openScreenshot(dataUrl);
     };
     document.addEventListener('replace-screenshot', onReplace);
     return () => document.removeEventListener('replace-screenshot', onReplace);
   }, []);
 
   const closeEditor = () => {
+    useHardLoadingStore.getState().hideHardLoading();
     setScreenshot(null);
     setCaptureMode(null);
+    // The store is module-level in a content script that outlives the editor, so without
+    // this the shapes and the 50-step history stay resident for the life of the tab.
+    useEditorStore.getState().reset();
     onCloseEditor?.();
   };
 
@@ -81,14 +105,17 @@ export default function App({
       onCloseEditor?.();
       return;
     }
-    await new Promise((r) => setTimeout(r, 100));
+    const { showHardLoading, hideHardLoading } = useHardLoadingStore.getState();
+    // Hide our UI first — captureVisibleTab would otherwise include the loading popup.
+    hideHardLoading();
     try {
-      const full = await captureVisibleTab();
+      const full = await settleThenCaptureVisibleTab();
+      showHardLoading({ title: 'Capturing…', message: 'Cropping selected area' });
       const cropped = await cropVisibleCapture(full, rect);
-      setScreenshot(cropped);
-      useEditorStore.getState().reset();
+      await openScreenshot(cropped);
     } catch (e) {
       console.error(e);
+      hideHardLoading();
       onCloseEditor?.();
     }
   };
@@ -99,9 +126,11 @@ export default function App({
       onCloseEditor?.();
       return;
     }
-    await new Promise((r) => setTimeout(r, 100));
+    const { showHardLoading, hideHardLoading } = useHardLoadingStore.getState();
+    hideHardLoading();
     try {
-      const full = await captureVisibleTab();
+      const full = await settleThenCaptureVisibleTab();
+      showHardLoading({ title: 'Pinning…', message: 'Saving area to pins' });
       const cropped = await cropVisibleCapture(full, rect);
       await savePinImage(cropped);
       chrome.runtime.sendMessage({ type: 'OPEN_SIDE_PANEL' });
@@ -111,21 +140,24 @@ export default function App({
       const detail = e instanceof Error && e.message ? e.message : 'Could not pin screenshot';
       toast.error(detail);
       onCloseEditor?.();
+    } finally {
+      hideHardLoading();
     }
   };
 
   const handleFullPageCapture = (dataUrl: string | null) => {
     setCaptureMode(null);
-    if (dataUrl) openScreenshot(dataUrl);
+    if (dataUrl) void openScreenshot(dataUrl);
     else onCloseEditor?.();
   };
 
-  if (!screenshot && !captureMode) return null;
+  if (!screenshot && !captureMode && !hardLoading) return null;
 
   if (captureMode === 'area' || captureMode === 'pin_area') {
     return (
       <>
         <Toaster position="top-center" theme="light" />
+        <HardLoadingHost />
         <AreaCaptureOverlay
           onCapture={captureMode === 'pin_area' ? finishAreaAsPin : finishAreaAsEditor}
         />
@@ -137,16 +169,24 @@ export default function App({
     return <FullPageCaptureOverlay onCapture={handleFullPageCapture} />;
   }
 
+  if (!screenshot) {
+    return (
+      <>
+        <Toaster position="top-center" theme="light" />
+        <HardLoadingHost />
+      </>
+    );
+  }
+
   return (
     <div className="fixed inset-0 z-[999999] flex items-center justify-center overflow-hidden font-sans bg-foreground/30 backdrop-blur-md pointer-events-auto">
       <Toaster position="top-center" theme="light" />
+      <HardLoadingHost />
       <Toolbar onClose={closeEditor} />
       <div className="w-full h-full">
-        {screenshot && (
-          <ErrorBoundary fallbackTitle="Canvas crashed">
-            <CanvasEditor screenshotUrl={screenshot} />
-          </ErrorBoundary>
-        )}
+        <ErrorBoundary fallbackTitle="Canvas crashed">
+          <CanvasEditor screenshotUrl={screenshot} />
+        </ErrorBoundary>
       </div>
     </div>
   );

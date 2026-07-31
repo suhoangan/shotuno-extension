@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useEditorStore } from '../../../../store/useEditorStore';
+import { useHardLoadingStore } from '../../../../store/useHardLoadingStore';
 import { detectSensitiveAreas } from '../../../utils/smartBlur';
 
 export function useSmartBlur(screenshotUrl: string | null) {
@@ -8,11 +9,12 @@ export function useSmartBlur(screenshotUrl: string | null) {
   const { shapes, setShapes, blurType, saveHistory } = useEditorStore();
 
   const handleSmartBlur = async () => {
-    if (!screenshotUrl) return;
-    
+    if (!screenshotUrl || isProcessing) return;
+
     setIsProcessing(true);
-    const loadingToastId = toast.loading('Scanning for sensitive content...');
-    
+    const { showHardLoading, hideHardLoading } = useHardLoadingStore.getState();
+    showHardLoading({ title: 'Smart Blur…', message: 'Scanning for sensitive content' });
+
     try {
       const img = new Image();
       img.crossOrigin = 'anonymous';
@@ -23,18 +25,19 @@ export function useSmartBlur(screenshotUrl: string | null) {
       });
 
       const newShapes = await detectSensitiveAreas(img, blurType);
-      
+
       if (newShapes.length > 0) {
         setShapes([...shapes, ...newShapes]);
         saveHistory();
-        toast.success(`Smart Blur applied to ${newShapes.length} sensitive items`, { id: loadingToastId });
+        toast.success(`Smart Blur applied to ${newShapes.length} sensitive items`);
       } else {
-        toast.info('No sensitive content detected.', { id: loadingToastId });
+        toast.info('No sensitive content detected.');
       }
     } catch (err) {
       console.error('Smart Blur error:', err);
-      toast.error('Smart Blur failed to process image.', { id: loadingToastId });
+      toast.error('Smart Blur failed to process image.');
     } finally {
+      hideHardLoading();
       setIsProcessing(false);
     }
   };

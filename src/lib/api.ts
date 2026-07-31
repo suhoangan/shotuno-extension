@@ -9,3 +9,12 @@ export function webUrl(path = '/') {
   const normalized = path.startsWith('/') ? path : `/${path}`;
   return `${base}${normalized}`;
 }
+
+export const API_BASE = 
+  (typeof env !== 'undefined' && env.VITE_API_URL) || 'http://localhost:3000';
+
+export function apiUrl(path = '/') {
+  const base = API_BASE.replace(/\/$/, '');
+  const normalized = path.startsWith('/') ? path : `/${path}`;
+  return `${base}${normalized}`;
+}

@@ -3,6 +3,7 @@ import { ZoomIn, ZoomOut } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../components/ui/tooltip';
 import { BTN, BAR_GAP, ICON, CHROME } from './toolbar/toolbarUi';
+import { BUTTON_ZOOM_STEP, MAX_ZOOM, MIN_ZOOM } from './canvas/renderScale';
 
 interface ZoomControlsProps {
   scale: number;
@@ -19,7 +20,7 @@ export const ZoomControls = React.memo(function ZoomControls({ scale, setScale, 
             <Button 
               variant="ghost" 
               size="icon" 
-              onClick={() => setScale(s => Math.max(0.1, s / 1.25))} 
+              onClick={() => setScale(s => Math.max(MIN_ZOOM, s / BUTTON_ZOOM_STEP))} 
               className={`${BTN} hover:bg-accent text-muted-foreground hover:text-foreground`} 
             />
           }>
@@ -46,7 +47,7 @@ export const ZoomControls = React.memo(function ZoomControls({ scale, setScale, 
             <Button 
               variant="ghost" 
               size="icon" 
-              onClick={() => setScale(s => Math.min(5, s * 1.25))} 
+              onClick={() => setScale(s => Math.min(MAX_ZOOM, s * BUTTON_ZOOM_STEP))} 
               className={`${BTN} hover:bg-accent text-muted-foreground hover:text-foreground`} 
             />
           }>

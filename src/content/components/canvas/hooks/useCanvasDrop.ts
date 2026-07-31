@@ -8,6 +8,7 @@ import {
   fetchLibraryDataUrl,
   parseShotunoDragIds,
 } from '../../../../lib/shotunoDrag';
+import { limitImageResolution } from '../../../../lib/limitImageResolution';
 
 export function useCanvasDrop(stageRef: React.RefObject<any>, scale: number, bounds: { x: number; y: number; width: number; height: number }) {
   const { addShape } = useEditorStore();
@@ -65,14 +66,16 @@ export function useCanvasDrop(stageRef: React.RefObject<any>, scale: number, bou
         return;
       }
 
-      const processImage = (srcUrl: string, offsetX = 0, offsetY = 0) => {
-        const img = new window.Image();
-        if (srcUrl.startsWith('http')) {
-          img.crossOrigin = 'Anonymous';
-        }
-        img.onload = () => {
-          let finalWidth = img.width;
-          let finalHeight = img.height;
+      const processImage = async (srcUrl: string, offsetX = 0, offsetY = 0) => {
+        try {
+          // Drawn a few hundred pixels wide, so there is no point keeping a 4K source alive
+          // in the store and in every undo snapshot that references this shape.
+          const sized = await limitImageResolution(srcUrl, {
+            crossOrigin: srcUrl.startsWith('http') ? 'Anonymous' : undefined,
+          });
+
+          let finalWidth = sized.width;
+          let finalHeight = sized.height;
 
           const maxSize = Math.min(500, Math.max(bounds.width, bounds.height) * 0.5);
 
@@ -97,17 +100,15 @@ export function useCanvasDrop(stageRef: React.RefObject<any>, scale: number, bou
             y: pos.y,
             width: finalWidth,
             height: finalHeight,
-            src: srcUrl,
+            src: sized.dataUrl,
             color: style.color,
             strokeWidth: toImageAnnotationSize(style.strokeWidth),
             isSolid: style.isSolid,
           });
           useEditorStore.getState().saveHistory();
-        };
-        img.onerror = () => {
+        } catch {
           toast.error('Failed to load dropped image');
-        };
-        img.src = srcUrl;
+        }
       };
 
       const files = e.dataTransfer?.files;
@@ -119,7 +120,7 @@ export function useCanvasDrop(stageRef: React.RefObject<any>, scale: number, bou
             const reader = new FileReader();
             reader.onload = (event) => {
               if (event.target?.result) {
-                processImage(event.target.result as string, index * 30, index * 30);
+                void processImage(event.target.result as string, index * 30, index * 30);
               }
             };
             reader.readAsDataURL(file);
@@ -133,12 +134,12 @@ export function useCanvasDrop(stageRef: React.RefObject<any>, scale: number, bou
           library.ids.map(async (id, index) => {
             const dataUrl = await fetchLibraryDataUrl(library.kind, id);
             if (dataUrl) {
-              processImage(dataUrl, index * 30, index * 30);
+              await processImage(dataUrl, index * 30, index * 30);
               return;
             }
             const other = library.kind === 'pin' ? 'gallery' : 'pin';
             const fallback = await fetchLibraryDataUrl(other, id);
-            if (fallback) processImage(fallback, index * 30, index * 30);
+            if (fallback) await processImage(fallback, index * 30, index * 30);
             else toast.error(`Failed to load image ${id}`);
           }),
         );
@@ -152,7 +153,7 @@ export function useCanvasDrop(stageRef: React.RefObject<any>, scale: number, bou
       }
 
       if (url) {
-        processImage(url);
+        void processImage(url);
       } else {
         toast.error('Drop failed: No image data found');
       }

@@ -10,6 +10,7 @@ import { ImageShape } from './ImageShape';
 import { CounterShape } from './CounterShape';
 import { MagnifierShape } from './MagnifierShape';
 import { useShapeProps } from '../hooks/useShapeProps';
+import { useEditorStore } from '../../../../store/useEditorStore';
 import type { Shape, TextShape as TextShapeType } from '../../../../store/useEditorStore';
 
 interface ShapeRendererProps {
@@ -18,13 +19,44 @@ interface ShapeRendererProps {
   editingTextId: string | null;
   onTextDblClick: (e: any, shape: TextShapeType) => void;
   bgImage: HTMLImageElement | null;
-  allShapes: Shape[];
   /** Bust memo when tool changes so listening/draggable update immediately. */
   activeTool: string;
   isSelected: boolean;
 }
 
-const ShapeRendererComponent = ({ shape, stageRef, editingTextId, onTextDblClick, bgImage, allShapes, activeTool, isSelected }: ShapeRendererProps) => {
+/**
+ * The magnifier is the only shape that needs to see its siblings. Subscribing here rather
+ * than taking them as a prop keeps the ever-changing `shapes` array out of every other
+ * shape's memo check, so editing one shape no longer re-renders all of them.
+ */
+const ConnectedMagnifierShape = ({
+  shape, commonProps, stageRef, editingTextId, onTextDblClick, bgImage, activeTool,
+}: Omit<ShapeRendererProps, 'isSelected'> & { commonProps: any }) => {
+  const allShapes = useEditorStore((s) => s.shapes);
+
+  return (
+    <MagnifierShape
+      shape={shape as any}
+      commonProps={commonProps}
+      bgImage={bgImage}
+      allShapes={allShapes}
+      renderShape={(s) => (
+        <ShapeRendererComponent
+          key={s.id}
+          shape={s}
+          stageRef={stageRef}
+          editingTextId={editingTextId}
+          onTextDblClick={onTextDblClick}
+          bgImage={bgImage}
+          activeTool={activeTool}
+          isSelected={false}
+        />
+      )}
+    />
+  );
+};
+
+const ShapeRendererComponent = ({ shape, stageRef, editingTextId, onTextDblClick, bgImage, activeTool, isSelected }: ShapeRendererProps) => {
   const commonProps = useShapeProps({ shape, stageRef, activeTool, isSelected });
 
   switch (shape.type) {
@@ -58,24 +90,14 @@ const ShapeRendererComponent = ({ shape, stageRef, editingTextId, onTextDblClick
       return <CounterShape shape={shape as any} commonProps={commonProps} />;
     case 'magnifier':
       return (
-        <MagnifierShape 
-          shape={shape as any} 
-          commonProps={commonProps} 
+        <ConnectedMagnifierShape
+          shape={shape}
+          commonProps={commonProps}
+          stageRef={stageRef}
+          editingTextId={editingTextId}
+          onTextDblClick={onTextDblClick}
           bgImage={bgImage}
-          allShapes={allShapes}
-          renderShape={(s) => (
-            <ShapeRendererComponent
-              key={s.id}
-              shape={s}
-              stageRef={stageRef}
-              editingTextId={editingTextId}
-              onTextDblClick={onTextDblClick}
-              bgImage={bgImage}
-              allShapes={allShapes}
-              activeTool={activeTool}
-              isSelected={false}
-            />
-          )}
+          activeTool={activeTool}
         />
       );
     default:
@@ -90,7 +112,6 @@ export const ShapeRenderer = React.memo(ShapeRendererComponent, (prevProps, next
     prevProps.shape === nextProps.shape &&
     prevProps.editingTextId === nextProps.editingTextId &&
     prevProps.bgImage === nextProps.bgImage &&
-    prevProps.allShapes === nextProps.allShapes &&
     prevProps.activeTool === nextProps.activeTool &&
     prevProps.isSelected === nextProps.isSelected
   );

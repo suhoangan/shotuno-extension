@@ -1,3 +1,5 @@
+import { createPrefetchedFileCache } from './prefetchedFileCache';
+
 export interface GalleryImage {
   id: string;
   downloadId?: number;
@@ -126,41 +128,7 @@ export async function openGalleryOnDesktop(id: string): Promise<void> {
   }
 }
 
-export async function dataUrlToFile(dataUrl: string, filename: string): Promise<File> {
-  const res = await fetch(dataUrl);
-  const blob = await res.blob();
-  return new File([blob], filename, { type: blob.type || 'image/png' });
-}
-
 /** Prefetch full images so dragstart can attach Files synchronously. */
 export function createFullImageCache() {
-  const cache = new Map<string, File>();
-  const pending = new Map<string, Promise<File | null>>();
-
-  const prefetch = (id: string, filename = `shotuno-${id}.png`) => {
-    if (cache.has(id) || pending.has(id)) return;
-    const p = getFullImage(id).then(async (dataUrl) => {
-      if (!dataUrl) return null;
-      const file = await dataUrlToFile(dataUrl, filename);
-      cache.set(id, file);
-      return file;
-    }).finally(() => pending.delete(id));
-    pending.set(id, p);
-  };
-
-  const getCached = (id: string) => cache.get(id) ?? null;
-
-  const attachFilesToDataTransfer = (dt: DataTransfer, ids: string[]) => {
-    let added = 0;
-    for (const id of ids) {
-      const file = cache.get(id);
-      if (file) {
-        dt.items.add(file);
-        added += 1;
-      }
-    }
-    return added;
-  };
-
-  return { prefetch, getCached, attachFilesToDataTransfer, cache };
+  return createPrefetchedFileCache(getFullImage);
 }

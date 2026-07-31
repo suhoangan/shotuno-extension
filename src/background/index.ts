@@ -24,6 +24,24 @@ chrome.runtime.onMessage.addListener((message: any, sender: any, sendResponse: a
   return routeMessage(message, sendResponse, sender);
 });
 
+chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
+  if (message.type === 'LOGIN_SYNC' && message.token) {
+    chrome.storage.local.set({ 
+      authToken: message.token,
+      authUser: message.user,
+    }).then(() => {
+      sendResponse({ success: true });
+    });
+    return true; // async response
+  }
+  if (message.type === 'LOGOUT_SYNC') {
+    chrome.storage.local.remove(['authToken', 'authUser']).then(() => {
+      sendResponse({ success: true });
+    });
+    return true;
+  }
+});
+
 chrome.runtime.onInstalled.addListener((details: any) => {
   if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
     chrome.tabs.create({ url: chrome.runtime.getURL('src/onboarding/index.html') });

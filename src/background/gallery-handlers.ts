@@ -1,10 +1,10 @@
 import { set as idbSet, get as idbGet, del as idbDel } from 'idb-keyval';
 import { handleGalleryDesktopMessage } from './gallery-desktop-handlers';
 import { ensureImageExt } from '../lib/imageNames';
+import { GALLERY_RETENTION_MS, partitionExpired } from './retention';
 
 const GALLERY_KEY = 'canvas_gallery_images';
 const MAX_GALLERY = 50;
-const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
 type GalleryImage = {
   id: string;
@@ -139,12 +139,10 @@ export function handleGalleryMessage(
   if (message.type === 'SYNC_GALLERY') {
     chrome.storage.local.get([GALLERY_KEY], async (result) => {
       const currentImages = (result[GALLERY_KEY] as GalleryImage[] | undefined) || [];
-      const now = Date.now();
-      let validImages = currentImages.filter((img) => now - img.timestamp <= THIRTY_DAYS_MS);
-      const expired = currentImages.filter((img) => now - img.timestamp > THIRTY_DAYS_MS);
+      const { kept, expired } = partitionExpired(currentImages, GALLERY_RETENTION_MS);
       expired.forEach((img) => void idbDel(`gallery_full_${img.id}`));
 
-      validImages = await pruneStaleDownloads(validImages);
+      let validImages = await pruneStaleDownloads(kept);
       validImages.sort((a, b) => b.timestamp - a.timestamp);
 
       const changed = validImages.length !== currentImages.length

@@ -23,9 +23,19 @@ export const ImageShape = ({ shape, commonProps }: ImageShapeProps) => {
   const color = shape.color || IMAGE_DEFAULTS.color;
 
   useEffect(() => {
+    let cancelled = false;
     const image = new window.Image();
+    image.onload = () => {
+      if (!cancelled) setImg(image);
+    };
     image.src = shape.src;
-    image.onload = () => setImg(image);
+    return () => {
+      // Without this a swapped src leaves the old bitmap reachable and lets a stale
+      // load resolve into state after the shape has moved on.
+      cancelled = true;
+      image.onload = null;
+      image.src = '';
+    };
   }, [shape.src]);
 
   useEffect(() => {

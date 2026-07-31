@@ -11,16 +11,14 @@ const EMPTY_BOUNDS: StageBounds = {
 };
 
 export function useCanvasBounds(image: HTMLImageElement | null): StageBounds {
-  const {
-    borderEnabled,
-    borderStyle,
-    borderPadding,
-    borderPaddingSize,
-    includeUrl,
-    urlPosition,
-    cropRect,
-    activeTool,
-  } = useEditorStore();
+  const borderEnabled = useEditorStore((s) => s.borderEnabled);
+  const borderStyle = useEditorStore((s) => s.borderStyle);
+  const borderPadding = useEditorStore((s) => s.borderPadding);
+  const borderPaddingSize = useEditorStore((s) => s.borderPaddingSize);
+  const includeUrl = useEditorStore((s) => s.includeUrl);
+  const urlPosition = useEditorStore((s) => s.urlPosition);
+  const cropRect = useEditorStore((s) => s.cropRect);
+  const activeTool = useEditorStore((s) => s.activeTool);
 
   return useMemo(() => {
     if (!image) return EMPTY_BOUNDS;
