@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Maximize, Crop, AlignVerticalSpaceAround, Images, FolderOpen, Pin, Layers } from 'lucide-react';
+import { Maximize, Crop, AlignVerticalSpaceAround, Images, FolderOpen, Pin, Loader2, LayoutGrid } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Separator } from '../components/ui/separator';
 import { UserAccountHeader } from '../components/UserAccountHeader';
@@ -7,9 +7,11 @@ import { UserAccountHeader } from '../components/UserAccountHeader';
 export default function App() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<string | null>(null);
 
-  const startCapture = async (type: 'visible' | 'area' | 'full' | 'pin_area' | 'multi_pin_area') => {
+  const startCapture = async (type: 'visible' | 'area' | 'full' | 'pin_area' | 'grid') => {
     setError(null);
+    setLoading(type);
     try {
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
       const activeTab = tabs[0];
@@ -32,6 +34,7 @@ export default function App() {
           payload: { captureType: type, tabId: activeTab.id },
         },
         (response) => {
+          setLoading(null);
           if (chrome.runtime.lastError) {
             setError(
               chrome.runtime.lastError.message ||
@@ -47,6 +50,7 @@ export default function App() {
         },
       );
     } catch (e) {
+      setLoading(null);
       console.error('Failed to initiate capture', e);
       setError(e instanceof Error ? e.message : 'Failed to start capture');
     }
@@ -107,8 +111,13 @@ export default function App() {
         variant="outline"
         className="h-auto justify-start gap-3 py-2.5 px-3 ring-1 ring-primary/30"
         onClick={() => void startCapture('pin_area')}
+        disabled={loading !== null}
       >
-        <Pin size={18} className="text-primary shrink-0" />
+        {loading === 'pin_area' ? (
+          <Loader2 size={18} className="text-primary shrink-0 animate-spin" />
+        ) : (
+          <Pin size={18} className="text-primary shrink-0" />
+        )}
         <div className="flex flex-col items-start text-left">
           <span className="font-medium text-sm">Pin area</span>
           <span className="text-xs text-muted-foreground font-normal">
@@ -120,23 +129,14 @@ export default function App() {
       <Button
         variant="outline"
         className="h-auto justify-start gap-3 py-2.5 px-3"
-        onClick={() => void startCapture('multi_pin_area')}
-      >
-        <Layers size={18} className="text-primary shrink-0" />
-        <div className="flex flex-col items-start text-left">
-          <span className="font-medium text-sm">Multi-capture Pins</span>
-          <span className="text-xs text-muted-foreground font-normal">
-            Continuous capture to pins
-          </span>
-        </div>
-      </Button>
-
-      <Button
-        variant="outline"
-        className="h-auto justify-start gap-3 py-2.5 px-3"
         onClick={() => void startCapture('visible')}
+        disabled={loading !== null}
       >
-        <Maximize size={18} className="text-primary shrink-0" />
+        {loading === 'visible' ? (
+          <Loader2 size={18} className="text-primary shrink-0 animate-spin" />
+        ) : (
+          <Maximize size={18} className="text-primary shrink-0" />
+        )}
         <div className="flex flex-col items-start text-left">
           <span className="font-medium text-sm">Visible Content</span>
           <span className="text-xs text-muted-foreground font-normal">
@@ -149,8 +149,13 @@ export default function App() {
         variant="outline"
         className="h-auto justify-start gap-3 py-2.5 px-3"
         onClick={() => void startCapture('area')}
+        disabled={loading !== null}
       >
-        <Crop size={18} className="text-primary shrink-0" />
+        {loading === 'area' ? (
+          <Loader2 size={18} className="text-primary shrink-0 animate-spin" />
+        ) : (
+          <Crop size={18} className="text-primary shrink-0" />
+        )}
         <div className="flex flex-col items-start text-left">
           <span className="font-medium text-sm">Selected Area</span>
           <span className="text-xs text-muted-foreground font-normal">
@@ -162,9 +167,33 @@ export default function App() {
       <Button
         variant="outline"
         className="h-auto justify-start gap-3 py-2.5 px-3"
-        onClick={() => void startCapture('full')}
+        onClick={() => void startCapture('grid')}
+        disabled={loading !== null}
       >
-        <AlignVerticalSpaceAround size={18} className="text-primary shrink-0" />
+        {loading === 'grid' ? (
+          <Loader2 size={18} className="text-primary shrink-0 animate-spin" />
+        ) : (
+          <LayoutGrid size={18} className="text-primary shrink-0" />
+        )}
+        <div className="flex flex-col items-start text-left">
+          <span className="font-medium text-sm">Grid Capture</span>
+          <span className="text-xs text-muted-foreground font-normal">
+            Capture multiple regions
+          </span>
+        </div>
+      </Button>
+
+      <Button
+        variant="outline"
+        className="h-auto justify-start gap-3 py-2.5 px-3"
+        onClick={() => void startCapture('full')}
+        disabled={loading !== null}
+      >
+        {loading === 'full' ? (
+          <Loader2 size={18} className="text-primary shrink-0 animate-spin" />
+        ) : (
+          <AlignVerticalSpaceAround size={18} className="text-primary shrink-0" />
+        )}
         <div className="flex flex-col items-start text-left">
           <span className="font-medium text-sm">Full Page</span>
           <span className="text-xs text-muted-foreground font-normal">

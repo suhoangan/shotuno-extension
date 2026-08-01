@@ -6,6 +6,7 @@ export interface GalleryImage {
   url: string;
   timestamp: number;
   filename?: string;
+  batchId?: string;
 }
 
 type MessageResponse = {

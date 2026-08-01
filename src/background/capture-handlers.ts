@@ -100,8 +100,8 @@ export function handleCaptureMessage(
           return;
         }
 
-        if (captureType === 'multi_pin_area') {
-          await sendCaptureToTab(tabId, { type: 'START_MULTI_PIN_AREA_SELECTION' });
+        if (captureType === 'grid') {
+          await sendCaptureToTab(tabId, { type: 'START_GRID_CAPTURE' });
           sendResponse({ success: true });
           return;
         }

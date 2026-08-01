@@ -7,6 +7,7 @@ export type PinImage = {
   url: string;
   timestamp: number;
   filename?: string;
+  batchId?: string;
 };
 
 type MessageResponse = {
@@ -40,6 +41,15 @@ export async function savePinImage(dataUrl: string, filename?: string): Promise<
   });
   if (response?.success && response.image) return response.image;
   throw new Error(response?.error || 'Failed to save pin');
+}
+
+export async function savePinImagesBatch(dataUrls: string[], batchId: string): Promise<PinImage[]> {
+  const response = await sendRuntimeMessage({
+    type: 'SAVE_PIN_IMAGES_BATCH',
+    payload: { dataUrls, batchId },
+  });
+  if (response?.success && response.images) return response.images;
+  throw new Error(response?.error || 'Failed to save pin batch');
 }
 
 export async function syncPins(): Promise<PinImage[]> {

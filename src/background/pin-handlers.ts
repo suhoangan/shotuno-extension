@@ -76,6 +76,62 @@ export function handlePinMessage(
     return true;
   }
 
+  if (message.type === 'SAVE_PIN_IMAGES_BATCH') {
+    const { dataUrls, batchId } = message.payload as {
+      dataUrls: string[];
+      batchId: string;
+    };
+    if (!dataUrls || dataUrls.length === 0) {
+      sendResponse({ success: false, error: 'Missing images' });
+      return true;
+    }
+
+    void (async () => {
+      const newPins: PinImage[] = [];
+      const timestamp = Date.now();
+
+      for (let i = 0; i < dataUrls.length; i++) {
+        const dataUrl = dataUrls[i];
+        const newId = `${timestamp}-${i}-${Math.random().toString(36).slice(2, 8)}`;
+        const name = ensureImageExt(stampedImageName('pin').replace('Pin', `Pin ${i + 1}`));
+        
+        await idbSet(`pin_full_${newId}`, dataUrl);
+        const thumb = await makePinThumbnail(dataUrl);
+        
+        newPins.push({
+          id: newId,
+          url: thumb,
+          timestamp,
+          filename: name,
+          batchId,
+        });
+      }
+
+      chrome.storage.local.get([PINS_STORAGE_KEY], (res) => {
+        if (chrome.runtime.lastError) {
+          sendResponse({
+            success: false,
+            error: chrome.runtime.lastError.message || 'Failed to read pins',
+          });
+          return;
+        }
+        const current = (res[PINS_STORAGE_KEY] as PinImage[] | undefined) || [];
+        const { kept: live } = partitionExpired(current, PIN_RETENTION_MS);
+        const updated = [...newPins, ...live].slice(0, MAX_PINS);
+        const kept = new Set(updated.map((p) => p.id));
+        current.forEach((p) => {
+          if (!kept.has(p.id)) void idbDel(`pin_full_${p.id}`);
+        });
+        writePins(updated, () => sendResponse({ success: true, images: newPins }));
+      });
+    })().catch((e) => {
+      const msg = e instanceof Error ? e.message : 'Failed to save pin batch';
+      console.error('[shotuno] SAVE_PIN_IMAGES_BATCH failed', e);
+      sendResponse({ success: false, error: msg || 'Failed to save pin batch' });
+    });
+    return true;
+  }
+
   if (message.type === 'GET_PIN_FULL') {
     const id = (message.payload as { id: string }).id;
     void idbGet(`pin_full_${id}`).then((dataUrl) => {

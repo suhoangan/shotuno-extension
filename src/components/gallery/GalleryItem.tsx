@@ -1,4 +1,4 @@
-import { Check, Trash2 } from 'lucide-react';
+import { Check, Trash2, LayoutGrid } from 'lucide-react';
 import { Button } from '../ui/button';
 import type { GalleryImage } from '../../lib/galleryDb';
 import type { GalleryViewMode } from './galleryPrefs';
@@ -77,7 +77,10 @@ export function GalleryItem({
           <img src={image.url} alt={label} className="w-full h-full object-cover" />
         </div>
         <div className="flex-1 min-w-0 text-left pointer-events-none">
-          <p className="text-xs font-medium text-foreground truncate">{label}</p>
+          <p className="text-xs font-medium text-foreground truncate flex items-center gap-1">
+            {label}
+            {image.batchId && <span title="Grid Batch"><LayoutGrid size={10} className="text-muted-foreground inline" /></span>}
+          </p>
           <p className="text-[10px] text-muted-foreground">{formatGalleryDate(image.timestamp)}</p>
         </div>
         <Button
@@ -139,6 +142,12 @@ export function GalleryItem({
       >
         <Trash2 size={14} />
       </Button>
+
+      {image.batchId && (
+        <div className="absolute bottom-1.5 right-1.5 z-10 h-6 px-1.5 rounded-full bg-background/80 border border-border flex items-center justify-center text-muted-foreground shadow-sm pointer-events-none" title="Part of a Grid Capture batch">
+          <LayoutGrid size={12} />
+        </div>
+      )}
     </div>
   );
 }

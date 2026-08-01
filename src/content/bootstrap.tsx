@@ -77,7 +77,8 @@ chrome.runtime.onMessage.addListener((message: BootstrapMessage | { type: string
     (message.type === 'TOGGLE_EDITOR' ||
       message.type === 'START_AREA_SELECTION' ||
       message.type === 'START_PIN_AREA_SELECTION' ||
-      message.type === 'START_FULL_PAGE_CAPTURE')
+      message.type === 'START_FULL_PAGE_CAPTURE' ||
+      message.type === 'START_GRID_CAPTURE')
   ) {
     destroyContentScript();
   }
@@ -89,7 +90,8 @@ chrome.runtime.onMessage.addListener((message: BootstrapMessage | { type: string
     message.type === 'TOGGLE_EDITOR' ||
     message.type === 'START_AREA_SELECTION' ||
     message.type === 'START_PIN_AREA_SELECTION' ||
-    message.type === 'START_FULL_PAGE_CAPTURE'
+    message.type === 'START_FULL_PAGE_CAPTURE' ||
+    message.type === 'START_GRID_CAPTURE'
   ) {
     ensureMounted(message as BootstrapMessage);
   }

@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../../components/ui/button';
-import { X, Check } from 'lucide-react';
+import { X } from 'lucide-react';
 
 export default function AreaCaptureOverlay({ 
   onCapture,
-  isMulti,
   onClose,
 }: { 
   onCapture: (rect: { x: number, y: number, w: number, h: number }) => void;
-  isMulti?: boolean;
   onClose?: () => void;
 }) {
   const [isDragging, setIsDragging] = useState(false);
@@ -33,7 +31,8 @@ export default function AreaCaptureOverlay({
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
-    setHoverRect(null);
+    // Do not clear hoverRect here so we can use it on mouseUp if it's a click
+
     setStartPos({ x: e.clientX, y: e.clientY });
     setCurrentPos({ x: e.clientX, y: e.clientY });
   };
@@ -42,6 +41,17 @@ export default function AreaCaptureOverlay({
     if (isDragging) {
       setCurrentPos({ x: e.clientX, y: e.clientY });
       return;
+    }
+    
+    // Check if hovering over extension UI controls (Cancel button, etc)
+    const shadowRoot = document.getElementById('shotuno-root')?.shadowRoot;
+    if (shadowRoot) {
+      const shadowElements = shadowRoot.elementsFromPoint(e.clientX, e.clientY);
+      const topShadowEl = shadowElements[0];
+      if (topShadowEl && topShadowEl.id !== 'capture-overlay-backdrop') {
+        setHoverRect(null);
+        return;
+      }
     }
     
     // Auto-snapping logic
@@ -61,12 +71,7 @@ export default function AreaCaptureOverlay({
   };
 
   const handleMouseUp = () => {
-    if (!isDragging) {
-      if (hoverRect) {
-        onCapture(hoverRect);
-      }
-      return;
-    }
+    if (!isDragging) return;
     setIsDragging(false);
     
     const x = Math.min(startPos.x, currentPos.x);
@@ -74,11 +79,16 @@ export default function AreaCaptureOverlay({
     const w = Math.abs(currentPos.x - startPos.x);
     const h = Math.abs(currentPos.y - startPos.y);
 
-    if (w > 10 && h > 10) {
+    if (w <= 10 && h <= 10) {
+      // It's a click (no significant drag)
+      if (hoverRect) {
+        onCapture(hoverRect);
+      } else {
+        onCapture({ x: 0, y: 0, w: 0, h: 0 }); 
+      }
+    } else {
+      // It's a drag capture
       onCapture({ x, y, w, h });
-    } else if (!isMulti) {
-      // Cancelled if area is too small and not in multi mode
-      onCapture({ x: 0, y: 0, w: 0, h: 0 }); 
     }
   };
 
@@ -89,6 +99,7 @@ export default function AreaCaptureOverlay({
 
   return (
     <div 
+      id="capture-overlay-backdrop"
       className="fixed inset-0 z-[9999999] cursor-crosshair pointer-events-auto"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -99,13 +110,23 @@ export default function AreaCaptureOverlay({
           <mask id="hole">
             <rect width="100%" height="100%" fill="white" />
             {isDragging && <rect x={x} y={y} width={w} height={h} fill="black" />}
+            {!isDragging && hoverRect && (
+              <rect 
+                x={hoverRect.x} 
+                y={hoverRect.y} 
+                width={hoverRect.w} 
+                height={hoverRect.h} 
+                fill="black" 
+                className="transition-all duration-150 ease-out"
+              />
+            )}
           </mask>
         </defs>
         <rect width="100%" height="100%" fill="rgba(0,0,0,0.5)" mask="url(#hole)" />
       </svg>
       {!isDragging && hoverRect && (
         <div 
-          className="absolute border-2 border-primary border-dashed pointer-events-none bg-primary/10 transition-all duration-75 ease-out"
+          className="absolute border-2 border-primary border-dashed pointer-events-none transition-all duration-150 ease-out"
           style={{ left: hoverRect.x, top: hoverRect.y, width: hoverRect.w, height: hoverRect.h }}
         >
           <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-black/75 text-primary-foreground text-xs px-2 py-1 rounded whitespace-nowrap">
@@ -124,17 +145,14 @@ export default function AreaCaptureOverlay({
         </div>
       )}
       
-      {isMulti && (
-        <div className="absolute top-4 right-4 bg-background/95 backdrop-blur shadow-lg border border-border rounded-lg p-2 flex items-center gap-2 pointer-events-auto z-[9999999]">
-          <span className="text-sm font-medium px-2">Multi-capture</span>
-          <Button variant="outline" size="sm" onClick={() => onClose && onClose()}>
-            <X size={16} className="mr-1" /> Cancel
-          </Button>
-          <Button size="sm" onClick={() => onClose && onClose()}>
-            <Check size={16} className="mr-1" /> Done
-          </Button>
-        </div>
-      )}
+      <div 
+        className="absolute top-4 right-4 z-[9999999] pointer-events-auto"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <Button size="sm" onClick={() => onClose && onClose()} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground border-transparent shadow-lg">
+          <X size={16} className="mr-1" /> Cancel
+        </Button>
+      </div>
     </div>
   );
 }

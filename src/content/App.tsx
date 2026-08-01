@@ -3,12 +3,13 @@ import CanvasEditor from './components/CanvasEditor';
 import Toolbar from './components/Toolbar';
 import AreaCaptureOverlay from './components/AreaCaptureOverlay';
 import FullPageCaptureOverlay from './components/FullPageCaptureOverlay';
+import GridCaptureOverlay from './components/grid-capture/GridCaptureOverlay';
 import { HardLoadingHost } from './components/HardLoadingHost';
 import { Toaster } from '../components/ui/sonner';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { useEditorStore } from '../store/useEditorStore';
 import { useHardLoadingStore } from '../store/useHardLoadingStore';
-import { savePinImage } from '../lib/pinDb';
+import { savePinImage, savePinImagesBatch } from '../lib/pinDb';
 import { cropVisibleCapture, settleThenCaptureVisibleTab } from './utils/areaCapture';
 import { limitImageResolution } from '../lib/limitImageResolution';
 import { toast } from 'sonner';
@@ -17,17 +18,17 @@ export type BootstrapMessage =
   | { type: 'TOGGLE_EDITOR'; payload?: string }
   | { type: 'START_AREA_SELECTION' }
   | { type: 'START_PIN_AREA_SELECTION' }
-  | { type: 'START_MULTI_PIN_AREA_SELECTION' }
-  | { type: 'START_FULL_PAGE_CAPTURE' };
+  | { type: 'START_FULL_PAGE_CAPTURE' }
+  | { type: 'START_GRID_CAPTURE' };
 
-type CaptureMode = 'area' | 'pin_area' | 'multi_pin_area' | 'full' | null;
+type CaptureMode = 'area' | 'pin_area' | 'full' | 'grid' | null;
 
 function captureModeFromBootstrap(message: BootstrapMessage | null): CaptureMode {
   if (!message) return null;
   if (message.type === 'START_AREA_SELECTION') return 'area';
   if (message.type === 'START_PIN_AREA_SELECTION') return 'pin_area';
-  if (message.type === 'START_MULTI_PIN_AREA_SELECTION') return 'multi_pin_area';
   if (message.type === 'START_FULL_PAGE_CAPTURE') return 'full';
+  if (message.type === 'START_GRID_CAPTURE') return 'grid';
   return null;
 }
 
@@ -58,14 +59,12 @@ export default function App({
       setScreenshot(null);
       return;
     }
-    const { showHardLoading, hideHardLoading } = useHardLoadingStore.getState();
-    showHardLoading({ title: 'Preparing image…', message: 'Optimizing for the editor' });
     try {
       useEditorStore.getState().reset();
       const { dataUrl: sized } = await limitImageResolution(dataUrl);
       setScreenshot(sized);
-    } finally {
-      hideHardLoading();
+    } catch (e) {
+      console.error('Failed to prepare image', e);
     }
   };
 
@@ -77,10 +76,10 @@ export default function App({
       setCaptureMode('area');
     } else if (bootstrap.type === 'START_PIN_AREA_SELECTION') {
       setCaptureMode('pin_area');
-    } else if (bootstrap.type === 'START_MULTI_PIN_AREA_SELECTION') {
-      setCaptureMode('multi_pin_area');
     } else if (bootstrap.type === 'START_FULL_PAGE_CAPTURE') {
       setCaptureMode('full');
+    } else if (bootstrap.type === 'START_GRID_CAPTURE') {
+      setCaptureMode('grid');
     }
   }, [bootstrap]);
 
@@ -109,56 +108,68 @@ export default function App({
       onCloseEditor?.();
       return;
     }
-    const { showHardLoading, hideHardLoading } = useHardLoadingStore.getState();
-    // Hide our UI first — captureVisibleTab would otherwise include the loading popup.
-    hideHardLoading();
+    
     try {
       const full = await settleThenCaptureVisibleTab();
-      showHardLoading({ title: 'Capturing…', message: 'Cropping selected area' });
       const cropped = await cropVisibleCapture(full, rect);
       await openScreenshot(cropped);
     } catch (e) {
       console.error(e);
-      hideHardLoading();
       onCloseEditor?.();
     }
   };
 
-  const finishAreaAsPin = async (rect: { x: number; y: number; w: number; h: number }, isMulti?: boolean) => {
-    if (!isMulti) setCaptureMode(null);
+  const finishAreaAsPin = async (rect: { x: number; y: number; w: number; h: number }) => {
+    setCaptureMode(null);
     if (rect.w === 0 || rect.h === 0) {
-      if (!isMulti) onCloseEditor?.();
+      onCloseEditor?.();
       return;
     }
-    const { showHardLoading, hideHardLoading } = useHardLoadingStore.getState();
-    hideHardLoading();
+    
     try {
-      if (isMulti) {
-        // Flash effect for smooth UX
-        const flash = document.createElement('div');
-        flash.className = 'fixed inset-0 z-[99999999] bg-white pointer-events-none transition-opacity duration-300';
-        document.body.appendChild(flash);
-        void flash.offsetWidth; // force reflow
-        flash.style.opacity = '0';
-        setTimeout(() => flash.remove(), 300);
-      }
-
       const full = await settleThenCaptureVisibleTab();
-      if (!isMulti) {
-        showHardLoading({ title: 'Pinning…', message: 'Saving area to pins' });
-      }
       const cropped = await cropVisibleCapture(full, rect);
       await savePinImage(cropped);
       chrome.runtime.sendMessage({ type: 'OPEN_SIDE_PANEL' });
-      if (!isMulti) onCloseEditor?.();
+      onCloseEditor?.();
       toast.success('Saved to pins');
     } catch (e) {
       console.error(e);
       const detail = e instanceof Error && e.message ? e.message : 'Could not pin screenshot';
       toast.error(detail);
-      if (!isMulti) onCloseEditor?.();
-    } finally {
-      if (!isMulti) hideHardLoading();
+      onCloseEditor?.();
+    }
+  };
+
+  const finishGridCapture = async (regions: { id: string; x: number; y: number; w: number; h: number }[]) => {
+    setCaptureMode(null);
+    if (regions.length === 0) {
+      onCloseEditor?.();
+      return;
+    }
+    
+    try {
+      const full = await settleThenCaptureVisibleTab();
+      useHardLoadingStore.getState().showHardLoading({ title: 'Capturing grid', message: 'Processing regions' });
+      const batchId = `batch-${Date.now()}`;
+      
+      const croppedUrls: string[] = [];
+      for (const rect of regions) {
+        const cropped = await cropVisibleCapture(full, rect);
+        croppedUrls.push(cropped);
+      }
+      
+      await savePinImagesBatch(croppedUrls, batchId);
+      useHardLoadingStore.getState().hideHardLoading();
+      chrome.runtime.sendMessage({ type: 'OPEN_SIDE_PANEL' });
+      onCloseEditor?.();
+      toast.success(`Saved ${regions.length} regions to pins`);
+    } catch (e) {
+      useHardLoadingStore.getState().hideHardLoading();
+      console.error(e);
+      const detail = e instanceof Error && e.message ? e.message : 'Could not save grid capture';
+      toast.error(detail);
+      onCloseEditor?.();
     }
   };
 
@@ -170,19 +181,31 @@ export default function App({
 
   if (!screenshot && !captureMode && !hardLoading) return null;
 
-  if (captureMode === 'area' || captureMode === 'pin_area' || captureMode === 'multi_pin_area') {
+  if (captureMode === 'area' || captureMode === 'pin_area') {
     return (
       <>
         <Toaster position="top-center" theme="light" />
         <HardLoadingHost />
         <AreaCaptureOverlay
-          isMulti={captureMode === 'multi_pin_area'}
-          onClose={() => setCaptureMode(null)}
+          onClose={closeEditor}
           onCapture={(rect) => 
-            captureMode === 'pin_area' || captureMode === 'multi_pin_area' 
-              ? finishAreaAsPin(rect, captureMode === 'multi_pin_area') 
+            captureMode === 'pin_area' 
+              ? finishAreaAsPin(rect) 
               : finishAreaAsEditor(rect)
           }
+        />
+      </>
+    );
+  }
+
+  if (captureMode === 'grid') {
+    return (
+      <>
+        <Toaster position="top-center" theme="light" />
+        <HardLoadingHost />
+        <GridCaptureOverlay
+          onClose={closeEditor}
+          onCaptureAll={finishGridCapture}
         />
       </>
     );
