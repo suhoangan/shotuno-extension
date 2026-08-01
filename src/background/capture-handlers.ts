@@ -100,6 +100,12 @@ export function handleCaptureMessage(
           return;
         }
 
+        if (captureType === 'multi_pin_area') {
+          await sendCaptureToTab(tabId, { type: 'START_MULTI_PIN_AREA_SELECTION' });
+          sendResponse({ success: true });
+          return;
+        }
+
         if (captureType === 'full') {
           // Prefer DevTools-style CDP full-size capture; fall back to scroll-stitch.
           await new Promise((r) => setTimeout(r, 300));

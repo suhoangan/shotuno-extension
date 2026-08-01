@@ -9,12 +9,12 @@ Dựa trên yêu cầu gốc của bạn, đây là bản đối chiếu chi ti�
 - [x] Xây dựng Shadow DOM Injection để hiển thị app ngay trên current page (không mở tab mới).
 
 ## Phase 2: Screen Capture Engine
-- [ ] Chụp vùng nhìn thấy (Visible Content).
-- [ ] Chụp theo vùng chọn (Area Selection - Kéo thả chuột).
-- [ ] Chụp toàn trang (Full Page - Cuộn và ghép ảnh).
+- [x] Chụp vùng nhìn thấy (Visible Content).
+- [x] Chụp theo vùng chọn (Area Selection - Kéo thả chuột).
+- [x] Chụp toàn trang (Full Page - Cuộn và ghép ảnh).
 
 ## Phase 3: Editor Core & State Management (Zustand + Konva)
-- [ ] Xây dựng `useEditorStore` (Zustand) để quản lý: Công cụ đang chọn, Lịch sử thao tác, Mảng các hình vẽ (Shapes).
+- [x] Xây dựng `useEditorStore` (Zustand) để quản lý: Công cụ đang chọn, Lịch sử thao tác, Mảng các hình vẽ (Shapes).
 - [x] Khởi tạo `<Stage>` và `<Layer>` bằng `react-konva`.
 - [x] Logic load ảnh chụp làm Background Layer.
 - [x] Thuật toán Zoom & Auto Expand (Tự động thu phóng Canvas vừa với màn hình nếu ảnh quá to).
@@ -45,7 +45,17 @@ Dựa trên yêu cầu gốc của bạn, đây là bản đối chiếu chi ti�
 ## Phase 7: Export & Tương tác Output
 - [x] Render Canvas thành Base64 / Blob.
 - [x] Nút "Copy to Clipboard": Lưu ảnh thẳng vào Clipboard của hệ điều hành.
-- [x] Nút "Download": Tải ảnh xuống máy.nơi lưu (store) screenshot (ví dụ: đổi thư mục lưu mặc định).
+- [x] Nút "Download": Tải ảnh xuống máy.
 
 ## Phase 8: Polish & Phát hành
 - [ ] Đóng gói và tối ưu.
+
+## Phase 9: Monetization & Credit System (Đã hoàn thành)
+- [x] Setup Backend `api` với DB Postgres lưu thông tin user, subscription, credit.
+- [x] Chức năng Google Login trên Web và đồng bộ JWT token xuống extension qua `chrome.runtime.sendMessage`.
+- [x] Website (Next.js): Trang Landing với các gói Free ($0), Pro Monthly ($4.99), Pro Annual ($35.99).
+- [x] Backend API để check giới hạn 15 credits/ngày (tự động reset sau 24h).
+- [x] Extension: Badge "Pro" (vương miện) hiển thị trên các tools Pro dành cho Free User.
+- [x] Popup cảnh báo Subscription khi hết Credit hoặc yêu cầu Pro.
+- [x] Admin Dashboard (Web) quản lý user, analytics, phiên làm việc.
+- [x] Tích hợp Gumroad Webhook xử lý webhook khi User Subscribe thành công.

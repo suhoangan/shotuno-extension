@@ -4,7 +4,6 @@ import { Button } from '../ui/button';
 import { GalleryPanel, type GalleryDragMode } from '../gallery/GalleryPanel';
 import { PinPanel } from '../pins/PinPanel';
 import type { GalleryImage } from '../../lib/galleryDb';
-import { BuyMeCoffeeLink } from '../BuyMeCoffeeLink';
 
 export type LibraryTab = 'pins' | 'downloads';
 
@@ -94,10 +93,6 @@ export function LibraryShell({
           className="flex-1 min-h-0"
         />
       )}
-
-      <div className="shrink-0 border-t border-border/60 p-3">
-        <BuyMeCoffeeLink className="w-full justify-center" />
-      </div>
     </div>
   );
 }

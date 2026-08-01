@@ -9,13 +9,16 @@ import { Switch } from '../../../components/ui/switch';
 import { Label } from '../../../components/ui/label';
 import { Input } from '../../../components/ui/input';
 import { BTN, ICON } from './toolbarUi';
+import { ProBadge } from './ProBadge';
 
 export function WatermarkMenu({
   showWatermarkMenu,
   setShowWatermarkMenu,
+  isPro,
 }: {
   showWatermarkMenu: boolean;
   setShowWatermarkMenu: (show: boolean) => void;
+  isPro?: boolean;
 }) {
   const {
     watermarkEnabled, setWatermarkEnabled,
@@ -37,18 +40,19 @@ export function WatermarkMenu({
     reader.readAsDataURL(file);
   };
 
-  const triggerClass = `inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 ${BTN} ${showWatermarkMenu || watermarkEnabled ? 'bg-primary text-primary-foreground hover:bg-primary/80' : 'bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground'}`;
+  const triggerClass = `inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 relative ${BTN} ${showWatermarkMenu || watermarkEnabled ? 'bg-primary text-primary-foreground hover:bg-primary/80' : 'bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground'}`;
 
   return (
     <Popover open={showWatermarkMenu} onOpenChange={setShowWatermarkMenu}>
       <Tooltip>
         <TooltipTrigger
           render={
-            <PopoverTrigger className={triggerClass} />
+            <PopoverTrigger className={triggerClass}>
+              <Stamp size={ICON} />
+              <ProBadge show={isPro} />
+            </PopoverTrigger>
           }
-        >
-          <Stamp size={ICON} />
-        </TooltipTrigger>
+        />
         <TooltipContent side="bottom" sideOffset={8} className="z-[99999999]">
           Watermark
         </TooltipContent>

@@ -1,14 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { isTrialActive } from '@/lib/trial';
+import { licenseStatusOf } from '@/lib/entitlements/license';
 
-describe('isTrialActive', () => {
-  it('allows admin always', () => {
-    expect(isTrialActive(null, 'ADMIN')).toBe(true);
+describe('trial license status', () => {
+  it('marks admin as PRO', () => {
+    expect(licenseStatusOf({ role: 'ADMIN', entitlements: {} })).toBe('PRO');
   });
 
-  it('checks trial date', () => {
-    expect(isTrialActive(new Date(Date.now() + 10000).toISOString())).toBe(true);
-    expect(isTrialActive(new Date(Date.now() - 10000).toISOString())).toBe(false);
+  it('uses entitlements.licenseStatus when present', () => {
+    expect(
+      licenseStatusOf({
+        entitlements: { licenseStatus: 'TRIAL' },
+      }),
+    ).toBe('TRIAL');
+    expect(
+      licenseStatusOf({
+        entitlements: { licenseStatus: 'FREE' },
+      }),
+    ).toBe('FREE');
   });
 });
-

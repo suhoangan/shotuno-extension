@@ -17,14 +17,16 @@ export type BootstrapMessage =
   | { type: 'TOGGLE_EDITOR'; payload?: string }
   | { type: 'START_AREA_SELECTION' }
   | { type: 'START_PIN_AREA_SELECTION' }
+  | { type: 'START_MULTI_PIN_AREA_SELECTION' }
   | { type: 'START_FULL_PAGE_CAPTURE' };
 
-type CaptureMode = 'area' | 'pin_area' | 'full' | null;
+type CaptureMode = 'area' | 'pin_area' | 'multi_pin_area' | 'full' | null;
 
 function captureModeFromBootstrap(message: BootstrapMessage | null): CaptureMode {
   if (!message) return null;
   if (message.type === 'START_AREA_SELECTION') return 'area';
   if (message.type === 'START_PIN_AREA_SELECTION') return 'pin_area';
+  if (message.type === 'START_MULTI_PIN_AREA_SELECTION') return 'multi_pin_area';
   if (message.type === 'START_FULL_PAGE_CAPTURE') return 'full';
   return null;
 }
@@ -75,6 +77,8 @@ export default function App({
       setCaptureMode('area');
     } else if (bootstrap.type === 'START_PIN_AREA_SELECTION') {
       setCaptureMode('pin_area');
+    } else if (bootstrap.type === 'START_MULTI_PIN_AREA_SELECTION') {
+      setCaptureMode('multi_pin_area');
     } else if (bootstrap.type === 'START_FULL_PAGE_CAPTURE') {
       setCaptureMode('full');
     }
@@ -120,28 +124,41 @@ export default function App({
     }
   };
 
-  const finishAreaAsPin = async (rect: { x: number; y: number; w: number; h: number }) => {
-    setCaptureMode(null);
+  const finishAreaAsPin = async (rect: { x: number; y: number; w: number; h: number }, isMulti?: boolean) => {
+    if (!isMulti) setCaptureMode(null);
     if (rect.w === 0 || rect.h === 0) {
-      onCloseEditor?.();
+      if (!isMulti) onCloseEditor?.();
       return;
     }
     const { showHardLoading, hideHardLoading } = useHardLoadingStore.getState();
     hideHardLoading();
     try {
+      if (isMulti) {
+        // Flash effect for smooth UX
+        const flash = document.createElement('div');
+        flash.className = 'fixed inset-0 z-[99999999] bg-white pointer-events-none transition-opacity duration-300';
+        document.body.appendChild(flash);
+        void flash.offsetWidth; // force reflow
+        flash.style.opacity = '0';
+        setTimeout(() => flash.remove(), 300);
+      }
+
       const full = await settleThenCaptureVisibleTab();
-      showHardLoading({ title: 'Pinning…', message: 'Saving area to pins' });
+      if (!isMulti) {
+        showHardLoading({ title: 'Pinning…', message: 'Saving area to pins' });
+      }
       const cropped = await cropVisibleCapture(full, rect);
       await savePinImage(cropped);
       chrome.runtime.sendMessage({ type: 'OPEN_SIDE_PANEL' });
-      onCloseEditor?.();
+      if (!isMulti) onCloseEditor?.();
+      toast.success('Saved to pins');
     } catch (e) {
       console.error(e);
       const detail = e instanceof Error && e.message ? e.message : 'Could not pin screenshot';
       toast.error(detail);
-      onCloseEditor?.();
+      if (!isMulti) onCloseEditor?.();
     } finally {
-      hideHardLoading();
+      if (!isMulti) hideHardLoading();
     }
   };
 
@@ -153,13 +170,19 @@ export default function App({
 
   if (!screenshot && !captureMode && !hardLoading) return null;
 
-  if (captureMode === 'area' || captureMode === 'pin_area') {
+  if (captureMode === 'area' || captureMode === 'pin_area' || captureMode === 'multi_pin_area') {
     return (
       <>
         <Toaster position="top-center" theme="light" />
         <HardLoadingHost />
         <AreaCaptureOverlay
-          onCapture={captureMode === 'pin_area' ? finishAreaAsPin : finishAreaAsEditor}
+          isMulti={captureMode === 'multi_pin_area'}
+          onClose={() => setCaptureMode(null)}
+          onCapture={(rect) => 
+            captureMode === 'pin_area' || captureMode === 'multi_pin_area' 
+              ? finishAreaAsPin(rect, captureMode === 'multi_pin_area') 
+              : finishAreaAsEditor(rect)
+          }
         />
       </>
     );

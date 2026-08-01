@@ -38,7 +38,7 @@ export function useCanvasZoom(
     updateScale();
     window.addEventListener('resize', updateScale);
     return () => window.removeEventListener('resize', updateScale);
-  }, [image, bounds.width, bounds.height]);
+  }, [image, bounds.width, bounds.height, containerRef]);
 
   useEffect(() => {
     const container = containerRef.current;

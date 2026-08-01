@@ -138,30 +138,20 @@ export function toolProFeatureId(
   tool: string,
 ): ProFeatureId | null {
   switch (tool) {
-    case 'arrow':
-      return 'arrow';
-    case 'rect':
-    case 'circle':
-    case 'triangle':
-      return 'shapes';
-    case 'text':
-      return 'text';
-    case 'brush':
-      return 'brush';
-    case 'highlight':
-      return 'highlight';
-    case 'counter':
-      return 'counter';
-    case 'blur':
-      return 'blur';
-    case 'magnifier':
-      return 'magnifier';
     case 'ocr':
       return 'ocr';
-    case 'measure':
-      return 'measure';
-    case 'crop':
-      return 'crop';
+    case 'smart_blur':
+      return 'smart_blur';
+    case 'send_to_ai':
+      return 'send_to_ai';
+    case 'watermark':
+      return 'watermark';
+    case 'window_border':
+      return 'window_border';
+    case 'resize':
+      return 'resize';
+    case 'stickers':
+      return 'stickers';
     default:
       return null;
   }

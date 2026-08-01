@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
+tsconfig.tsbuildinfo
 
 # Chrome Web Store zip artifacts
 store-listing/*.zip

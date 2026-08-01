@@ -32,6 +32,26 @@ export default defineManifest(async (env) => {
     hostPermissions.add(originPattern(webUrl))
   }
 
+  const externallyConnectableMatches: string[] = []
+  if (webUrl) {
+    try {
+      const origin = new URL(webUrl).origin
+      if (!isProd || isPublicWebOrigin(webUrl)) {
+        externallyConnectableMatches.push(`${origin}/*`)
+      }
+    } catch {
+      /* ignore invalid VITE_WEB_URL */
+    }
+  }
+  // Local Next.js default when developing against localhost web.
+  if (!isProd) {
+    for (const origin of ['http://localhost:3001/*', 'http://127.0.0.1:3001/*']) {
+      if (!externallyConnectableMatches.includes(origin)) {
+        externallyConnectableMatches.push(origin)
+      }
+    }
+  }
+
   return {
     manifest_version: 3,
     name: 'Shotuno',
@@ -41,6 +61,9 @@ export default defineManifest(async (env) => {
       'Capture visible, area, or full-page screenshots and annotate them in-tab - arrows, blur, OCR, pins, and more.',
     ...(webUrl && isPublicWebOrigin(webUrl)
       ? { homepage_url: webUrl.replace(/\/$/, '') }
+      : {}),
+    ...(externallyConnectableMatches.length
+      ? { externally_connectable: { matches: externallyConnectableMatches } }
       : {}),
     action: {
       default_title: 'Shotuno - Capture & annotate',
@@ -66,6 +89,7 @@ export default defineManifest(async (env) => {
       'downloads',
       'scripting',
       'sidePanel',
+      'cookies',
       // DevTools-style full-page capture (Page.captureScreenshot beyond viewport).
       'debugger',
     ],

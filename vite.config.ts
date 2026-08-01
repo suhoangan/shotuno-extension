@@ -100,7 +100,6 @@ export default defineConfig({
       'src/content/bootstrap.tsx',
       'src/sidepanel/index.html',
       'src/popup/index.html',
-      'src/dashboard/index.html',
     ],
   },
   build: {

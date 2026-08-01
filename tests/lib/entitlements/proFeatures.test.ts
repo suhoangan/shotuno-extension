@@ -23,9 +23,12 @@ describe('proFeatures', () => {
     expect(d.export_download).toBe(true);
   });
 
-  it('maps ToolType to ProFeatureId', () => {
+  it('maps gated ToolType to ProFeatureId', () => {
     expect(toolProFeatureId('ocr')).toBe('ocr');
-    expect(toolProFeatureId('rect')).toBe('shapes');
+    expect(toolProFeatureId('smart_blur')).toBe('smart_blur');
+    expect(toolProFeatureId('stickers')).toBe('stickers');
+    // Free annotation tools are not credit-gated via toolProFeatureId
+    expect(toolProFeatureId('rect')).toBeNull();
     expect(toolProFeatureId('select')).toBeNull();
   });
 

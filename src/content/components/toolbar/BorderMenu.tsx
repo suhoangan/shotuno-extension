@@ -15,8 +15,17 @@ import { Checkbox } from '../../../components/ui/checkbox';
 import { Label } from '../../../components/ui/label';
 import { Slider } from '../../../components/ui/slider';
 import { BTN, ICON } from './toolbarUi';
+import { ProBadge } from './ProBadge';
 
-export function BorderMenu({ showBorderMenu, setShowBorderMenu }: { showBorderMenu: boolean; setShowBorderMenu: (show: boolean) => void }) {
+export function BorderMenu({
+  showBorderMenu,
+  setShowBorderMenu,
+  isPro,
+}: {
+  showBorderMenu: boolean;
+  setShowBorderMenu: (show: boolean) => void;
+  isPro?: boolean;
+}) {
   const {
     borderEnabled, setBorderEnabled, borderStyle, setBorderStyle,
     borderPadding, setBorderPadding, borderPaddingPreset, setBorderPaddingPreset,
@@ -25,18 +34,19 @@ export function BorderMenu({ showBorderMenu, setShowBorderMenu }: { showBorderMe
   } = useEditorStore();
 
   const paddingSize = snapBorderPaddingSize(borderPaddingSize);
-  const triggerClass = `inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 ${BTN} ${showBorderMenu || borderEnabled ? 'bg-primary text-primary-foreground hover:bg-primary/80' : 'bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground'}`;
+  const triggerClass = `inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 relative ${BTN} ${showBorderMenu || borderEnabled ? 'bg-primary text-primary-foreground hover:bg-primary/80' : 'bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground'}`;
 
   return (
     <Popover open={showBorderMenu} onOpenChange={setShowBorderMenu}>
       <Tooltip>
         <TooltipTrigger
           render={
-            <PopoverTrigger className={triggerClass} />
+            <PopoverTrigger className={triggerClass}>
+              <Monitor size={ICON} />
+              <ProBadge show={isPro} />
+            </PopoverTrigger>
           }
-        >
-          <Monitor size={ICON} />
-        </TooltipTrigger>
+        />
         <TooltipContent side="bottom" sideOffset={8} className="z-[99999999]">
           Window Border & Padding
         </TooltipContent>

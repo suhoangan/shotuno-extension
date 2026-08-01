@@ -4,13 +4,14 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev:local": "vite",
     "build": "tsc -b && vite build",
     "package:store": "node scripts/package-store.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "dev": "docker compose up"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -36,7 +37,7 @@
     "@crxjs/vite-plugin": "^2.7.1",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/chrome": "^0.2.2",
-    "@types/node": "^24.13.3",
+    "@types/node": "^22.0.0",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",

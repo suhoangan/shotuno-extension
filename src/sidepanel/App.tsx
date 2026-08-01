@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { Toaster } from '../components/ui/sonner';
 import { LibraryShell } from '../components/library/LibraryShell';
 import { openEditorWithDataUrl } from '../lib/openEditor';
+import { UserAccountHeader } from '../components/UserAccountHeader';
 
 export default function App() {
   useEffect(() => {
@@ -39,8 +40,12 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen flex flex-col font-sans">
+    <div className="h-screen flex flex-col font-sans bg-background">
       <Toaster position="top-center" theme="light" />
+      <div className="flex items-center justify-between gap-2 p-3 border-b border-border/50">
+        <h1 className="text-sm font-bold text-foreground tracking-tight">Library</h1>
+        <UserAccountHeader compact />
+      </div>
       <LibraryShell
         dragMode="web"
         onOpenImageFile={handleOpenImage}
