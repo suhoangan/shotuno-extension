@@ -1,4 +1,5 @@
 import { captureFullSizeScreenshot } from './captureFullSizeScreenshot';
+import { isCaptureType, type CaptureType } from '../lib/captureModes';
 
 type CaptureSender = { tab?: { id?: number; windowId?: number } };
 
@@ -52,13 +53,88 @@ async function ensureContentScript(tabId: number): Promise<void> {
   }
 }
 
-async function sendCaptureToTab(tabId: number, message: { type: string; payload?: unknown }) {
+export async function sendCaptureToTab(
+  tabId: number,
+  message: { type: string; payload?: unknown },
+) {
   try {
     await chrome.tabs.sendMessage(tabId, message);
   } catch {
     await ensureContentScript(tabId);
     await chrome.tabs.sendMessage(tabId, message);
   }
+}
+
+export type StartCaptureOptions = {
+  /** Prefer the tab's window for captureVisibleTab (context menu / multi-window). */
+  windowId?: number;
+  /** Popup closes first — default 300ms. Context menu can pass 0. */
+  settleMs?: number;
+};
+
+/** Shared entry for popup messages and context-menu clicks. */
+export async function startCaptureForTab(
+  tabId: number,
+  captureType: CaptureType,
+  opts: StartCaptureOptions = {},
+): Promise<void> {
+  const settleMs = opts.settleMs ?? 300;
+
+  if (captureType === 'visible') {
+    if (settleMs > 0) await new Promise((r) => setTimeout(r, settleMs));
+    const dataUrl =
+      opts.windowId != null
+        ? await chrome.tabs.captureVisibleTab(opts.windowId, { format: 'png' })
+        : await chrome.tabs.captureVisibleTab({ format: 'png' });
+    await sendCaptureToTab(tabId, { type: 'TOGGLE_EDITOR', payload: dataUrl });
+    return;
+  }
+
+  if (captureType === 'area') {
+    await sendCaptureToTab(tabId, { type: 'START_AREA_SELECTION' });
+    return;
+  }
+
+  if (captureType === 'scroll_area') {
+    await sendCaptureToTab(tabId, { type: 'START_SCROLL_AREA_CAPTURE' });
+    return;
+  }
+
+  if (captureType === 'pin_area') {
+    await sendCaptureToTab(tabId, { type: 'START_PIN_AREA_SELECTION' });
+    return;
+  }
+
+  if (captureType === 'grid') {
+    await sendCaptureToTab(tabId, { type: 'START_GRID_CAPTURE' });
+    return;
+  }
+
+  if (captureType === 'full') {
+    // Prefer DevTools-style CDP full-size capture; fall back to scroll-stitch.
+    if (settleMs > 0) await new Promise((r) => setTimeout(r, settleMs));
+    try {
+      const dataUrl = await captureFullSizeScreenshot(tabId);
+      await sendCaptureToTab(tabId, { type: 'TOGGLE_EDITOR', payload: dataUrl });
+    } catch (e: any) {
+      console.error('CDP capture failed:', e);
+      try {
+        await chrome.scripting.executeScript({
+          target: { tabId },
+          func: (msg) => alert('CDP Capture Failed: ' + msg),
+          args: [e?.message || String(e)],
+        });
+      } catch {} // ignore script injection error
+      await sendCaptureToTab(tabId, { type: 'START_FULL_PAGE_CAPTURE' });
+    }
+    return;
+  }
+
+
+}
+
+export async function openEditorWithDataUrl(tabId: number, dataUrl: string): Promise<void> {
+  await sendCaptureToTab(tabId, { type: 'TOGGLE_EDITOR', payload: dataUrl });
 }
 
 export function handleCaptureMessage(
@@ -80,46 +156,21 @@ export function handleCaptureMessage(
           return;
         }
 
-        if (captureType === 'visible') {
-          await new Promise((r) => setTimeout(r, 300));
-          const dataUrl = await chrome.tabs.captureVisibleTab({ format: 'png' });
-          await sendCaptureToTab(tabId, { type: 'TOGGLE_EDITOR', payload: dataUrl });
-          sendResponse({ success: true });
+        if (!isCaptureType(captureType)) {
+          sendResponse({ success: false, error: `Unknown capture type: ${captureType}` });
           return;
         }
 
-        if (captureType === 'area') {
-          await sendCaptureToTab(tabId, { type: 'START_AREA_SELECTION' });
-          sendResponse({ success: true });
-          return;
-        }
-
-        if (captureType === 'pin_area') {
-          await sendCaptureToTab(tabId, { type: 'START_PIN_AREA_SELECTION' });
-          sendResponse({ success: true });
-          return;
-        }
-
-        if (captureType === 'grid') {
-          await sendCaptureToTab(tabId, { type: 'START_GRID_CAPTURE' });
-          sendResponse({ success: true });
-          return;
-        }
-
-        if (captureType === 'full') {
-          // Prefer DevTools-style CDP full-size capture; fall back to scroll-stitch.
-          await new Promise((r) => setTimeout(r, 300));
+        let windowId = sender?.tab?.windowId;
+        if (windowId == null) {
           try {
-            const dataUrl = await captureFullSizeScreenshot(tabId);
-            await sendCaptureToTab(tabId, { type: 'TOGGLE_EDITOR', payload: dataUrl });
+            windowId = (await chrome.tabs.get(tabId)).windowId;
           } catch {
-            await sendCaptureToTab(tabId, { type: 'START_FULL_PAGE_CAPTURE' });
+            /* ignore */
           }
-          sendResponse({ success: true });
-          return;
         }
-
-        sendResponse({ success: false, error: `Unknown capture type: ${captureType}` });
+        await startCaptureForTab(tabId, captureType, { windowId });
+        sendResponse({ success: true });
       } catch (e) {
         const err = e as Error;
         sendResponse({
@@ -157,7 +208,7 @@ export function handleCaptureMessage(
           sendResponse({ success: false, error: 'No active tab' });
           return;
         }
-        await sendCaptureToTab(tabId, { type: 'TOGGLE_EDITOR', payload: dataUrl });
+        await openEditorWithDataUrl(tabId, dataUrl);
         sendResponse({ success: true });
       } catch (e) {
         sendResponse({

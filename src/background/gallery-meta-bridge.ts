@@ -1,3 +1,4 @@
+import { storage } from '../lib/chromeStorage';
 const GALLERY_KEY = 'canvas_gallery_images';
 const PINS_KEY = 'shotuno_pins';
 const MAX_ITEMS = 20;
@@ -34,7 +35,7 @@ function asItems(
 }
 
 export async function getGalleryMetaForWeb(): Promise<GalleryMetaItem[]> {
-  const result = await chrome.storage.local.get([GALLERY_KEY, PINS_KEY]);
+  const result = await storage.local.get([GALLERY_KEY, PINS_KEY]);
   const gallery = asItems(result[GALLERY_KEY], 'gallery');
   const pins = asItems(result[PINS_KEY], 'pin');
   return [...gallery, ...pins]

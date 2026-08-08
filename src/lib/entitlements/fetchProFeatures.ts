@@ -1,5 +1,7 @@
 import { apiUrl } from '../api';
 import { unwrapApi } from '../unwrapApi';
+import { storage } from '../../lib/chromeStorage';
+
 import {
   defaultProFeatures,
   normalizeProFeatures,
@@ -11,12 +13,12 @@ const CACHE_AT_KEY = 'shotunoProFeaturesAt';
 const TTL_MS = 5 * 60 * 1000;
 
 export async function loadProFeatures(force = false): Promise<ProFeaturesMap> {
-  if (typeof chrome === 'undefined' || !chrome.storage?.local) {
+  if (!storage.isAvailable()) {
     return defaultProFeatures();
   }
 
   if (!force) {
-    const cached = await chrome.storage.local.get([CACHE_KEY, CACHE_AT_KEY]);
+    const cached = await storage.local.get([CACHE_KEY, CACHE_AT_KEY]);
     const at = cached[CACHE_AT_KEY] as number | undefined;
     if (
       cached[CACHE_KEY] &&
@@ -37,7 +39,7 @@ export async function loadProFeatures(force = false): Promise<ProFeaturesMap> {
         ? (data as { features: unknown }).features
         : data,
     );
-    await chrome.storage.local.set({
+    await storage.local.set({
       [CACHE_KEY]: map,
       [CACHE_AT_KEY]: Date.now(),
     });

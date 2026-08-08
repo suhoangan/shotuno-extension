@@ -1,4 +1,4 @@
-import { Check, Trash2, LayoutGrid } from 'lucide-react';
+import { Check, Trash2, LayoutGrid, Cloud } from 'lucide-react';
 import { Button } from '../ui/button';
 import type { GalleryImage } from '../../lib/galleryDb';
 import type { GalleryViewMode } from './galleryPrefs';
@@ -62,17 +62,19 @@ export function GalleryItem({
           selected ? 'border-primary bg-primary/5' : 'border-border/60 hover:border-border hover:bg-muted/40'
         }`}
       >
-        <button
+        <Button
           type="button"
+          size="icon"
+          variant={selected ? "default" : "outline"}
           data-item-action
           onClick={(e) => { e.stopPropagation(); onToggleSelect(); }}
-          className={`shrink-0 w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
+          className={`shrink-0 w-5 h-5 rounded-md p-0 transition-colors ${
             selected ? 'bg-primary border-primary text-primary-foreground' : 'border-border bg-background'
           }`}
           aria-label={selected ? 'Deselect' : 'Select'}
         >
           {selected && <Check size={12} />}
-        </button>
+        </Button>
         <div className="shrink-0 w-12 h-12 rounded-md overflow-hidden bg-muted border border-border/40 pointer-events-none">
           <img src={image.url} alt={label} className="w-full h-full object-cover" />
         </div>
@@ -80,6 +82,7 @@ export function GalleryItem({
           <p className="text-xs font-medium text-foreground truncate flex items-center gap-1">
             {label}
             {image.batchId && <span title="Grid Batch"><LayoutGrid size={10} className="text-muted-foreground inline" /></span>}
+            {image.cloudUrl && <span title="Synced"><Cloud size={10} className="text-muted-foreground inline" /></span>}
           </p>
           <p className="text-[10px] text-muted-foreground">{formatGalleryDate(image.timestamp)}</p>
         </div>
@@ -116,11 +119,13 @@ export function GalleryItem({
       }`}
     >
       <img src={image.url} alt={label} className="absolute inset-0 w-full h-full object-cover pointer-events-none" />
-      <button
+      <Button
         type="button"
+        size="icon"
+        variant={selected ? "default" : "outline"}
         data-item-action
         onClick={(e) => { e.stopPropagation(); onToggleSelect(); }}
-        className={`absolute top-1.5 left-1.5 z-10 w-5 h-5 rounded-md border flex items-center justify-center shadow-sm transition-colors ${
+        className={`absolute top-1.5 left-1.5 z-10 w-5 h-5 rounded-md p-0 shadow-sm transition-colors ${
           selected
             ? 'bg-primary border-primary text-primary-foreground'
             : `bg-background/80 border-border ${selectMode ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`
@@ -128,7 +133,7 @@ export function GalleryItem({
         aria-label={selected ? 'Deselect' : 'Select'}
       >
         {selected && <Check size={12} />}
-      </button>
+      </Button>
       <div className="absolute inset-x-0 bottom-0 px-2 py-2 bg-gradient-to-t from-black/65 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
         <p className="text-xs font-medium text-primary-foreground truncate drop-shadow-sm">{multiHint}</p>
       </div>
@@ -146,6 +151,11 @@ export function GalleryItem({
       {image.batchId && (
         <div className="absolute bottom-1.5 right-1.5 z-10 h-6 px-1.5 rounded-full bg-background/80 border border-border flex items-center justify-center text-muted-foreground shadow-sm pointer-events-none" title="Part of a Grid Capture batch">
           <LayoutGrid size={12} />
+        </div>
+      )}
+      {image.cloudUrl && (
+        <div className={`absolute bottom-1.5 ${image.batchId ? 'right-9' : 'right-1.5'} z-10 h-6 px-1.5 rounded-full bg-background/80 border border-border flex items-center justify-center text-muted-foreground shadow-sm pointer-events-none`} title="Synced">
+          <Cloud size={12} />
         </div>
       )}
     </div>

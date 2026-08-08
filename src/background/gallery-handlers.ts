@@ -2,6 +2,8 @@ import { set as idbSet, get as idbGet, del as idbDel } from 'idb-keyval';
 import { handleGalleryDesktopMessage } from './gallery-desktop-handlers';
 import { ensureImageExt } from '../lib/imageNames';
 import { GALLERY_RETENTION_MS, partitionExpired } from './retention';
+import { storage } from '../lib/chromeStorage';
+
 
 const GALLERY_KEY = 'canvas_gallery_images';
 const MAX_GALLERY = 50;
@@ -38,18 +40,18 @@ async function pruneStaleDownloads(images: GalleryImage[]): Promise<GalleryImage
 }
 
 function writeGallery(images: GalleryImage[], sendResponse?: (r: unknown) => void) {
-  chrome.storage.local.set({ [GALLERY_KEY]: images }, () => {
+  storage.local.set({ [GALLERY_KEY]: images }, () => {
     sendResponse?.({ success: true, images });
   });
 }
 
 function removeByDownloadId(downloadId: number) {
-  chrome.storage.local.get([GALLERY_KEY], (result) => {
+  storage.local.get([GALLERY_KEY], (result) => {
     const current = (result[GALLERY_KEY] as GalleryImage[] | undefined) || [];
     const removed = current.filter((img) => img.downloadId === downloadId);
     if (!removed.length) return;
     const updated = current.filter((img) => img.downloadId !== downloadId);
-    chrome.storage.local.set({ [GALLERY_KEY]: updated }, () => {
+    storage.local.set({ [GALLERY_KEY]: updated }, () => {
       removed.forEach((img) => void idbDel(`gallery_full_${img.id}`));
     });
   });
@@ -80,13 +82,13 @@ export function handleGalleryMessage(
     };
     const now = Date.now();
 
-    chrome.storage.local.get(['lastDownloadTime'], (result) => {
+    storage.local.get(['lastDownloadTime'], (result) => {
       if (now - ((result.lastDownloadTime as number) || 0) < 2000) {
         sendResponse({ success: false, error: 'Throttled' });
         return;
       }
 
-      chrome.storage.local.set({ lastDownloadTime: now }, () => {
+      storage.local.set({ lastDownloadTime: now }, () => {
         chrome.downloads.download(
           { url: dataUrl, filename: `${filename}.png`, saveAs: false },
           (downloadId?: number) => {
@@ -100,7 +102,7 @@ export function handleGalleryMessage(
 
             const newId = Date.now().toString();
             idbSet(`gallery_full_${newId}`, dataUrl).then(() => {
-              chrome.storage.local.get([GALLERY_KEY], (res) => {
+              storage.local.get([GALLERY_KEY], (res) => {
                 const currentImages = (res[GALLERY_KEY] as GalleryImage[] | undefined) || [];
                 const newImage: GalleryImage = {
                   id: newId,
@@ -111,7 +113,7 @@ export function handleGalleryMessage(
                 };
                 const updatedImages = [newImage, ...currentImages].slice(0, MAX_GALLERY);
                 const keptIds = new Set(updatedImages.map((img) => img.id));
-                chrome.storage.local.set({ [GALLERY_KEY]: updatedImages }, () => {
+                storage.local.set({ [GALLERY_KEY]: updatedImages }, () => {
                   currentImages.forEach((img) => {
                     if (!keptIds.has(img.id)) {
                       void idbDel(`gallery_full_${img.id}`);
@@ -137,7 +139,7 @@ export function handleGalleryMessage(
   }
 
   if (message.type === 'SYNC_GALLERY') {
-    chrome.storage.local.get([GALLERY_KEY], async (result) => {
+    storage.local.get([GALLERY_KEY], async (result) => {
       const currentImages = (result[GALLERY_KEY] as GalleryImage[] | undefined) || [];
       const { kept, expired } = partitionExpired(currentImages, GALLERY_RETENTION_MS);
       expired.forEach((img) => void idbDel(`gallery_full_${img.id}`));
@@ -159,11 +161,11 @@ export function handleGalleryMessage(
 
   if (message.type === 'DELETE_GALLERY_IMAGE') {
     const { id } = message.payload as { id: string };
-    chrome.storage.local.get([GALLERY_KEY], (result) => {
+    storage.local.get([GALLERY_KEY], (result) => {
       const updatedImages = ((result[GALLERY_KEY] as GalleryImage[] | undefined) || []).filter(
         (img) => img.id !== id,
       );
-      chrome.storage.local.set({ [GALLERY_KEY]: updatedImages }, () => {
+      storage.local.set({ [GALLERY_KEY]: updatedImages }, () => {
         idbDel(`gallery_full_${id}`).then(() => sendResponse({ success: true }));
       });
     });
@@ -173,11 +175,11 @@ export function handleGalleryMessage(
   if (message.type === 'DELETE_GALLERY_IMAGES') {
     const { ids } = message.payload as { ids: string[] };
     const idSet = new Set(ids);
-    chrome.storage.local.get([GALLERY_KEY], (result) => {
+    storage.local.get([GALLERY_KEY], (result) => {
       const updatedImages = ((result[GALLERY_KEY] as GalleryImage[] | undefined) || []).filter(
         (img) => !idSet.has(img.id),
       );
-      chrome.storage.local.set({ [GALLERY_KEY]: updatedImages }, () => {
+      storage.local.set({ [GALLERY_KEY]: updatedImages }, () => {
         Promise.all([...idSet].map((id) => idbDel(`gallery_full_${id}`))).then(() => {
           sendResponse({ success: true });
         });
@@ -189,10 +191,10 @@ export function handleGalleryMessage(
   if (message.type === 'RENAME_GALLERY_IMAGE') {
     const { id, filename } = message.payload as { id: string; filename: string };
     const next = ensureImageExt(filename);
-    chrome.storage.local.get([GALLERY_KEY], (result) => {
+    storage.local.get([GALLERY_KEY], (result) => {
       const images = (result[GALLERY_KEY] as GalleryImage[] | undefined) || [];
       const updated = images.map((img) => (img.id === id ? { ...img, filename: next } : img));
-      chrome.storage.local.set({ [GALLERY_KEY]: updated }, () => {
+      storage.local.set({ [GALLERY_KEY]: updated }, () => {
         sendResponse({ success: true });
       });
     });

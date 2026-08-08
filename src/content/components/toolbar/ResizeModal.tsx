@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Lock, Unlock } from 'lucide-react';
 import { useEditorStore } from '../../../store/useEditorStore';
+import { Button } from '../../../components/ui/button';
 
 interface ResizeModalProps {
   isOpen: boolean;
@@ -88,13 +89,13 @@ export const ResizeModal = ({ isOpen, onClose, image, setImage }: ResizeModalPro
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[999999] flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[999999] flex items-center justify-center p-4">
       <div className="bg-background border border-border rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between p-4 border-b border-border/50 bg-card/50">
           <h2 className="text-lg font-semibold text-foreground">Resize Image</h2>
-          <button onClick={onClose} className="p-1 text-muted-foreground hover:text-foreground transition-colors">
+          <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-muted-foreground hover:text-foreground">
             <X size={20} />
-          </button>
+          </Button>
         </div>
 
         <div className="p-6 flex gap-4 items-center justify-center">
@@ -108,13 +109,15 @@ export const ResizeModal = ({ isOpen, onClose, image, setImage }: ResizeModalPro
             />
           </div>
           
-          <button 
+          <Button 
+            variant={keepAspectRatio ? "secondary" : "ghost"}
+            size="icon"
             onClick={() => setKeepAspectRatio(!keepAspectRatio)}
-            className={`mt-4 p-2 rounded-lg transition-colors ${keepAspectRatio ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:bg-accent hover:text-foreground'}`}
+            className="mt-4"
             title="Lock Aspect Ratio"
           >
             {keepAspectRatio ? <Lock size={16} /> : <Unlock size={16} />}
-          </button>
+          </Button>
 
           <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground">Height</label>
@@ -128,15 +131,15 @@ export const ResizeModal = ({ isOpen, onClose, image, setImage }: ResizeModalPro
         </div>
 
         <div className="p-4 border-t border-border/50 bg-card/30 flex justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2 text-sm font-medium text-foreground hover:text-foreground transition-colors">
+          <Button variant="outline" onClick={onClose}>
             Cancel
-          </button>
-          <button 
+          </Button>
+          <Button 
+            variant="default"
             onClick={handleResize}
-            className="px-4 py-2 text-sm font-medium bg-primary hover:bg-primary/80 text-primary-foreground rounded-lg transition-colors"
           >
             Apply Resize
-          </button>
+          </Button>
         </div>
       </div>
     </div>

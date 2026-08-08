@@ -136,8 +136,6 @@ export async function injectGemini(text: string, dataUrl: string) {
       'Shotuno: Could not auto-attach image on Gemini. Image+prompt are on the clipboard — press Ctrl+V.',
     );
     showFallbackBanner();
-  } else {
-    console.log('Shotuno: Gemini image attached successfully');
   }
 }
 

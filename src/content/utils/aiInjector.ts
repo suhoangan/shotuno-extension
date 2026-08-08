@@ -1,4 +1,6 @@
 import { injectGemini } from './geminiInject';
+import { storage } from '../../lib/chromeStorage';
+
 import {
   assignFileToInput,
   dataUrlToFile,
@@ -75,9 +77,7 @@ async function injectComposer(provider: string, element: HTMLElement, text: stri
     insertEditorText(editor, text);
   }
 
-  if (attached) {
-    console.log(`Shotuno: ${provider} image + prompt injected`);
-  } else {
+  if (!attached) {
     console.warn(
       `Shotuno: Could not auto-attach on ${provider}. Image+prompt are on the clipboard — press Ctrl+V.`,
     );
@@ -100,12 +100,11 @@ export function initializeAIInjector() {
     return;
   }
 
-  chrome.storage.local.get(['pendingAIInjection'], (result: { pendingAIInjection?: any }) => {
+  storage.local.get(['pendingAIInjection'], (result: { pendingAIInjection?: any }) => {
     const injection = result.pendingAIInjection;
 
     if (injection?.imageUri && Date.now() - injection.timestamp < 60000) {
-      console.log('Shotuno: Found pending AI injection. Initiating...');
-      chrome.storage.local.remove(['pendingAIInjection']);
+      storage.local.remove(['pendingAIInjection']);
 
       if (hostname.includes('gemini.google.com')) {
         setTimeout(() => {
@@ -130,7 +129,7 @@ export function initializeAIInjector() {
         })
         .catch((err) => console.error('Shotuno: Injection failed', err));
     } else if (injection) {
-      chrome.storage.local.remove(['pendingAIInjection']);
+      storage.local.remove(['pendingAIInjection']);
     }
   });
 }

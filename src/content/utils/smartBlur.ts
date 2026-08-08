@@ -1,4 +1,3 @@
-import Tesseract from 'tesseract.js';
 import type { RectShape } from '../../store/editorTypes';
 
 const SENSITIVE_PATTERNS = [
@@ -49,7 +48,8 @@ export async function detectSensitiveAreas(
   ctx.drawImage(image, 0, 0);
   const dataUrl = canvas.toDataURL('image/png');
 
-  // Run Tesseract using createWorker to explicitly request blocks
+  // Dynamic import keeps tesseract out of the editor shell chunk.
+  const { default: Tesseract } = await import('tesseract.js');
   const worker = await Tesseract.createWorker('eng');
   const result = await worker.recognize(dataUrl, undefined, { blocks: true });
   await worker.terminate();

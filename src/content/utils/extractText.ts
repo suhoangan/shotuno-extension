@@ -1,5 +1,3 @@
-import Tesseract from 'tesseract.js';
-
 export async function extractTextFromImage(
   image: HTMLImageElement,
   rect: { x: number; y: number; width: number; height: number }
@@ -22,9 +20,9 @@ export async function extractTextFromImage(
   const dataUrl = canvas.toDataURL('image/png');
 
   try {
-    const result = await Tesseract.recognize(dataUrl, 'eng', {
-      logger: m => console.log('Tesseract:', m)
-    });
+    // Dynamic import keeps tesseract out of the editor shell chunk.
+    const { default: Tesseract } = await import('tesseract.js');
+    const result = await Tesseract.recognize(dataUrl, 'eng');
     return result.data.text.trim();
   } catch (err) {
     console.error('OCR failed:', err);

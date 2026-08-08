@@ -4,6 +4,7 @@ import {
   isProFeatureEnabled,
   normalizeProFeatures,
   PRO_FEATURE_IDS,
+  toolFeatureId,
   toolProFeatureId,
 } from '@/lib/entitlements/proFeatures';
 
@@ -30,6 +31,12 @@ describe('proFeatures', () => {
     // Free annotation tools are not credit-gated via toolProFeatureId
     expect(toolProFeatureId('rect')).toBeNull();
     expect(toolProFeatureId('select')).toBeNull();
+  });
+
+  it('maps annotation tools to catalog ids for UI enable/disable', () => {
+    expect(toolFeatureId('arrow')).toBe('arrow');
+    expect(toolFeatureId('rect')).toBe('shapes');
+    expect(toolFeatureId('select')).toBeNull();
   });
 
   it('normalizes partial updates and ignores junk', () => {

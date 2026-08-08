@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import { Download, Eye, FolderOpen, Pencil, PencilLine, Trash2 } from 'lucide-react';
+import { Download, Eye, FolderOpen, Pencil, PencilLine, Share2, Trash2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +13,8 @@ interface LibraryItemMenuProps {
   onPreview: () => void;
   onRename?: () => void;
   onDownload?: () => void;
+  onShareLink?: () => void;
+  onCopyCloudLink?: () => void;
   onOpenDesktop?: () => void;
   onRemove?: () => void;
 }
@@ -24,6 +26,8 @@ export function LibraryItemMenu({
   onPreview,
   onRename,
   onDownload,
+  onShareLink,
+  onCopyCloudLink,
   onOpenDesktop,
   onRemove,
 }: LibraryItemMenuProps) {
@@ -58,6 +62,18 @@ export function LibraryItemMenu({
           <Eye size={14} />
           Preview
         </DropdownMenuItem>
+        {onShareLink && (
+          <DropdownMenuItem onClick={onShareLink}>
+            <Share2 size={14} />
+            Share Cloud Link
+          </DropdownMenuItem>
+        )}
+        {onCopyCloudLink && (
+          <DropdownMenuItem onClick={onCopyCloudLink}>
+            <Share2 size={14} />
+            Copy Cloud Link (Synced)
+          </DropdownMenuItem>
+        )}
         {onRename && (
           <DropdownMenuItem onClick={onRename}>
             <PencilLine size={14} />

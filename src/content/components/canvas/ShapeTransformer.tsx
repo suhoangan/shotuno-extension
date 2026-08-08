@@ -14,14 +14,13 @@ export const ShapeTransformer = ({ shapeId, isMulti, shapes }: ShapeTransformerP
   const shape = shapes.find(s => s.id === shapeId);
 
   useEffect(() => {
-    if (trRef.current) {
-      const node = trRef.current.getStage()?.findOne(`#${shapeId}`);
-      if (node) {
-        trRef.current.nodes([node]);
-        trRef.current.forceUpdate();
-        trRef.current.getLayer()?.batchDraw();
-      }
-    }
+    if (!trRef.current) return;
+    const node = trRef.current.getStage()?.findOne(`#${shapeId}`);
+    if (!node) return;
+
+    trRef.current.nodes([node]);
+    trRef.current.forceUpdate();
+    trRef.current.getLayer()?.batchDraw();
   }, [shapeId, isMulti, shape?.x, shape?.y, shape?.width, shape?.height, shape?.radius, shape?.rotation]);
 
   const shapeType = shapes.find(s => s.id === shapeId)?.type as string | undefined;
@@ -92,14 +91,10 @@ export const ShapeTransformer = ({ shapeId, isMulti, shapes }: ShapeTransformerP
         }
         
         if (trRef.current) {
-          if (isSnapped) {
-            trRef.current.setAttr('borderStroke', '#10b981'); // Green when 1:1
-            trRef.current.setAttr('borderStrokeWidth', 2);
-          } else {
-            trRef.current.setAttr('borderStroke', isText ? 'red' : '#3b82f6');
-            trRef.current.setAttr('borderStroke', isText || isCallout ? 'red' : '#3b82f6');
-            trRef.current.setAttr('borderStrokeWidth', 1);
-          }
+          const stroke = isSnapped ? '#10b981' : (isText || isCallout ? 'red' : '#3b82f6');
+          const strokeWidth = isSnapped ? 2 : 1;
+          trRef.current.setAttr('borderStroke', stroke);
+          trRef.current.setAttr('borderStrokeWidth', strokeWidth);
         }
         
         return newBox;

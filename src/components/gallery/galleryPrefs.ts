@@ -1,3 +1,4 @@
+import { storage } from '../../lib/chromeStorage';
 export type GalleryViewMode = 'grid' | 'list';
 export type GalleryDateFilter = 'all' | 'today' | 'week';
 
@@ -17,11 +18,11 @@ export const DEFAULT_GALLERY_UI_PREFS: GalleryUiPrefs = {
 
 export function loadGalleryUiPrefs(): Promise<GalleryUiPrefs> {
   return new Promise((resolve) => {
-    if (typeof chrome === 'undefined' || !chrome.storage?.local) {
+    if (!storage.isAvailable()) {
       resolve({ ...DEFAULT_GALLERY_UI_PREFS });
       return;
     }
-    chrome.storage.local.get([GALLERY_UI_PREFS_KEY], (result) => {
+    storage.local.get([GALLERY_UI_PREFS_KEY], (result) => {
       const raw = result[GALLERY_UI_PREFS_KEY] as Partial<GalleryUiPrefs> | undefined;
       resolve({
         view: raw?.view === 'list' ? 'list' : 'grid',
@@ -33,8 +34,8 @@ export function loadGalleryUiPrefs(): Promise<GalleryUiPrefs> {
 }
 
 export function saveGalleryUiPrefs(prefs: GalleryUiPrefs) {
-  if (typeof chrome === 'undefined' || !chrome.storage?.local) return;
-  chrome.storage.local.set({ [GALLERY_UI_PREFS_KEY]: prefs });
+  if (!storage.isAvailable()) return;
+  storage.local.set({ [GALLERY_UI_PREFS_KEY]: prefs });
 }
 
 export function filterGalleryByDate<T extends { timestamp: number }>(

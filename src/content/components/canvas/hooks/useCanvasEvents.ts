@@ -1,9 +1,15 @@
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 import { useEditorStore } from '../../../../store/useEditorStore';
 import { imageShapeStyleFromTool } from '../../../../store/editorDefaults';
 import { toImageAnnotationSize } from '../annotationSize';
 import { isEditableKeyboardTarget } from '../isEditableKeyboardTarget';
-import { limitImageResolution } from '../../../../lib/limitImageResolution';
+import { limitImageResolution, MAX_IMPORT_EDGE, FREE_MAX_IMPORT_EDGE } from '../../../../lib/limitImageResolution';
+import { isUserFreeTier } from '../../../../lib/entitlements/license';
+import { storage } from '../../../../lib/chromeStorage';
+import { webUrl } from '../../../../lib/api';
+
+
 
 interface UseCanvasEventsProps {
   bounds: { x: number; y: number; width: number; height: number };
@@ -20,12 +26,12 @@ export function useCanvasEvents({ bounds, editingText }: UseCanvasEventsProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isEditableKeyboardTarget(e)) return;
+      if (e.key !== 'Delete' && e.key !== 'Backspace') return;
+      if (selectedShapeIds.length === 0 || editingText) return;
 
-      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedShapeIds.length > 0 && !editingText) {
-        useEditorStore.getState().setShapes(useEditorStore.getState().shapes.filter((s: any) => !selectedShapeIds.includes(s.id)));
-        setSelectedShapeIds([]);
-        saveHistory();
-      }
+      useEditorStore.getState().setShapes(useEditorStore.getState().shapes.filter((s: any) => !selectedShapeIds.includes(s.id)));
+      setSelectedShapeIds([]);
+      saveHistory();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -38,17 +44,32 @@ export function useCanvasEvents({ bounds, editingText }: UseCanvasEventsProps) {
       reader.onload = async (e) => {
         const src = e.target?.result as string;
         if (!src) return;
+        
+        const { authUser } = await storage.local.get(['authUser']);
+        const isFree = isUserFreeTier(authUser as any);
+        const maxEdge = isFree ? FREE_MAX_IMPORT_EDGE : MAX_IMPORT_EDGE;
+        
         // Pasted at most 600px wide, so keeping the pasted source at full resolution just
         // pins a large data URL in the store for as long as any undo step references it.
-        const sized = await limitImageResolution(src).catch(() => null);
+        const sized = await limitImageResolution(src, { maxEdge }).catch(() => null);
         if (!sized) return;
+        
+        if (isFree && sized.dataUrl !== src) {
+          toast.info('Pasted image resolution limited on Free tier.', {
+            action: {
+              label: 'Upgrade',
+              onClick: () => window.open(webUrl('#pricing'), '_blank')
+            }
+          });
+        }
 
         let w = sized.width;
         let h = sized.height;
         const maxDim = 600;
         if (w > maxDim || h > maxDim) {
-          if (w > h) { h = (maxDim / w) * h; w = maxDim; }
-          else { w = (maxDim / h) * w; h = maxDim; }
+          const factor = maxDim / Math.max(w, h);
+          w *= factor;
+          h *= factor;
         }
         const style = imageShapeStyleFromTool(useEditorStore.getState().toolSettings);
         addShape({

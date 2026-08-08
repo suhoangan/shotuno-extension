@@ -1,20 +1,24 @@
 import { useEffect } from 'react';
 import { useEditorStore } from '../../../../store/useEditorStore';
 import { STICKER_SIZE } from '../../../../store/editorDefaults';
+import { editorActions } from '../../../editorActions';
 import { toImageAnnotationSize } from '../annotationSize';
+import { useProGate } from '../../hooks/useProGate';
 
-/** Listen for toolbar `add-sticker` events and spawn a sticker in view. */
+/** Listen for toolbar add-sticker actions and spawn a sticker in view. */
 export function useStickerSpawn(
   containerRef: React.RefObject<HTMLDivElement | null>,
   stageRef: React.RefObject<{ x: () => number; y: () => number; container: () => HTMLElement } | null>,
   scale: number,
   bounds: { x: number; y: number; width: number; height: number },
 ) {
+  const { runPro } = useProGate();
+
   useEffect(() => {
-    const handleAddSticker = (e: Event) => {
-      const emoji = (e as CustomEvent<string>).detail;
-      const state = useEditorStore.getState();
-      const size = toImageAnnotationSize(STICKER_SIZE);
+    return editorActions.onAddSticker((emoji) => {
+      void runPro('stickers', () => {
+        const state = useEditorStore.getState();
+        const size = toImageAnnotationSize(STICKER_SIZE);
 
       let spawnX = bounds.x + bounds.width / 2 - size / 2;
       let spawnY = bounds.y + bounds.height / 2 - size / 2;
@@ -48,8 +52,7 @@ export function useStickerSpawn(
       });
       state.setSelectedShapeIds([id]);
       state.saveHistory();
-    };
-    document.addEventListener('add-sticker', handleAddSticker);
-    return () => document.removeEventListener('add-sticker', handleAddSticker);
-  }, [bounds, scale, containerRef, stageRef]);
+      });
+    });
+  }, [bounds, scale, containerRef, stageRef, runPro]);
 }

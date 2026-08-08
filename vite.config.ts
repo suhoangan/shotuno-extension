@@ -22,7 +22,14 @@ const crxHmrPlugin = crxPlugins.find(
 if (crxHmrPlugin && typeof crxHmrPlugin.config === 'function') {
   const originalConfig = crxHmrPlugin.config
   crxHmrPlugin.config = async function (config: UserConfig, env: ConfigEnv) {
-    const result = await originalConfig.call(this, config, env)
+    const cleanConfig: UserConfig = {
+      ...config,
+      server: {
+        ...config?.server,
+        hmr: typeof config?.server?.hmr === 'object' ? { ...config.server.hmr } : config?.server?.hmr,
+      },
+    }
+    const result = await originalConfig.call(this, cleanConfig, env)
     const hmr = result?.server?.hmr
     if (result?.server && hmr && typeof hmr === 'object') {
       result.server.ws = { ...result.server.ws, ...hmr }

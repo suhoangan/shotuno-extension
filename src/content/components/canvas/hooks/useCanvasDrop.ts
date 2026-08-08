@@ -8,7 +8,10 @@ import {
   fetchLibraryDataUrl,
   parseShotunoDragIds,
 } from '../../../../lib/shotunoDrag';
-import { limitImageResolution } from '../../../../lib/limitImageResolution';
+import { webUrl } from '../../../../lib/api';
+import { limitImageResolution, MAX_IMPORT_EDGE, FREE_MAX_IMPORT_EDGE } from '../../../../lib/limitImageResolution';
+import { isUserFreeTier } from '../../../../lib/entitlements/license';
+import { storage } from '../../../../lib/chromeStorage';
 
 export function useCanvasDrop(stageRef: React.RefObject<any>, scale: number, bounds: { x: number; y: number; width: number; height: number }) {
   const { addShape } = useEditorStore();
@@ -68,11 +71,25 @@ export function useCanvasDrop(stageRef: React.RefObject<any>, scale: number, bou
 
       const processImage = async (srcUrl: string, offsetX = 0, offsetY = 0) => {
         try {
+          const { authUser } = await storage.local.get(['authUser']);
+          const isFree = isUserFreeTier(authUser as any);
+          const maxEdge = isFree ? FREE_MAX_IMPORT_EDGE : MAX_IMPORT_EDGE;
+          
           // Drawn a few hundred pixels wide, so there is no point keeping a 4K source alive
           // in the store and in every undo snapshot that references this shape.
           const sized = await limitImageResolution(srcUrl, {
             crossOrigin: srcUrl.startsWith('http') ? 'Anonymous' : undefined,
+            maxEdge,
           });
+          
+          if (isFree && sized.dataUrl !== srcUrl && !srcUrl.startsWith('http')) {
+            toast.info('Image resolution limited on Free tier.', {
+              action: {
+                label: 'Upgrade',
+                onClick: () => window.open(webUrl('#pricing'), '_blank')
+              }
+            });
+          }
 
           let finalWidth = sized.width;
           let finalHeight = sized.height;

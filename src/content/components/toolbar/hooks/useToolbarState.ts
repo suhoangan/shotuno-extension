@@ -5,15 +5,18 @@ import { snapStrokeWidth } from '../../../../store/editorDefaults';
 import { toUiAnnotationSize } from '../../canvas/annotationSize';
 import {
   isProFeatureEnabled,
-  toolProFeatureId,
+  toolFeatureId,
   type ProFeaturesMap,
 } from '../../../../lib/entitlements/proFeatures';
+import { editorActions } from '../../../editorActions';
 import { isUserFreeTier as computeFreeTier } from '../../../../lib/entitlements/license';
 import { loadProFeatures } from '../../../../lib/entitlements/fetchProFeatures';
 import { requestEndTextEdit } from '../../canvas/commitTextEdit';
 import { useProGate } from '../../hooks/useProGate';
 import { useToolHotkeys } from '../../hooks/useToolHotkeys';
 import { useHardLoadingStore } from '../../../../store/useHardLoadingStore';
+import { storage } from '../../../../lib/chromeStorage';
+
 
 export function useToolbarState(onClose: () => void) {
   const {
@@ -37,7 +40,7 @@ export function useToolbarState(onClose: () => void) {
 
   useEffect(() => {
     const refresh = () => {
-      chrome.storage.local.get('authUser').then(({ authUser }) => {
+      storage.local.get('authUser').then(({ authUser }) => {
         setIsUserFreeTier(computeFreeTier(authUser as object));
       });
     };
@@ -49,8 +52,8 @@ export function useToolbarState(onClose: () => void) {
     ) => {
       if (area === 'local' && changes.authUser) refresh();
     };
-    chrome.storage.onChanged.addListener(onChange);
-    return () => chrome.storage.onChanged.removeListener(onChange);
+    storage.onChanged.addListener(onChange);
+    return () => storage.onChanged.removeListener(onChange);
   }, []);
 
   const featureEnabled = useCallback(
@@ -93,23 +96,18 @@ export function useToolbarState(onClose: () => void) {
       return;
     }
     throttle(`save-${type}`, 1500, () => {
-      document.dispatchEvent(new CustomEvent('export-canvas', { detail: { type, filename: filename.trim() } }));
+      editorActions.emitExportCanvas({ type, filename: filename.trim() });
     })();
   };
 
   const handleToolSelect = useCallback((tool: ToolType) => {
-    const apply = () => {
-      requestEndTextEdit();
-      setActiveTool(tool);
-      setSelectedShapeIds([]);
-    };
-    const featureId = toolProFeatureId(tool);
-    if (featureId) {
-      void runPro(featureId, apply);
-      return;
-    }
-    apply();
-  }, [runPro, setActiveTool, setSelectedShapeIds]);
+    const catalogId = toolFeatureId(tool);
+    if (catalogId && !featureEnabled(catalogId)) return;
+
+    requestEndTextEdit();
+    setActiveTool(tool);
+    setSelectedShapeIds([]);
+  }, [featureEnabled, setActiveTool, setSelectedShapeIds]);
 
   useToolHotkeys(handleToolSelect);
 

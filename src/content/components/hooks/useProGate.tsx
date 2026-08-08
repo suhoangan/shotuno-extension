@@ -2,6 +2,8 @@ import { useCallback, useState } from 'react';
 import type { ProFeatureId } from '../../../lib/entitlements/proFeatures';
 import { apiUrl } from '../../../lib/api';
 import { unwrapApi } from '../../../lib/unwrapApi';
+import { storage } from '../../../lib/chromeStorage';
+
 
 type ToolUseSnapshot = {
   dailyCreditsRemaining?: number;
@@ -19,7 +21,7 @@ export function useProGate() {
   const runPro = useCallback(
     async (featureId: ProFeatureId, action: () => void | Promise<void>) => {
       try {
-        const data = await chrome.storage.local.get('authToken');
+        const data = await storage.local.get('authToken');
         const token = data.authToken as string | undefined;
 
         if (!token) {
@@ -63,9 +65,9 @@ export function useProGate() {
           );
         }
 
-        const { authUser } = await chrome.storage.local.get('authUser');
+        const { authUser } = await storage.local.get('authUser');
         if (authUser && typeof authUser === 'object') {
-          await chrome.storage.local.set({
+          await storage.local.set({
             authUser: {
               ...authUser,
               entitlements: {

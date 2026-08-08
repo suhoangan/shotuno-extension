@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
+import { storage } from '../lib/chromeStorage';
+
 
 export const SIDE_PANEL_OPEN_KEY = 'shotunoSidePanelOpen';
 
@@ -9,7 +11,7 @@ export function useToggleSidePanel(onError?: (msg: string) => void) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    chrome.storage.local.get([SIDE_PANEL_OPEN_KEY], (result) => {
+    storage.local.get([SIDE_PANEL_OPEN_KEY], (result) => {
       if (!chrome.runtime.lastError) {
         setOpen(Boolean(result[SIDE_PANEL_OPEN_KEY]));
       }
@@ -32,10 +34,10 @@ export function useToggleSidePanel(onError?: (msg: string) => void) {
       }
     };
 
-    chrome.storage.onChanged.addListener(onStorage);
+    storage.onChanged.addListener(onStorage);
     chrome.runtime.onMessage.addListener(onMessage);
     return () => {
-      chrome.storage.onChanged.removeListener(onStorage);
+      storage.onChanged.removeListener(onStorage);
       chrome.runtime.onMessage.removeListener(onMessage);
     };
   }, []);

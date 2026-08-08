@@ -1,6 +1,6 @@
 /** Single source of truth for free-tier UI (crowns) vs Pro access. */
 
-export type LicenseStatus = 'PRO' | 'TRIAL' | 'FREE';
+export type LicenseStatus = 'PRO' | 'FREE';
 
 export type EntitlementsLike = {
   licenseStatus?: LicenseStatus | string;
@@ -17,7 +17,14 @@ export type AuthUserLike = {
 
 export function licenseStatusOf(user: AuthUserLike | null | undefined): LicenseStatus {
   const status = user?.entitlements?.licenseStatus;
-  if (status === 'PRO' || status === 'TRIAL' || status === 'FREE') return status;
+  
+  const statusMap: Record<string, LicenseStatus> = {
+    PRO: 'PRO',
+    FREE: 'FREE',
+  };
+  
+  if (status && statusMap[status]) return statusMap[status];
+
   // Legacy fallback before licenseStatus existed
   if (user?.role === 'ADMIN') return 'PRO';
   const tier = user?.entitlements?.planTier;
@@ -25,7 +32,7 @@ export function licenseStatusOf(user: AuthUserLike | null | undefined): LicenseS
   return 'FREE';
 }
 
-/** Crowns / upsell chrome — FREE only (trial has access without crowns). */
+/** Crowns / upsell chrome — FREE only. */
 export function isUserFreeTier(user: AuthUserLike | null | undefined): boolean {
   return licenseStatusOf(user) === 'FREE';
 }
@@ -36,6 +43,7 @@ export function hasUnlimitedCredits(user: AuthUserLike | null | undefined): bool
 }
 
 export function dailyCreditsRemaining(user: AuthUserLike | null | undefined): number {
+  if (!user) return 0;
   const n = user?.entitlements?.dailyCreditsRemaining;
   return typeof n === 'number' && Number.isFinite(n) ? Math.max(0, n) : 15;
 }

@@ -2,6 +2,8 @@ import { get as idbGet, set as idbSet, del as idbDel } from 'idb-keyval';
 import { PINS_STORAGE_KEY, type PinImage } from '../lib/pinDb';
 import { ensureImageExt, filenameFromUrl, stampedImageName } from '../lib/imageNames';
 import { makePinThumbnail } from './pin-thumbnail';
+import { storage } from '../lib/chromeStorage';
+
 
 const MAX_PINS = 40;
 const FETCH_TIMEOUT_MS = 10_000;
@@ -59,7 +61,7 @@ async function appendPinsBatch(
   items: Array<{ dataUrl: string; filename: string }>,
 ): Promise<PinImage[]> {
   if (!items.length) return [];
-  const result = await chrome.storage.local.get([PINS_STORAGE_KEY]);
+  const result = await storage.local.get([PINS_STORAGE_KEY]);
   let current = (result[PINS_STORAGE_KEY] as PinImage[] | undefined) || [];
   const saved: PinImage[] = [];
 
@@ -83,7 +85,7 @@ async function appendPinsBatch(
   previous.forEach((p) => {
     if (!kept.has(p.id)) void idbDel(`pin_full_${p.id}`);
   });
-  await chrome.storage.local.set({ [PINS_STORAGE_KEY]: current });
+  await storage.local.set({ [PINS_STORAGE_KEY]: current });
   return saved;
 }
 
@@ -142,7 +144,7 @@ export function handlePinImportMessage(
   if (message.type === 'DOWNLOAD_PINS') {
     const { ids } = message.payload as { ids: string[] };
     void enqueue(async () => {
-      const result = await chrome.storage.local.get([PINS_STORAGE_KEY]);
+      const result = await storage.local.get([PINS_STORAGE_KEY]);
       const pins = (result[PINS_STORAGE_KEY] as PinImage[] | undefined) || [];
       let ok = 0;
       for (const id of ids.slice(0, MAX_PINS)) {

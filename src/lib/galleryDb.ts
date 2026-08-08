@@ -1,4 +1,6 @@
 import { createPrefetchedFileCache } from './prefetchedFileCache';
+import { storage } from '../lib/chromeStorage';
+
 
 export interface GalleryImage {
   id: string;
@@ -7,6 +9,8 @@ export interface GalleryImage {
   timestamp: number;
   filename?: string;
   batchId?: string;
+  cloudUrl?: string;
+  shareId?: string;
 }
 
 type MessageResponse = {
@@ -58,9 +62,9 @@ export async function syncGalleryImages(): Promise<GalleryImage[]> {
 }
 
 export async function loadGalleryImages(): Promise<GalleryImage[]> {
-  if (typeof chrome === 'undefined' || !chrome.storage?.local) return [];
+  if (!storage.isAvailable()) return [];
   return new Promise((resolve) => {
-    chrome.storage.local.get(['canvas_gallery_images'], (result) => {
+    storage.local.get(['canvas_gallery_images'], (result) => {
       if (chrome.runtime.lastError) {
         resolve([]);
         return;

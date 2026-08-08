@@ -5,6 +5,7 @@ import { StyleToggle } from './StyleToggle';
 import { StrokeWidthControl } from './StrokeWidthControl';
 import { ICON, STYLE_BAR, STYLE_GAP, CHROME } from './toolbarUi';
 import { toImageAnnotationSize } from '../canvas/annotationSize';
+import { Button } from '../../../components/ui/button';
 
 const colors = ['#ef4444', '#facc15', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ffffff', '#000000'];
 
@@ -169,12 +170,14 @@ export function StyleToolbar() {
           title={borderStyleLocked ? 'Enable Border to change color' : undefined}
         >
           {colors.map(c => (
-            <button 
+            <Button 
               key={c}
               type="button"
+              variant="outline"
+              size="icon"
               disabled={borderStyleLocked}
               onClick={() => { setSelectedColor(c, persistOpts); applyToSelection({ color: c }); }}
-              className={`w-5 h-5 rounded-full border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-transform ${borderStyleLocked ? 'cursor-not-allowed' : 'hover:scale-110'} ${selectedColor === c ? 'border-foreground scale-110 shadow-sm' : 'border-border hover:border-foreground/40'}`}
+              className={`w-5 h-5 rounded-full border-2 p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-transform ${borderStyleLocked ? 'cursor-not-allowed' : 'hover:scale-110'} ${selectedColor === c ? 'border-foreground scale-110 shadow-sm' : 'border-border hover:border-foreground/40'}`}
               style={{ backgroundColor: c }}
             />
           ))}

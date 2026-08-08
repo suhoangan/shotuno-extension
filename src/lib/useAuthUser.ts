@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { syncAuthFromCookies, clearExtensionAuthAndCookie } from '../background/auth-sync';
 import { webUrl } from './api';
+import { storage } from '../lib/chromeStorage';
+
 
 export interface AuthUser {
   id?: string;
@@ -9,7 +11,7 @@ export interface AuthUser {
   avatarUrl?: string;
   entitlements?: {
     planTier?: string;
-    licenseStatus?: 'PRO' | 'TRIAL' | 'FREE';
+    licenseStatus?: 'PRO' | 'FREE';
     dailyCreditsRemaining?: number;
     unlimitedCredits?: boolean;
     canUsePro?: boolean;
@@ -21,13 +23,13 @@ export function useAuthUser() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    chrome.storage.local.get(['authUser']).then(({ authUser }) => {
+    storage.local.get(['authUser']).then(({ authUser }) => {
       setAuthUser((authUser as AuthUser) || null);
       setLoading(false);
     });
 
     void syncAuthFromCookies().then(() => {
-      chrome.storage.local.get(['authUser']).then(({ authUser }) => {
+      storage.local.get(['authUser']).then(({ authUser }) => {
         setAuthUser((authUser as AuthUser) || null);
       });
     });
@@ -41,8 +43,8 @@ export function useAuthUser() {
       }
     };
 
-    chrome.storage.onChanged.addListener(listener);
-    return () => chrome.storage.onChanged.removeListener(listener);
+    storage.onChanged.addListener(listener);
+    return () => storage.onChanged.removeListener(listener);
   }, []);
 
   const loginViaWeb = () => {

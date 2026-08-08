@@ -91,11 +91,15 @@ export function ShapeToolMenu({
               <Icon size={ICON_SM} /> <span className="text-sm whitespace-nowrap">{label}</span>
             </Button>
           ))}
-          <div className="h-px bg-border/40 my-0.5" />
-          <StickerPicker
-            onPicked={() => onOpenChange(false)}
-            onAddSticker={onAddSticker}
-          />
+          {onAddSticker && (
+            <>
+              <div className="h-px bg-border/40 my-0.5" />
+              <StickerPicker
+                onPicked={() => onOpenChange(false)}
+                onAddSticker={onAddSticker}
+              />
+            </>
+          )}
         </div>
       )}
     </div>

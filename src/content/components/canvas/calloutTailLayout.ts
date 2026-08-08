@@ -17,6 +17,28 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
+function computeTailBases(
+  side: Side,
+  hitX: number,
+  hitY: number,
+  shapeWidth: number,
+  shapeHeight: number,
+  edgePad: number,
+  half: number
+) {
+  if (side === 'top' || side === 'bottom') {
+    const center = clamp(hitX, edgePad + half, shapeWidth - edgePad - half);
+    return side === 'top'
+      ? { baseA: center - half, baseB: center + half }
+      : { baseA: center + half, baseB: center - half };
+  }
+
+  const center = clamp(hitY, edgePad + half, shapeHeight - edgePad - half);
+  return side === 'right'
+    ? { baseA: center - half, baseB: center + half }
+    : { baseA: center + half, baseB: center - half };
+}
+
 export function getDefaultCalloutTailTip(
   shapeWidth: number,
   shapeHeight: number,
@@ -174,30 +196,7 @@ export function computeCalloutTailLayout(
   const half = tailWidth / 2;
   const edgePad = Math.max(inset, cornerRadius);
 
-  let baseA: number;
-  let baseB: number;
-
-  if (hit.side === 'top' || hit.side === 'bottom') {
-    const center = clamp(hit.x, edgePad + half, shapeWidth - edgePad - half);
-    // Clockwise: top L→R uses low then high; bottom R→L uses high then low
-    if (hit.side === 'top') {
-      baseA = center - half;
-      baseB = center + half;
-    } else {
-      baseA = center + half;
-      baseB = center - half;
-    }
-  } else {
-    const center = clamp(hit.y, edgePad + half, shapeHeight - edgePad - half);
-    // Clockwise: right T→B uses low then high; left B→T uses high then low
-    if (hit.side === 'right') {
-      baseA = center - half;
-      baseB = center + half;
-    } else {
-      baseA = center + half;
-      baseB = center - half;
-    }
-  }
+  const { baseA, baseB } = computeTailBases(hit.side, hit.x, hit.y, shapeWidth, shapeHeight, edgePad, half);
 
   return {
     visible: true,

@@ -34,17 +34,29 @@ export function BorderMenu({
   } = useEditorStore();
 
   const paddingSize = snapBorderPaddingSize(borderPaddingSize);
-  const triggerClass = `inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 relative ${BTN} ${showBorderMenu || borderEnabled ? 'bg-primary text-primary-foreground hover:bg-primary/80' : 'bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground'}`;
+  const isActive = showBorderMenu || borderEnabled;
 
   return (
     <Popover open={showBorderMenu} onOpenChange={setShowBorderMenu}>
       <Tooltip>
         <TooltipTrigger
           render={
-            <PopoverTrigger className={triggerClass}>
-              <Monitor size={ICON} />
-              <ProBadge show={isPro} />
-            </PopoverTrigger>
+            <PopoverTrigger
+              render={
+                <Button
+                  variant={isActive ? 'default' : 'ghost'}
+                  size="icon"
+                  className={`${BTN} relative overflow-visible rounded-lg transition-colors flex items-center justify-center ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground hover:bg-primary/80'
+                      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                  }`}
+                >
+                  <Monitor size={ICON} className="size-5" />
+                  <ProBadge show={isPro} />
+                </Button>
+              }
+            />
           }
         />
         <TooltipContent side="bottom" sideOffset={8} className="z-[99999999]">
@@ -155,12 +167,14 @@ export function BorderMenu({
             <Label className="text-xs font-medium text-muted-foreground">Background color</Label>
             <div className="grid grid-cols-6 gap-2">
               {BORDER_PADDING_PRESETS.map((preset) => (
-                <button
+                <Button
                   key={preset.id}
                   type="button"
+                  variant="outline"
+                  size="icon"
                   title={preset.id}
                   onClick={() => setBorderPaddingPreset(preset.id)}
-                  className={`h-7 w-7 rounded-full border-2 transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${borderPaddingPreset === preset.id && borderPadding && borderEnabled ? 'border-foreground scale-110 shadow-sm' : 'border-border hover:border-foreground/40'}`}
+                  className={`h-7 w-7 rounded-full border-2 p-0 transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${borderPaddingPreset === preset.id && borderPadding && borderEnabled ? 'border-foreground scale-110 shadow-sm' : 'border-border hover:border-foreground/40'}`}
                   style={{ background: preset.swatch }}
                 />
               ))}

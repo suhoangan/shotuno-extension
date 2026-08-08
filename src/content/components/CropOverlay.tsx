@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useEditorStore } from '../../store/useEditorStore';
 import type { StageBounds } from './canvas/stageBounds';
+import { Button } from '../../components/ui/button';
 
 interface CropOverlayProps {
   bounds: StageBounds;
@@ -100,27 +101,27 @@ export const CropOverlay: React.FC<CropOverlayProps> = ({ bounds, scale }) => {
   return (
     <div className="absolute inset-0 z-[999] pointer-events-none" style={{ width: r.bw, height: r.bh }}>
       {/* Dark overlays for cropped-out areas */}
-      <div className="absolute top-0 left-0 bg-black/60 pointer-events-auto " style={{ width: '100%', height: r.y }} />
-      <div className="absolute left-0 bg-black/60 pointer-events-auto " style={{ top: r.y, width: r.x, height: r.h }} />
-      <div className="absolute right-0 bg-black/60 pointer-events-auto " style={{ top: r.y, width: Math.max(0, r.bw - (r.x + r.w)), height: r.h }} />
-      <div className="absolute bottom-0 left-0 bg-black/60 pointer-events-auto " style={{ width: '100%', height: Math.max(0, r.bh - (r.y + r.h)) }} />
+      <div className="absolute top-0 left-0 bg-background/80 pointer-events-auto " style={{ width: '100%', height: r.y }} />
+      <div className="absolute left-0 bg-background/80 pointer-events-auto " style={{ top: r.y, width: r.x, height: r.h }} />
+      <div className="absolute right-0 bg-background/80 pointer-events-auto " style={{ top: r.y, width: Math.max(0, r.bw - (r.x + r.w)), height: r.h }} />
+      <div className="absolute bottom-0 left-0 bg-background/80 pointer-events-auto " style={{ width: '100%', height: Math.max(0, r.bh - (r.y + r.h)) }} />
 
       {/* Crop Box with Grid */}
       <div
-        className="absolute border-2 border-white/80 box-border pointer-events-auto flex flex-col cursor-move"
+        className="absolute border-2 border-foreground/80 box-border pointer-events-auto flex flex-col cursor-move"
         style={{ left: r.x, top: r.y, width: r.w, height: r.h }}
         onMouseDown={(e) => handleMouseDown(e, 'move')}
       >
         {/* 3x3 Grid Lines */}
         <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none opacity-50">
-          <div className="border-r border-b border-white" />
-          <div className="border-r border-b border-white" />
-          <div className="border-b border-white" />
-          <div className="border-r border-b border-white" />
-          <div className="border-r border-b border-white" />
-          <div className="border-b border-white" />
-          <div className="border-r border-white" />
-          <div className="border-r border-white" />
+          <div className="border-r border-b border-foreground" />
+          <div className="border-r border-b border-foreground" />
+          <div className="border-b border-foreground" />
+          <div className="border-r border-b border-foreground" />
+          <div className="border-r border-b border-foreground" />
+          <div className="border-b border-foreground" />
+          <div className="border-r border-foreground" />
+          <div className="border-r border-foreground" />
           <div className="" />
         </div>
 
@@ -132,20 +133,20 @@ export const CropOverlay: React.FC<CropOverlayProps> = ({ bounds, scale }) => {
           <div className="absolute right-[-10px] top-1/2 -translate-y-1/2 h-1/3 w-[20px] pointer-events-auto cursor-ew-resize" onMouseDown={(e) => handleMouseDown(e, 'right')} />
 
           <div className="absolute top-[-4px] left-[-4px] w-[20px] h-[20px] pointer-events-auto cursor-nwse-resize" onMouseDown={(e) => handleMouseDown(e, 'top-left')}>
-            <div className="absolute top-0 left-0 w-full h-[4px] bg-white shadow-sm" />
-            <div className="absolute top-0 left-0 w-[4px] h-full bg-white shadow-sm" />
+            <div className="absolute top-0 left-0 w-full h-[4px] bg-foreground shadow-sm" />
+            <div className="absolute top-0 left-0 w-[4px] h-full bg-foreground shadow-sm" />
           </div>
           <div className="absolute top-[-4px] right-[-4px] w-[20px] h-[20px] pointer-events-auto cursor-nesw-resize" onMouseDown={(e) => handleMouseDown(e, 'top-right')}>
-            <div className="absolute top-0 right-0 w-full h-[4px] bg-white shadow-sm" />
-            <div className="absolute top-0 right-0 w-[4px] h-full bg-white shadow-sm" />
+            <div className="absolute top-0 right-0 w-full h-[4px] bg-foreground shadow-sm" />
+            <div className="absolute top-0 right-0 w-[4px] h-full bg-foreground shadow-sm" />
           </div>
           <div className="absolute bottom-[-4px] left-[-4px] w-[20px] h-[20px] pointer-events-auto cursor-nesw-resize" onMouseDown={(e) => handleMouseDown(e, 'bottom-left')}>
-            <div className="absolute bottom-0 left-0 w-full h-[4px] bg-white shadow-sm" />
-            <div className="absolute bottom-0 left-0 w-[4px] h-full bg-white shadow-sm" />
+            <div className="absolute bottom-0 left-0 w-full h-[4px] bg-foreground shadow-sm" />
+            <div className="absolute bottom-0 left-0 w-[4px] h-full bg-foreground shadow-sm" />
           </div>
           <div className="absolute bottom-[-4px] right-[-4px] w-[20px] h-[20px] pointer-events-auto cursor-nwse-resize" onMouseDown={(e) => handleMouseDown(e, 'bottom-right')}>
-            <div className="absolute bottom-0 right-0 w-full h-[4px] bg-white shadow-sm" />
-            <div className="absolute bottom-0 right-0 w-[4px] h-full bg-white shadow-sm" />
+            <div className="absolute bottom-0 right-0 w-full h-[4px] bg-foreground shadow-sm" />
+            <div className="absolute bottom-0 right-0 w-[4px] h-full bg-foreground shadow-sm" />
           </div>
         </div>
 
@@ -154,25 +155,28 @@ export const CropOverlay: React.FC<CropOverlayProps> = ({ bounds, scale }) => {
           className="absolute left-1/2 -translate-x-1/2 -bottom-14 flex gap-2 pointer-events-auto"
           onMouseDown={(e) => e.stopPropagation()}
         >
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => {
               setCropRect(null);
               useEditorStore.getState().setActiveTool('select');
             }}
-            className="px-3 py-1.5 bg-card/90 hover:bg-accent text-foreground text-sm font-medium rounded-lg shadow-lg backdrop-blur-sm border border-border transition-colors flex items-center justify-center"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
             onClick={() => {
               useEditorStore.getState().saveHistory();
               useEditorStore.getState().setActiveTool('select');
             }}
-            className="px-3 py-1.5 bg-primary/90 hover:bg-primary text-primary-foreground text-sm font-medium rounded-lg shadow-lg backdrop-blur-sm border border-primary transition-colors flex items-center justify-center gap-1"
+            className="flex items-center gap-1"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
             Apply
-          </button>
+          </Button>
         </div>
       </div>
     </div>

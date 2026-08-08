@@ -7,10 +7,13 @@ import {
   renamePin,
   type PinImage,
 } from '../../lib/pinDb';
+import { uploadAndShareCloudLink } from '../../lib/cloudShare';
 import { GalleryItem } from '../gallery/GalleryItem';
 import { LibraryItemMenu } from '../gallery/GalleryItemMenu';
 import type { GalleryViewMode } from '../gallery/galleryPrefs';
 import { RenameImageDialog } from '../library/RenameImageDialog';
+import { useAuthUser } from '../../lib/useAuthUser';
+import { updatePin } from '../../lib/pinDb';
 
 interface PinListProps {
   pins: PinImage[];
@@ -32,6 +35,7 @@ export function PinList({
   onDragStart,
 }: PinListProps) {
   const [renameTarget, setRenameTarget] = useState<PinImage | null>(null);
+  const { authUser } = useAuthUser();
 
   if (pins.length === 0) {
     return (
@@ -60,6 +64,25 @@ export function PinList({
               onEdit={() => onEdit(pin.id)}
               onPreview={openPreview}
               onRename={() => setRenameTarget(pin)}
+              onShareLink={
+                authUser && !pin.cloudUrl
+                  ? () => {
+                      void uploadAndShareCloudLink(pin.url)
+                        .then(({ url, id }) => {
+                          void updatePin(pin.id, { cloudUrl: url, shareId: id });
+                        })
+                        .catch((e) => toast.error(e instanceof Error ? e.message : 'Share failed'));
+                    }
+                  : undefined
+              }
+              onCopyCloudLink={
+                authUser && pin.cloudUrl
+                  ? () => {
+                      void navigator.clipboard.writeText(pin.cloudUrl!);
+                      toast.success('Cloud link copied to clipboard!');
+                    }
+                  : undefined
+              }
               onDownload={() => {
                 void downloadPinImage(pin.id)
                   .then(() => toast.success('Saved to Downloads'))

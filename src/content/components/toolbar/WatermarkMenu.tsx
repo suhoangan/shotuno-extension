@@ -40,17 +40,29 @@ export function WatermarkMenu({
     reader.readAsDataURL(file);
   };
 
-  const triggerClass = `inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 relative ${BTN} ${showWatermarkMenu || watermarkEnabled ? 'bg-primary text-primary-foreground hover:bg-primary/80' : 'bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground'}`;
+  const isActive = showWatermarkMenu || watermarkEnabled;
 
   return (
     <Popover open={showWatermarkMenu} onOpenChange={setShowWatermarkMenu}>
       <Tooltip>
         <TooltipTrigger
           render={
-            <PopoverTrigger className={triggerClass}>
-              <Stamp size={ICON} />
-              <ProBadge show={isPro} />
-            </PopoverTrigger>
+            <PopoverTrigger
+              render={
+                <Button
+                  variant={isActive ? 'default' : 'ghost'}
+                  size="icon"
+                  className={`${BTN} relative overflow-visible rounded-lg transition-colors flex items-center justify-center ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground hover:bg-primary/80'
+                      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                  }`}
+                >
+                  <Stamp size={ICON} className="size-5" />
+                  <ProBadge show={isPro} />
+                </Button>
+              }
+            />
           }
         />
         <TooltipContent side="bottom" sideOffset={8} className="z-[99999999]">

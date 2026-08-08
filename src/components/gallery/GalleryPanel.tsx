@@ -30,6 +30,8 @@ import {
   type GalleryViewMode,
 } from './galleryPrefs';
 import { setShotunoDragData } from '../../lib/shotunoDrag';
+import { storage } from '../../lib/chromeStorage';
+
 
 export type GalleryDragMode = 'canvas' | 'web';
 
@@ -60,13 +62,13 @@ export function GalleryPanel({
 
   useEffect(() => {
     syncGalleryImages().then(onImagesChange);
-    if (typeof chrome === 'undefined' || !chrome.storage) return;
+    if (!storage.isAvailable()) return;
     const listener = (changes: Record<string, chrome.storage.StorageChange>, area: string) => {
       if (area !== 'local' || !changes.canvas_gallery_images) return;
       onImagesChange((changes.canvas_gallery_images.newValue as GalleryImage[]) || []);
     };
-    chrome.storage.onChanged.addListener(listener);
-    return () => chrome.storage.onChanged.removeListener(listener);
+    storage.onChanged.addListener(listener);
+    return () => storage.onChanged.removeListener(listener);
   }, [onImagesChange]);
 
   const updatePrefs = useCallback((patch: Partial<GalleryUiPrefs>) => {

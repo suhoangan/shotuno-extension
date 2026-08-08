@@ -4,6 +4,38 @@ import { Button } from '../components/ui/button';
 import { Separator } from '../components/ui/separator';
 import { UserAccountHeader } from '../components/UserAccountHeader';
 
+const CAPTURE_OPTIONS = [
+  { type: 'pin_area', icon: Pin, title: 'Pin area', description: 'Save to side panel for any tab', className: 'ring-1 ring-primary/30' },
+  { type: 'visible', icon: Maximize, title: 'Visible Content', description: 'Capture what\'s on screen' },
+  { type: 'area', icon: Crop, title: 'Selected Area', description: 'Draw a region to edit' },
+  { type: 'grid', icon: LayoutGrid, title: 'Grid Capture', description: 'Capture multiple regions' },
+  { type: 'full', icon: AlignVerticalSpaceAround, title: 'Full Page', description: 'Like DevTools full-size screenshot' },
+] as const;
+
+function CaptureButton({ option, loading, onClick }: { option: typeof CAPTURE_OPTIONS[number], loading: string | null, onClick: () => void }) {
+  const Icon = option.icon;
+  return (
+    <Button
+      variant="outline"
+      className={`h-auto justify-start gap-3 py-2.5 px-3 ${'className' in option ? option.className : ''}`}
+      onClick={onClick}
+      disabled={loading !== null}
+    >
+      {loading === option.type ? (
+        <Loader2 size={18} className="text-primary shrink-0 animate-spin" />
+      ) : (
+        <Icon size={18} className="text-primary shrink-0" />
+      )}
+      <div className="flex flex-col items-start text-left">
+        <span className="font-medium text-sm">{option.title}</span>
+        <span className="text-xs text-muted-foreground font-normal">
+          {option.description}
+        </span>
+      </div>
+    </Button>
+  );
+}
+
 export default function App() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -107,100 +139,14 @@ export default function App() {
         </p>
       )}
 
-      <Button
-        variant="outline"
-        className="h-auto justify-start gap-3 py-2.5 px-3 ring-1 ring-primary/30"
-        onClick={() => void startCapture('pin_area')}
-        disabled={loading !== null}
-      >
-        {loading === 'pin_area' ? (
-          <Loader2 size={18} className="text-primary shrink-0 animate-spin" />
-        ) : (
-          <Pin size={18} className="text-primary shrink-0" />
-        )}
-        <div className="flex flex-col items-start text-left">
-          <span className="font-medium text-sm">Pin area</span>
-          <span className="text-xs text-muted-foreground font-normal">
-            Save to side panel for any tab
-          </span>
-        </div>
-      </Button>
-
-      <Button
-        variant="outline"
-        className="h-auto justify-start gap-3 py-2.5 px-3"
-        onClick={() => void startCapture('visible')}
-        disabled={loading !== null}
-      >
-        {loading === 'visible' ? (
-          <Loader2 size={18} className="text-primary shrink-0 animate-spin" />
-        ) : (
-          <Maximize size={18} className="text-primary shrink-0" />
-        )}
-        <div className="flex flex-col items-start text-left">
-          <span className="font-medium text-sm">Visible Content</span>
-          <span className="text-xs text-muted-foreground font-normal">
-            Capture what&apos;s on screen
-          </span>
-        </div>
-      </Button>
-
-      <Button
-        variant="outline"
-        className="h-auto justify-start gap-3 py-2.5 px-3"
-        onClick={() => void startCapture('area')}
-        disabled={loading !== null}
-      >
-        {loading === 'area' ? (
-          <Loader2 size={18} className="text-primary shrink-0 animate-spin" />
-        ) : (
-          <Crop size={18} className="text-primary shrink-0" />
-        )}
-        <div className="flex flex-col items-start text-left">
-          <span className="font-medium text-sm">Selected Area</span>
-          <span className="text-xs text-muted-foreground font-normal">
-            Draw a region to edit
-          </span>
-        </div>
-      </Button>
-
-      <Button
-        variant="outline"
-        className="h-auto justify-start gap-3 py-2.5 px-3"
-        onClick={() => void startCapture('grid')}
-        disabled={loading !== null}
-      >
-        {loading === 'grid' ? (
-          <Loader2 size={18} className="text-primary shrink-0 animate-spin" />
-        ) : (
-          <LayoutGrid size={18} className="text-primary shrink-0" />
-        )}
-        <div className="flex flex-col items-start text-left">
-          <span className="font-medium text-sm">Grid Capture</span>
-          <span className="text-xs text-muted-foreground font-normal">
-            Capture multiple regions
-          </span>
-        </div>
-      </Button>
-
-      <Button
-        variant="outline"
-        className="h-auto justify-start gap-3 py-2.5 px-3"
-        onClick={() => void startCapture('full')}
-        disabled={loading !== null}
-      >
-        {loading === 'full' ? (
-          <Loader2 size={18} className="text-primary shrink-0 animate-spin" />
-        ) : (
-          <AlignVerticalSpaceAround size={18} className="text-primary shrink-0" />
-        )}
-        <div className="flex flex-col items-start text-left">
-          <span className="font-medium text-sm">Full Page</span>
-          <span className="text-xs text-muted-foreground font-normal">
-            Like DevTools full-size screenshot
-          </span>
-        </div>
-      </Button>
+      {CAPTURE_OPTIONS.map((option) => (
+        <CaptureButton
+          key={option.type}
+          option={option}
+          loading={loading}
+          onClick={() => void startCapture(option.type as any)}
+        />
+      ))}
 
       <Separator className="bg-border/40" />
 

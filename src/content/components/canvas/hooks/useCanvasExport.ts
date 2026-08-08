@@ -3,8 +3,11 @@ import { toast } from 'sonner';
 import { useEditorStore } from '../../../../store/useEditorStore';
 import { exportHardLoading, useHardLoadingStore } from '../../../../store/useHardLoadingStore';
 import { saveGalleryImage } from '../../../../lib/galleryDb';
+import { editorActions } from '../../../editorActions';
 import { copyImageAndTextToClipboard } from '../../../utils/clipboardUtils';
 import { exportStageToPng } from '../exportStageToPng';
+import { storage } from '../../../../lib/chromeStorage';
+
 
 const AI_URLS: Record<string, string> = {
   ChatGPT: 'https://chatgpt.com/',
@@ -89,7 +92,7 @@ export function useCanvasExport(stageRef: React.RefObject<any>) {
 
           if (type === 'ai') {
             if (aiProvider && aiProvider !== 'Copy') {
-              await chrome.storage.local.set({
+              await storage.local.set({
                 pendingAIInjection: {
                   provider: aiProvider,
                   prompt: prompt || '',
@@ -128,10 +131,11 @@ export function useCanvasExport(stageRef: React.RefObject<any>) {
       timeouts.add(timeoutId);
     };
 
-    const handleExport = (e: any) => handleSave(e.detail.type, e.detail.filename, e.detail);
-    document.addEventListener('export-canvas', handleExport);
+    const offExport = editorActions.onExportCanvas((detail) => {
+      handleSave(detail.type, detail.filename, detail);
+    });
     return () => {
-      document.removeEventListener('export-canvas', handleExport);
+      offExport();
       timeouts.forEach(clearTimeout);
       timeouts.clear();
       useHardLoadingStore.getState().hideHardLoading();

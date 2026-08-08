@@ -26,6 +26,7 @@ import { useSmartBlur } from './canvas/hooks/useSmartBlur';
 import { useOcrExtract } from './canvas/hooks/useOcrExtract';
 import { syncAnnotationSizeFactor } from './canvas/annotationSize';
 import { useEditorPrefs } from './canvas/hooks/useEditorPrefs';
+import { editorActions } from '../editorActions';
 
 interface CanvasEditorProps {
   screenshotUrl: string;
@@ -45,15 +46,11 @@ export default function CanvasEditor({ screenshotUrl }: CanvasEditorProps) {
   useEditorPrefs();
 
   useEffect(() => {
-    const handleOpenResize = () => setIsResizeOpen(true);
-    const handleSmartBlurEvent = () => handleSmartBlur();
-    
-    document.addEventListener('open-resize', handleOpenResize);
-    document.addEventListener('trigger-smart-blur', handleSmartBlurEvent);
-    
+    const offResize = editorActions.onOpenResize(() => setIsResizeOpen(true));
+    const offBlur = editorActions.onSmartBlur(() => { void handleSmartBlur(); });
     return () => {
-      document.removeEventListener('open-resize', handleOpenResize);
-      document.removeEventListener('trigger-smart-blur', handleSmartBlurEvent);
+      offResize();
+      offBlur();
     };
   }, [handleSmartBlur]);
 

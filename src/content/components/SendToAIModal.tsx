@@ -4,6 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../componen
 import { Button } from '../../components/ui/button';
 import { Textarea } from '../../components/ui/textarea';
 import { Label } from '../../components/ui/label';
+import { editorActions } from '../editorActions';
+import { useProGate } from './hooks/useProGate';
 
 interface SendToAIModalProps {
   isOpen: boolean;
@@ -11,13 +13,18 @@ interface SendToAIModalProps {
 }
 
 export default function SendToAIModal({ isOpen, onClose }: SendToAIModalProps) {
+  const { runPro } = useProGate();
   const [prompt, setPrompt] = useState('');
 
   const handleSend = (provider: string) => {
-    document.dispatchEvent(new CustomEvent('export-canvas', { 
-      detail: { type: 'ai', prompt: prompt.trim(), aiProvider: provider } 
-    }));
-    onClose();
+    void runPro('send_to_ai', () => {
+      editorActions.emitExportCanvas({
+        type: 'ai',
+        prompt: prompt.trim(),
+        aiProvider: provider,
+      });
+      onClose();
+    });
   };
 
   const quickPrompts = [
@@ -70,8 +77,8 @@ export default function SendToAIModal({ isOpen, onClose }: SendToAIModalProps) {
                 onClick={() => handleSend('ChatGPT')} 
                 className="h-auto p-3 justify-start bg-accent border-border hover:bg-primary hover:border-primary group"
               >
-                <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center group-hover:bg-primary-foreground/20 shrink-0 mr-3">
-                  <Bot size={18} className="text-emerald-600 group-hover:text-primary-foreground" />
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center group-hover:bg-primary-foreground/20 shrink-0 mr-3">
+                  <Bot size={18} className="text-primary group-hover:text-primary-foreground" />
                 </div>
                 <div className="flex flex-col items-start text-left">
                   <span className="font-semibold text-foreground group-hover:text-primary-foreground text-sm">ChatGPT</span>
@@ -82,10 +89,10 @@ export default function SendToAIModal({ isOpen, onClose }: SendToAIModalProps) {
               <Button 
                 variant="outline" 
                 onClick={() => handleSend('Claude')} 
-                className="h-auto p-3 justify-start bg-accent border-border hover:bg-amber-600 hover:border-amber-500 group"
+                className="h-auto p-3 justify-start bg-accent border-border hover:bg-primary hover:border-primary group"
               >
-                <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center group-hover:bg-primary-foreground/20 shrink-0 mr-3">
-                  <Bot size={18} className="text-amber-600 group-hover:text-primary-foreground" />
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center group-hover:bg-primary-foreground/20 shrink-0 mr-3">
+                  <Bot size={18} className="text-primary group-hover:text-primary-foreground" />
                 </div>
                 <div className="flex flex-col items-start text-left">
                   <span className="font-semibold text-foreground group-hover:text-primary-foreground text-sm">Claude</span>
@@ -96,10 +103,10 @@ export default function SendToAIModal({ isOpen, onClose }: SendToAIModalProps) {
               <Button 
                 variant="outline" 
                 onClick={() => handleSend('Gemini')} 
-                className="h-auto p-3 justify-start bg-accent border-border hover:bg-purple-600 hover:border-purple-500 group"
+                className="h-auto p-3 justify-start bg-accent border-border hover:bg-primary hover:border-primary group"
               >
-                <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center group-hover:bg-primary-foreground/20 shrink-0 mr-3">
-                  <Bot size={18} className="text-purple-600 group-hover:text-primary-foreground" />
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center group-hover:bg-primary-foreground/20 shrink-0 mr-3">
+                  <Bot size={18} className="text-primary group-hover:text-primary-foreground" />
                 </div>
                 <div className="flex flex-col items-start text-left">
                   <span className="font-semibold text-foreground group-hover:text-primary-foreground text-sm">Gemini</span>

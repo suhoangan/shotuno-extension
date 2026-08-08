@@ -1,4 +1,6 @@
 import { get as idbGet } from 'idb-keyval';
+import { storage } from '../lib/chromeStorage';
+
 
 const GALLERY_KEY = 'canvas_gallery_images';
 
@@ -32,7 +34,7 @@ export function handleGalleryDesktopMessage(
 ): boolean {
   if (message.type === 'REDOWNLOAD_GALLERY_IMAGE') {
     const { id } = message.payload as { id: string };
-    chrome.storage.local.get([GALLERY_KEY], async (result) => {
+    storage.local.get([GALLERY_KEY], async (result) => {
       const images = (result[GALLERY_KEY] as GalleryImage[] | undefined) || [];
       const img = images.find((i) => i.id === id);
       const dataUrl = (await idbGet(`gallery_full_${id}`)) as string | undefined;
@@ -51,7 +53,7 @@ export function handleGalleryDesktopMessage(
             return;
           }
           const updated = images.map((i) => (i.id === id ? { ...i, downloadId } : i));
-          chrome.storage.local.set({ [GALLERY_KEY]: updated }, () => {
+          storage.local.set({ [GALLERY_KEY]: updated }, () => {
             sendResponse({ success: true });
           });
         },
@@ -62,7 +64,7 @@ export function handleGalleryDesktopMessage(
 
   if (message.type === 'OPEN_GALLERY_ON_DESKTOP') {
     const { id } = message.payload as { id: string };
-    chrome.storage.local.get([GALLERY_KEY], async (result) => {
+    storage.local.get([GALLERY_KEY], async (result) => {
       const images = (result[GALLERY_KEY] as GalleryImage[] | undefined) || [];
       const img = images.find((i) => i.id === id);
       let downloadId = img?.downloadId;
@@ -82,7 +84,7 @@ export function handleGalleryDesktopMessage(
                 return;
               }
               const updated = images.map((i) => (i.id === id ? { ...i, downloadId: newId } : i));
-              chrome.storage.local.set({ [GALLERY_KEY]: updated }, () => resolve(newId));
+              storage.local.set({ [GALLERY_KEY]: updated }, () => resolve(newId));
             },
           );
         });

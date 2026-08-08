@@ -1,3 +1,4 @@
+
 const PLACEHOLDER =
   'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
@@ -11,8 +12,7 @@ async function blobToDataUrl(blob: Blob): Promise<string> {
 }
 
 /**
- * Small JPEG for chrome.storage.local list UI.
- * Full bytes stay in IndexedDB — storing full data URLs in sync storage freezes the side panel.
+ * Small JPEG for local list UI.
  */
 export async function makePinThumbnail(dataUrl: string, maxEdge = 200): Promise<string> {
   if (!dataUrl.startsWith('data:') && dataUrl.length < 80_000) return dataUrl;

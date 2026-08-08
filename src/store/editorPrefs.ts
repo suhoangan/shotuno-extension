@@ -1,5 +1,7 @@
 import { useEditorStore } from './useEditorStore';
 import { mergeToolSettings, type ToolSettings, type WatermarkMode } from './editorDefaults';
+import { storage } from '../lib/chromeStorage';
+
 
 export const EDITOR_PREFS_KEY = 'shotunoEditorPrefs';
 export const WATERMARK_IMAGE_KEY = 'shotunoWatermarkImage';
@@ -47,23 +49,23 @@ export function applyEditorPrefs(prefs: EditorPrefs) {
 }
 
 function writePrefs(prefs: EditorPrefs) {
-  if (typeof chrome === 'undefined' || !chrome.storage?.local) return;
-  chrome.storage.local.set({ [EDITOR_PREFS_KEY]: prefs });
+  if (!storage.isAvailable()) return;
+  storage.local.set({ [EDITOR_PREFS_KEY]: prefs });
 }
 
 function writeWatermarkImage(url: string | null) {
-  if (typeof chrome === 'undefined' || !chrome.storage?.local) return;
-  if (url) chrome.storage.local.set({ [WATERMARK_IMAGE_KEY]: url });
-  else chrome.storage.local.remove([WATERMARK_IMAGE_KEY]);
+  if (!storage.isAvailable()) return;
+  if (url) storage.local.set({ [WATERMARK_IMAGE_KEY]: url });
+  else storage.local.remove([WATERMARK_IMAGE_KEY]);
 }
 
 export function hydrateEditorPrefs(): Promise<void> {
   return new Promise((resolve) => {
-    if (typeof chrome === 'undefined' || !chrome.storage?.local) {
+    if (!storage.isAvailable()) {
       resolve();
       return;
     }
-    chrome.storage.local.get([EDITOR_PREFS_KEY, WATERMARK_IMAGE_KEY], (result) => {
+    storage.local.get([EDITOR_PREFS_KEY, WATERMARK_IMAGE_KEY], (result) => {
       const prefs = result[EDITOR_PREFS_KEY] as EditorPrefs | undefined;
       if (prefs && typeof prefs === 'object') applyEditorPrefs(prefs);
       const logo = result[WATERMARK_IMAGE_KEY];

@@ -1,27 +1,29 @@
-import { useEffect, useState } from 'react';
-import CanvasEditor from './components/CanvasEditor';
-import Toolbar from './components/Toolbar';
-import AreaCaptureOverlay from './components/AreaCaptureOverlay';
-import FullPageCaptureOverlay from './components/FullPageCaptureOverlay';
-import GridCaptureOverlay from './components/grid-capture/GridCaptureOverlay';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { HardLoadingHost } from './components/HardLoadingHost';
 import { Toaster } from '../components/ui/sonner';
-import { ErrorBoundary } from '../components/ErrorBoundary';
 import { useEditorStore } from '../store/useEditorStore';
 import { useHardLoadingStore } from '../store/useHardLoadingStore';
-import { savePinImage, savePinImagesBatch } from '../lib/pinDb';
-import { cropVisibleCapture, settleThenCaptureVisibleTab } from './utils/areaCapture';
-import { limitImageResolution } from '../lib/limitImageResolution';
-import { toast } from 'sonner';
+import { prepareScreenshot } from './capture/openScreenshot';
+import { captureAreaCrop, finishAreaAsPin } from './capture/finishArea';
+import { finishGridCapture } from './capture/finishGrid';
+import type { CaptureMode } from './capture/types';
+
+
 
 export type BootstrapMessage =
   | { type: 'TOGGLE_EDITOR'; payload?: string }
   | { type: 'START_AREA_SELECTION' }
   | { type: 'START_PIN_AREA_SELECTION' }
   | { type: 'START_FULL_PAGE_CAPTURE' }
-  | { type: 'START_GRID_CAPTURE' };
+  | { type: 'START_GRID_CAPTURE' }
+  | { type: 'START_SCROLL_AREA_CAPTURE' };
 
-type CaptureMode = 'area' | 'pin_area' | 'full' | 'grid' | null;
+/** Capture / editor chunks — validated under `vite build` (CRX dynamic import). */
+const AreaCaptureOverlay = lazy(() => import('./components/AreaCaptureOverlay'));
+const FullPageCaptureOverlay = lazy(() => import('./components/FullPageCaptureOverlay'));
+const GridCaptureOverlay = lazy(() => import('./components/grid-capture/GridCaptureOverlay'));
+const ScrollAreaCaptureOverlay = lazy(() => import('./components/ScrollAreaCaptureOverlay'));
+const EditorShell = lazy(() => import('./components/EditorShell'));
 
 function captureModeFromBootstrap(message: BootstrapMessage | null): CaptureMode {
   if (!message) return null;
@@ -29,12 +31,30 @@ function captureModeFromBootstrap(message: BootstrapMessage | null): CaptureMode
   if (message.type === 'START_PIN_AREA_SELECTION') return 'pin_area';
   if (message.type === 'START_FULL_PAGE_CAPTURE') return 'full';
   if (message.type === 'START_GRID_CAPTURE') return 'grid';
+  if (message.type === 'START_SCROLL_AREA_CAPTURE') return 'scroll_area';
   return null;
 }
 
 function screenshotFromBootstrap(message: BootstrapMessage | null): string | null {
   if (message?.type === 'TOGGLE_EDITOR') return message.payload ?? null;
   return null;
+}
+
+function ShellChrome({ children }: { children?: React.ReactNode }) {
+  return (
+    <>
+      <Toaster position="top-center" theme="light" />
+      <HardLoadingHost />
+      {children}
+    </>
+  );
+}
+
+/** Blocks page interaction while a lazy capture/editor chunk loads. */
+function ChunkFallback() {
+  return (
+    <div className="fixed inset-0 z-[999998] pointer-events-auto bg-foreground/20" aria-hidden />
+  );
 }
 
 export default function App({
@@ -48,11 +68,6 @@ export default function App({
   const [captureMode, setCaptureMode] = useState<CaptureMode>(() => captureModeFromBootstrap(bootstrap));
   const hardLoading = useHardLoadingStore((s) => s.loading);
 
-  /**
-   * Single entry point for every screenshot — tab capture, area crop, full page, and the
-   * popup's "Open image". Capping here rather than in `CanvasEditor` keeps the URL and the
-   * decoded image in the same coordinate space, which Smart Blur and OCR both depend on.
-   */
   const openScreenshot = async (dataUrl: string | null) => {
     setCaptureMode(null);
     if (!dataUrl) {
@@ -60,9 +75,7 @@ export default function App({
       return;
     }
     try {
-      useEditorStore.getState().reset();
-      const { dataUrl: sized } = await limitImageResolution(dataUrl);
-      setScreenshot(sized);
+      setScreenshot(await prepareScreenshot(dataUrl));
     } catch (e) {
       console.error('Failed to prepare image', e);
     }
@@ -80,6 +93,8 @@ export default function App({
       setCaptureMode('full');
     } else if (bootstrap.type === 'START_GRID_CAPTURE') {
       setCaptureMode('grid');
+    } else if (bootstrap.type === 'START_SCROLL_AREA_CAPTURE') {
+      setCaptureMode('scroll_area');
     }
   }, [bootstrap]);
 
@@ -96,22 +111,18 @@ export default function App({
     useHardLoadingStore.getState().hideHardLoading();
     setScreenshot(null);
     setCaptureMode(null);
-    // The store is module-level in a content script that outlives the editor, so without
-    // this the shapes and the 50-step history stay resident for the life of the tab.
     useEditorStore.getState().reset();
     onCloseEditor?.();
   };
 
   const finishAreaAsEditor = async (rect: { x: number; y: number; w: number; h: number }) => {
     setCaptureMode(null);
-    if (rect.w === 0 || rect.h === 0) {
-      onCloseEditor?.();
-      return;
-    }
-    
     try {
-      const full = await settleThenCaptureVisibleTab();
-      const cropped = await cropVisibleCapture(full, rect);
+      const cropped = await captureAreaCrop(rect);
+      if (!cropped) {
+        onCloseEditor?.();
+        return;
+      }
       await openScreenshot(cropped);
     } catch (e) {
       console.error(e);
@@ -119,58 +130,18 @@ export default function App({
     }
   };
 
-  const finishAreaAsPin = async (rect: { x: number; y: number; w: number; h: number }) => {
+  const onPinArea = async (rect: { x: number; y: number; w: number; h: number }) => {
     setCaptureMode(null);
-    if (rect.w === 0 || rect.h === 0) {
-      onCloseEditor?.();
-      return;
-    }
-    
-    try {
-      const full = await settleThenCaptureVisibleTab();
-      const cropped = await cropVisibleCapture(full, rect);
-      await savePinImage(cropped);
-      chrome.runtime.sendMessage({ type: 'OPEN_SIDE_PANEL' });
-      onCloseEditor?.();
-      toast.success('Saved to pins');
-    } catch (e) {
-      console.error(e);
-      const detail = e instanceof Error && e.message ? e.message : 'Could not pin screenshot';
-      toast.error(detail);
-      onCloseEditor?.();
-    }
+    await finishAreaAsPin(rect);
+    onCloseEditor?.();
   };
 
-  const finishGridCapture = async (regions: { id: string; x: number; y: number; w: number; h: number }[]) => {
+  const onGridCapture = async (
+    regions: { id: string; x: number; y: number; w: number; h: number }[],
+  ) => {
     setCaptureMode(null);
-    if (regions.length === 0) {
-      onCloseEditor?.();
-      return;
-    }
-    
-    try {
-      const full = await settleThenCaptureVisibleTab();
-      useHardLoadingStore.getState().showHardLoading({ title: 'Capturing grid', message: 'Processing regions' });
-      const batchId = `batch-${Date.now()}`;
-      
-      const croppedUrls: string[] = [];
-      for (const rect of regions) {
-        const cropped = await cropVisibleCapture(full, rect);
-        croppedUrls.push(cropped);
-      }
-      
-      await savePinImagesBatch(croppedUrls, batchId);
-      useHardLoadingStore.getState().hideHardLoading();
-      chrome.runtime.sendMessage({ type: 'OPEN_SIDE_PANEL' });
-      onCloseEditor?.();
-      toast.success(`Saved ${regions.length} regions to pins`);
-    } catch (e) {
-      useHardLoadingStore.getState().hideHardLoading();
-      console.error(e);
-      const detail = e instanceof Error && e.message ? e.message : 'Could not save grid capture';
-      toast.error(detail);
-      onCloseEditor?.();
-    }
+    await finishGridCapture(regions);
+    onCloseEditor?.();
   };
 
   const handleFullPageCapture = (dataUrl: string | null) => {
@@ -183,57 +154,56 @@ export default function App({
 
   if (captureMode === 'area' || captureMode === 'pin_area') {
     return (
-      <>
-        <Toaster position="top-center" theme="light" />
-        <HardLoadingHost />
-        <AreaCaptureOverlay
-          onClose={closeEditor}
-          onCapture={(rect) => 
-            captureMode === 'pin_area' 
-              ? finishAreaAsPin(rect) 
-              : finishAreaAsEditor(rect)
-          }
-        />
-      </>
+      <ShellChrome>
+        <Suspense fallback={<ChunkFallback />}>
+          <AreaCaptureOverlay
+            onClose={closeEditor}
+            onCapture={(rect) =>
+              captureMode === 'pin_area' ? onPinArea(rect) : finishAreaAsEditor(rect)
+            }
+          />
+        </Suspense>
+      </ShellChrome>
     );
   }
 
   if (captureMode === 'grid') {
     return (
-      <>
-        <Toaster position="top-center" theme="light" />
-        <HardLoadingHost />
-        <GridCaptureOverlay
-          onClose={closeEditor}
-          onCaptureAll={finishGridCapture}
-        />
-      </>
+      <ShellChrome>
+        <Suspense fallback={<ChunkFallback />}>
+          <GridCaptureOverlay onClose={closeEditor} onCaptureAll={onGridCapture} />
+        </Suspense>
+      </ShellChrome>
+    );
+  }
+
+  if (captureMode === 'scroll_area') {
+    return (
+      <ShellChrome>
+        <Suspense fallback={<ChunkFallback />}>
+          <ScrollAreaCaptureOverlay onClose={closeEditor} />
+        </Suspense>
+      </ShellChrome>
     );
   }
 
   if (captureMode === 'full') {
-    return <FullPageCaptureOverlay onCapture={handleFullPageCapture} />;
-  }
-
-  if (!screenshot) {
     return (
-      <>
-        <Toaster position="top-center" theme="light" />
-        <HardLoadingHost />
-      </>
+      <Suspense fallback={<ShellChrome><ChunkFallback /></ShellChrome>}>
+        <FullPageCaptureOverlay onCapture={handleFullPageCapture} />
+      </Suspense>
     );
   }
 
+  if (!screenshot) {
+    return <ShellChrome />;
+  }
+
   return (
-    <div className="fixed inset-0 z-[999999] flex items-center justify-center overflow-hidden font-sans bg-foreground/30 backdrop-blur-md pointer-events-auto">
-      <Toaster position="top-center" theme="light" />
-      <HardLoadingHost />
-      <Toolbar onClose={closeEditor} />
-      <div className="w-full h-full">
-        <ErrorBoundary fallbackTitle="Canvas crashed">
-          <CanvasEditor screenshotUrl={screenshot} />
-        </ErrorBoundary>
-      </div>
-    </div>
+    <ShellChrome>
+      <Suspense fallback={<ChunkFallback />}>
+        <EditorShell screenshotUrl={screenshot} onClose={closeEditor} />
+      </Suspense>
+    </ShellChrome>
   );
 }

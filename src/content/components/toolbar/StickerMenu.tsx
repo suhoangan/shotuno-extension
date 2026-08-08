@@ -1,10 +1,12 @@
 import { useEditorStore } from '../../../store/useEditorStore';
+import { editorActions } from '../../editorActions';
+import { Button } from '../../../components/ui/button';
 
 const STICKER_EMOJIS = ['🔥', '✅', '❌', '💡', '💯', '⭐', '❤️', '⚠️', '👀', '✨', '👍', '👎', '🎉', '🚀', '📌'];
 
 interface StickerPickerProps {
   onPicked?: () => void;
-  /** When set, parent handles add (e.g. Pro gate). Otherwise dispatches add-sticker. */
+  /** When set, parent handles add (e.g. Pro gate). Otherwise emits editorActions. */
   onAddSticker?: (emoji: string) => void;
 }
 
@@ -17,7 +19,7 @@ export function StickerPicker({ onPicked, onAddSticker }: StickerPickerProps) {
       onAddSticker(emoji);
       return;
     }
-    document.dispatchEvent(new CustomEvent('add-sticker', { detail: emoji }));
+    editorActions.emitAddSticker(emoji);
     setActiveTool('select');
     onPicked?.();
   };
@@ -27,9 +29,11 @@ export function StickerPicker({ onPicked, onAddSticker }: StickerPickerProps) {
       <div className="text-xs text-muted-foreground mb-1 px-0.5 font-medium">Stickers</div>
       <div className="grid grid-cols-5 gap-1 w-full">
         {STICKER_EMOJIS.map((emoji) => (
-          <button
+          <Button
             key={emoji}
             type="button"
+            variant="ghost"
+            size="icon"
             draggable={!onAddSticker}
             onDragStart={(e) => {
               if (onAddSticker) {
@@ -44,10 +48,10 @@ export function StickerPicker({ onPicked, onAddSticker }: StickerPickerProps) {
               onPicked?.();
             }}
             onClick={() => handleAddSticker(emoji)}
-            className="aspect-square min-w-0 w-full flex items-center justify-center text-base leading-none hover:bg-accent cursor-grab active:cursor-grabbing rounded"
+            className="aspect-square min-w-0 w-full h-auto flex items-center justify-center text-base leading-none hover:bg-accent cursor-grab active:cursor-grabbing rounded p-1"
           >
             {emoji}
-          </button>
+          </Button>
         ))}
       </div>
     </div>

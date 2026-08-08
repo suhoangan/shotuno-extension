@@ -4,22 +4,27 @@ import { isEditableKeyboardTarget } from '../canvas/isEditableKeyboardTarget';
 
 function keyToTool(e: KeyboardEvent): ToolType | null {
   const key = e.key.toLowerCase();
-  if (key === 'v') return 'select';
-  if (key === 'h' && !e.shiftKey) return 'pan';
-  if (key === 'h' && e.shiftKey) return 'highlight';
-  if (key === 'a') return 'arrow';
-  if (key === 't') return 'text';
-  if (key === 'b') return 'brush';
-  if (key === 'c' && !e.shiftKey) return 'counter';
-  if (key === 'c' && e.shiftKey) return 'crop';
-  if (key === 'm') return 'measure';
-  if (key === 'e') return 'ocr';
-  if (key === 'r') return 'rect';
-  if (key === 'o') return 'circle';
-  if (key === 'y') return 'triangle';
-  if (key === 's') return 'blur';
-  if (key === 'z') return 'magnifier';
-  return null;
+  const combo = e.shiftKey ? `shift+${key}` : key;
+  
+  const keyMap: Record<string, ToolType> = {
+    'v': 'select',
+    'h': 'pan',
+    'shift+h': 'highlight',
+    'a': 'arrow',
+    't': 'text',
+    'b': 'brush',
+    'c': 'counter',
+    'shift+c': 'crop',
+    'm': 'measure',
+    'e': 'ocr',
+    'r': 'rect',
+    'o': 'circle',
+    'y': 'triangle',
+    's': 'blur',
+    'z': 'magnifier'
+  };
+
+  return keyMap[combo] || keyMap[key] || null;
 }
 
 /** Tool hotkeys — use the same selectTool path as toolbar buttons (includes Pro gates). */

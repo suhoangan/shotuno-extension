@@ -95,6 +95,7 @@ export function textFontSizeFromStrokeWidth(strokeWidth: number) {
 }
 
 /** Watermark defaults — shared by WatermarkMenu + CanvasStage */
+export const DEFAULT_WATERMARK_ENABLED = false;
 export const DEFAULT_WATERMARK_TEXT = '© Shotuno';
 export const WATERMARK_IMAGE_MAX_WIDTH = 120;
 export const WATERMARK_OPACITY = 0.7;

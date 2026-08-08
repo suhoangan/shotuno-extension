@@ -133,7 +133,60 @@ export function isProFeatureId(value: string): value is ProFeatureId {
   return (PRO_FEATURE_IDS as readonly string[]).includes(value);
 }
 
-/** Map editor ToolType → feature id (null = always available: select/pan/image). */
+/**
+ * Map tool / action → catalog feature id for UI enable/disable.
+ * null = always available (select / pan / image).
+ */
+export function toolFeatureId(tool: string): ProFeatureId | null {
+  switch (tool) {
+    case 'arrow':
+      return 'arrow';
+    case 'rect':
+    case 'circle':
+    case 'triangle':
+    case 'shapes':
+      return 'shapes';
+    case 'stickers':
+    case 'sticker':
+      return 'stickers';
+    case 'text':
+      return 'text';
+    case 'brush':
+      return 'brush';
+    case 'highlight':
+      return 'highlight';
+    case 'counter':
+      return 'counter';
+    case 'blur':
+      return 'blur';
+    case 'magnifier':
+      return 'magnifier';
+    case 'measure':
+      return 'measure';
+    case 'crop':
+      return 'crop';
+    case 'ocr':
+      return 'ocr';
+    case 'smart_blur':
+      return 'smart_blur';
+    case 'send_to_ai':
+      return 'send_to_ai';
+    case 'watermark':
+      return 'watermark';
+    case 'window_border':
+      return 'window_border';
+    case 'resize':
+      return 'resize';
+    case 'export_copy':
+      return 'export_copy';
+    case 'export_download':
+      return 'export_download';
+    default:
+      return null;
+  }
+}
+
+/** Tools that consume Pro credits / subscription gate (subset of catalog). */
 export function toolProFeatureId(
   tool: string,
 ): ProFeatureId | null {

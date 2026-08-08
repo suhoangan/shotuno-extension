@@ -1,4 +1,6 @@
 import { SIDE_PANEL_OPEN_KEY } from '../lib/sidePanelUi';
+import { storage } from '../lib/chromeStorage';
+
 
 /** In-memory flag so toggle can open() without awaiting (keeps user gesture). */
 let sidePanelOpenCache = false;
@@ -10,9 +12,9 @@ export function getSidePanelOpenCache() {
 export async function setSidePanelOpen(open: boolean) {
   sidePanelOpenCache = open;
   // local so content scripts receive onChanged reliably
-  await chrome.storage.local.set({ [SIDE_PANEL_OPEN_KEY]: open });
+  await storage.local.set({ [SIDE_PANEL_OPEN_KEY]: open });
   try {
-    await chrome.storage.session.set({ [SIDE_PANEL_OPEN_KEY]: open });
+    await storage.session.set({ [SIDE_PANEL_OPEN_KEY]: open });
   } catch {
     /* session optional */
   }

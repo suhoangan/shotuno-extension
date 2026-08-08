@@ -90,7 +90,7 @@ export default defineManifest(async (env) => {
       'scripting',
       'sidePanel',
       'cookies',
-      // DevTools-style full-page capture (Page.captureScreenshot beyond viewport).
+      'contextMenus',
       'debugger',
     ],
     host_permissions: [...hostPermissions],

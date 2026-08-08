@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../../../components/ui/alert-dialog';
+import { ProBadge } from './ProBadge';
 
 interface ProSubscriptionModalProps {
   open: boolean;
@@ -28,14 +29,14 @@ export function ProSubscriptionModal({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="max-w-md p-6 bg-card border border-border/80 shadow-2xl rounded-2xl z-[99999999]">
+      <AlertDialogContent className="max-w-md sm:max-w-md p-5 bg-card border border-border/80 shadow-2xl rounded-2xl z-[99999999]">
         <AlertDialogHeader className="space-y-3 text-left">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-amber-500/15 text-amber-500 ring-1 ring-amber-500/30">
-                <Crown size={20} className="fill-amber-500/20" />
+              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-primary/15 text-primary ring-1 ring-primary/30">
+                <Crown size={20} className="fill-primary/20" />
               </div>
-              <span className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
+              <span className="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-2.5 py-0.5 rounded-full border border-primary/20">
                 Shotuno Pro
               </span>
             </div>
@@ -56,11 +57,9 @@ export function ProSubscriptionModal({
 
         <div className="my-4 space-y-2.5">
           <div className="flex items-start gap-3 p-3 rounded-xl bg-muted/50 border border-border/40">
-            <div className="relative p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 shrink-0">
-              <Sparkles size={18} className="text-amber-500" />
-              <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-500 text-slate-950 shadow-sm ring-2 ring-background">
-                <Crown size={8} className="fill-current" />
-              </span>
+            <div className="relative p-2 rounded-lg bg-primary/10 border border-primary/20 shrink-0">
+              <Sparkles size={18} className="text-primary" />
+              <ProBadge show className="-top-1 -right-1 ring-2" />
             </div>
             <div className="text-xs">
               <span className="font-semibold text-foreground block">Smart Parse & OCR</span>
@@ -69,11 +68,9 @@ export function ProSubscriptionModal({
           </div>
 
           <div className="flex items-start gap-3 p-3 rounded-xl bg-muted/50 border border-border/40">
-            <div className="relative p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 shrink-0">
-              <ShieldAlert size={18} className="text-blue-500" />
-              <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-500 text-slate-950 shadow-sm ring-2 ring-background">
-                <Crown size={8} className="fill-current" />
-              </span>
+            <div className="relative p-2 rounded-lg bg-primary/10 border border-primary/20 shrink-0">
+              <ShieldAlert size={18} className="text-primary" />
+              <ProBadge show className="-top-1 -right-1 ring-2" />
             </div>
             <div className="text-xs">
               <span className="font-semibold text-foreground block">AI Sensitive Data Blur</span>
@@ -82,11 +79,9 @@ export function ProSubscriptionModal({
           </div>
 
           <div className="flex items-start gap-3 p-3 rounded-xl bg-muted/50 border border-border/40">
-            <div className="relative p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 shrink-0">
-              <Image size={18} className="text-emerald-500" />
-              <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-500 text-slate-950 shadow-sm ring-2 ring-background">
-                <Crown size={8} className="fill-current" />
-              </span>
+            <div className="relative p-2 rounded-lg bg-primary/10 border border-primary/20 shrink-0">
+              <Image size={18} className="text-primary" />
+              <ProBadge show className="-top-1 -right-1 ring-2" />
             </div>
             <div className="text-xs">
               <span className="font-semibold text-foreground block">Pro Styling & Watermarks</span>
@@ -94,19 +89,19 @@ export function ProSubscriptionModal({
             </div>
           </div>
 
-          <div className="flex items-center gap-2 pt-1 px-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-            <CheckCircle2 size={14} className="shrink-0" />
+          <div className="flex items-center gap-2 pt-1 px-1 text-xs font-medium text-foreground">
+            <CheckCircle2 size={14} className="shrink-0 text-primary" />
             <span>Standard editing tools (arrows, text, crop, export) remain 100% free.</span>
           </div>
         </div>
 
-        <AlertDialogFooter className="flex-col sm:flex-row gap-2 mt-4">
-          <AlertDialogCancel className="w-full sm:w-auto text-xs font-medium text-muted-foreground hover:bg-accent rounded-xl py-2.5 px-4 border border-border/60">
+        <AlertDialogFooter className="mt-4 -mx-5 -mb-5 p-5 flex flex-wrap sm:flex-nowrap flex-col-reverse sm:flex-row gap-2 sm:justify-end">
+          <AlertDialogCancel className="w-full sm:w-auto text-xs font-medium text-muted-foreground hover:bg-accent rounded-xl py-2.5 px-4 border border-border/60 m-0">
             Continue with Free Tools
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleUpgradeClick}
-            className="w-full sm:w-auto text-xs font-semibold bg-amber-500 text-slate-950 hover:bg-amber-400 rounded-xl py-2.5 px-5 shadow-sm transition-all"
+            className="w-full sm:w-auto text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/80 rounded-xl py-2.5 px-5 shadow-sm transition-all m-0"
           >
             Log In / Upgrade to Pro
           </AlertDialogAction>

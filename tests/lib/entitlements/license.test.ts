@@ -21,19 +21,6 @@ describe('license helpers', () => {
     expect(dailyCreditsRemaining(user)).toBe(9);
   });
 
-  it('treats TRIAL as not free-tier crowns but metered', () => {
-    const user = {
-      entitlements: {
-        licenseStatus: 'TRIAL' as const,
-        dailyCreditsRemaining: 12,
-        unlimitedCredits: false,
-        canUsePro: true,
-      },
-    };
-    expect(isUserFreeTier(user)).toBe(false);
-    expect(hasUnlimitedCredits(user)).toBe(false);
-  });
-
   it('treats PRO as unlimited', () => {
     const user = {
       entitlements: {
@@ -44,5 +31,10 @@ describe('license helpers', () => {
     };
     expect(isUserFreeTier(user)).toBe(false);
     expect(hasUnlimitedCredits(user)).toBe(true);
+  });
+
+  it('returns 0 daily credits for null or anonymous user', () => {
+    expect(dailyCreditsRemaining(null)).toBe(0);
+    expect(dailyCreditsRemaining(undefined)).toBe(0);
   });
 });

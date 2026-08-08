@@ -1,11 +1,12 @@
-import { Copy, Download, X } from 'lucide-react';
+import { Copy, Download, Share2, X } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/tooltip';
 import { ICON } from './toolbarUi';
 
 interface ExportActionsProps {
-  onCopy: () => void;
-  onDownload: () => void;
+  onCopy?: () => void;
+  onDownload?: () => void;
+  onShareLink?: () => void;
   onClose: () => void;
   isVertical?: boolean;
   busy?: boolean;
@@ -14,44 +15,68 @@ interface ExportActionsProps {
 export function ExportActions({
   onCopy,
   onDownload,
+  onShareLink,
   onClose,
   isVertical,
   busy = false,
 }: ExportActionsProps) {
   return (
     <>
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onCopy}
-              disabled={busy}
-              className="h-8 w-8 text-muted-foreground hover:bg-accent hover:text-foreground"
-            />
-          }
-        >
-          <Copy size={ICON} />
-        </TooltipTrigger>
-        <TooltipContent side="bottom">Copy to Clipboard</TooltipContent>
-      </Tooltip>
+      {onShareLink && (
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onShareLink}
+                disabled={busy}
+                className="h-8 w-8 text-muted-foreground hover:bg-accent hover:text-foreground"
+              />
+            }
+          >
+            <Share2 size={ICON} />
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Share Cloud Link</TooltipContent>
+        </Tooltip>
+      )}
 
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <Button
-              size="icon"
-              onClick={onDownload}
-              disabled={busy}
-              className={`h-8 w-8 text-muted-foreground hover:bg-primary hover:text-primary-foreground bg-card ${isVertical ? 'mt-1' : 'ml-1'}`}
-            />
-          }
-        >
-          <Download size={ICON} />
-        </TooltipTrigger>
-        {!isVertical && <TooltipContent side="bottom">Save File</TooltipContent>}
-      </Tooltip>
+      {onCopy && (
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onCopy}
+                disabled={busy}
+                className="h-8 w-8 text-muted-foreground hover:bg-accent hover:text-foreground"
+              />
+            }
+          >
+            <Copy size={ICON} />
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Copy to Clipboard</TooltipContent>
+        </Tooltip>
+      )}
+
+      {onDownload && (
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                size="icon"
+                onClick={onDownload}
+                disabled={busy}
+                className={`h-8 w-8 text-muted-foreground hover:bg-primary hover:text-primary-foreground bg-card ${isVertical ? 'mt-1' : 'ml-1'}`}
+              />
+            }
+          >
+            <Download size={ICON} />
+          </TooltipTrigger>
+          {!isVertical && <TooltipContent side="bottom">Save File</TooltipContent>}
+        </Tooltip>
+      )}
 
       <Tooltip>
         <TooltipTrigger

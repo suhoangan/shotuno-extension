@@ -1,4 +1,6 @@
 import { createPrefetchedFileCache } from './prefetchedFileCache';
+import { storage } from '../lib/chromeStorage';
+
 
 export const PINS_STORAGE_KEY = 'shotuno_pins';
 
@@ -8,6 +10,8 @@ export type PinImage = {
   timestamp: number;
   filename?: string;
   batchId?: string;
+  cloudUrl?: string;
+  shareId?: string;
 };
 
 type MessageResponse = {
@@ -62,9 +66,9 @@ export async function syncPins(): Promise<PinImage[]> {
 }
 
 export async function loadPins(): Promise<PinImage[]> {
-  if (typeof chrome === 'undefined' || !chrome.storage?.local) return [];
+  if (!storage.isAvailable()) return [];
   return new Promise((resolve) => {
-    chrome.storage.local.get([PINS_STORAGE_KEY], (result) => {
+    storage.local.get([PINS_STORAGE_KEY], (result) => {
       if (chrome.runtime.lastError) {
         resolve([]);
         return;
@@ -103,6 +107,11 @@ export async function deletePins(ids: string[]): Promise<void> {
 export async function renamePin(id: string, filename: string): Promise<void> {
   const response = await sendRuntimeMessage({ type: 'RENAME_PIN', payload: { id, filename } });
   if (!response?.success) throw new Error(response?.error || 'Rename failed');
+}
+
+export async function updatePin(id: string, patch: Partial<PinImage>): Promise<void> {
+  const response = await sendRuntimeMessage({ type: 'UPDATE_PIN', payload: { id, patch } });
+  if (!response?.success) throw new Error(response?.error || 'Update failed');
 }
 
 /** Save a pin image into the browser Downloads folder. */

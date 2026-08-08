@@ -1,4 +1,3 @@
-/** Crop a visible-tab capture to a CSS-pixel rect (accounts for devicePixelRatio). */
 export function cropVisibleCapture(
   dataUrl: string,
   rect: { x: number; y: number; w: number; h: number },
@@ -6,10 +5,13 @@ export function cropVisibleCapture(
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
-      const dpr = window.devicePixelRatio || 1;
+      const viewportW = document.documentElement.clientWidth || window.innerWidth;
+      const viewportH = document.documentElement.clientHeight || window.innerHeight;
+      const scaleX = img.naturalWidth / viewportW;
+      const scaleY = img.naturalHeight / viewportH;
       const canvas = document.createElement('canvas');
-      canvas.width = rect.w * dpr;
-      canvas.height = rect.h * dpr;
+      canvas.width = Math.max(1, Math.round(rect.w * scaleX));
+      canvas.height = Math.max(1, Math.round(rect.h * scaleY));
       const ctx = canvas.getContext('2d');
       if (!ctx) {
         reject(new Error('Canvas unavailable'));
@@ -17,14 +19,14 @@ export function cropVisibleCapture(
       }
       ctx.drawImage(
         img,
-        rect.x * dpr,
-        rect.y * dpr,
-        rect.w * dpr,
-        rect.h * dpr,
+        rect.x * scaleX,
+        rect.y * scaleY,
+        rect.w * scaleX,
+        rect.h * scaleY,
         0,
         0,
-        rect.w * dpr,
-        rect.h * dpr,
+        canvas.width,
+        canvas.height,
       );
       const out = canvas.toDataURL('image/png');
       canvas.width = 0;

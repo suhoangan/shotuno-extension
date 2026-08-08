@@ -55,20 +55,20 @@ export default function AreaCaptureOverlay({
     }
     
     // Auto-snapping logic
-    const elements = document.elementsFromPoint(e.clientX, e.clientY);
-    const target = elements.find(el => el.id !== 'shotuno-root' && !el.closest('#shotuno-root'));
-    
-    if (target && target.getBoundingClientRect) {
-      const rect = target.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0 && target.tagName !== 'HTML' && target.tagName !== 'BODY') {
-        setHoverRect({ x: rect.left, y: rect.top, w: rect.width, h: rect.height });
-      } else {
-        setHoverRect(null);
-      }
-    } else {
-      setHoverRect(null);
-    }
+    setHoverRect(getAreaHoverRect(e.clientX, e.clientY));
   };
+
+function getAreaHoverRect(clientX: number, clientY: number): { x: number; y: number; w: number; h: number } | null {
+  const elements = document.elementsFromPoint(clientX, clientY);
+  const target = elements.find((el) => el.id !== 'shotuno-root' && !el.closest('#shotuno-root'));
+  if (!target || typeof target.getBoundingClientRect !== 'function') return null;
+  if (target.tagName === 'HTML' || target.tagName === 'BODY') return null;
+
+  const rect = target.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) return null;
+
+  return { x: rect.left, y: rect.top, w: rect.width, h: rect.height };
+}
 
   const handleMouseUp = () => {
     if (!isDragging) return;
@@ -79,17 +79,12 @@ export default function AreaCaptureOverlay({
     const w = Math.abs(currentPos.x - startPos.x);
     const h = Math.abs(currentPos.y - startPos.y);
 
-    if (w <= 10 && h <= 10) {
-      // It's a click (no significant drag)
-      if (hoverRect) {
-        onCapture(hoverRect);
-      } else {
-        onCapture({ x: 0, y: 0, w: 0, h: 0 }); 
-      }
-    } else {
-      // It's a drag capture
+    if (w > 10 || h > 10) {
       onCapture({ x, y, w, h });
+      return;
     }
+
+    onCapture(hoverRect || { x: 0, y: 0, w: 0, h: 0 });
   };
 
   const x = Math.min(startPos.x, currentPos.x);
@@ -129,7 +124,7 @@ export default function AreaCaptureOverlay({
           className="absolute border-2 border-primary border-dashed pointer-events-none transition-all duration-150 ease-out"
           style={{ left: hoverRect.x, top: hoverRect.y, width: hoverRect.w, height: hoverRect.h }}
         >
-          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-black/75 text-primary-foreground text-xs px-2 py-1 rounded whitespace-nowrap">
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-background/90 text-foreground border border-border text-xs px-2 py-1 rounded whitespace-nowrap">
             {Math.round(hoverRect.w)} x {Math.round(hoverRect.h)}
           </div>
         </div>
@@ -139,7 +134,7 @@ export default function AreaCaptureOverlay({
           className="absolute border-2 border-primary pointer-events-none"
           style={{ left: x, top: y, width: w, height: h }}
         >
-          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-black/75 text-primary-foreground text-xs px-2 py-1 rounded whitespace-nowrap">
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-background/90 text-foreground border border-border text-xs px-2 py-1 rounded whitespace-nowrap">
             {w} x {h}
           </div>
         </div>

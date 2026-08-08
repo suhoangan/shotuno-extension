@@ -31,6 +31,8 @@ import { setShotunoDragData } from '../../lib/shotunoDrag';
 import { openEditorWithDataUrl } from '../../lib/openEditor';
 import { PinList } from './PinList';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { storage } from '../../lib/chromeStorage';
+
 
 async function openPinInEditor(id: string) {
   const dataUrl = await getPinFullImage(id);
@@ -53,13 +55,13 @@ export function PinPanel({ className = '' }: { className?: string }) {
 
   useEffect(() => {
     void syncPins().then(setPins);
-    if (typeof chrome === 'undefined' || !chrome.storage) return;
+    if (!storage.isAvailable()) return;
     const listener = (changes: Record<string, chrome.storage.StorageChange>, area: string) => {
       if (area !== 'local' || !changes[PINS_STORAGE_KEY]) return;
       setPins((changes[PINS_STORAGE_KEY].newValue as PinImage[]) || []);
     };
-    chrome.storage.onChanged.addListener(listener);
-    return () => chrome.storage.onChanged.removeListener(listener);
+    storage.onChanged.addListener(listener);
+    return () => storage.onChanged.removeListener(listener);
   }, []);
 
   useEffect(() => {

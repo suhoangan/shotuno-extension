@@ -88,7 +88,7 @@ export function CanvasStage(props: CanvasStageProps) {
       onTouchStart={handleMouseDown}
       onTouchMove={handleMouseMove}
       onTouchEnd={handleMouseUp}
-      className="shadow-2xl bg-black/10"
+      className="shadow-2xl bg-muted/20"
       style={{ cursor: isPanning ? 'grab' : cursorForTool(activeTool as ToolType) }}
     >
       <Layer>
