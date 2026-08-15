@@ -2,6 +2,7 @@ import { Copy, Download, Share2, X } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/tooltip';
 import { ICON } from './toolbarUi';
+import { useTranslation } from '../../../lib/i18n';
 
 interface ExportActionsProps {
   onCopy?: () => void;
@@ -20,6 +21,8 @@ export function ExportActions({
   isVertical,
   busy = false,
 }: ExportActionsProps) {
+  const { t } = useTranslation();
+
   return (
     <>
       {onShareLink && (
@@ -37,7 +40,7 @@ export function ExportActions({
           >
             <Share2 size={ICON} />
           </TooltipTrigger>
-          <TooltipContent side="bottom">Share Cloud Link</TooltipContent>
+          <TooltipContent side="bottom">{t('toolbar.shareCloudLink')}</TooltipContent>
         </Tooltip>
       )}
 
@@ -56,7 +59,7 @@ export function ExportActions({
           >
             <Copy size={ICON} />
           </TooltipTrigger>
-          <TooltipContent side="bottom">Copy to Clipboard</TooltipContent>
+          <TooltipContent side="bottom">{t('toolbar.copyTooltip')}</TooltipContent>
         </Tooltip>
       )}
 
@@ -74,7 +77,7 @@ export function ExportActions({
           >
             <Download size={ICON} />
           </TooltipTrigger>
-          {!isVertical && <TooltipContent side="bottom">Save File</TooltipContent>}
+          {!isVertical && <TooltipContent side="bottom">{t('toolbar.saveFile')}</TooltipContent>}
         </Tooltip>
       )}
 
@@ -91,7 +94,7 @@ export function ExportActions({
         >
           <X size={ICON} />
         </TooltipTrigger>
-        {!isVertical && <TooltipContent side="bottom">Close</TooltipContent>}
+        {!isVertical && <TooltipContent side="bottom">{t('toolbar.closeTooltip')}</TooltipContent>}
       </Tooltip>
     </>
   );

@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import { Download, Eye, FolderOpen, Pencil, PencilLine, Share2, Trash2 } from 'lucide-react';
+import { Copy, Download, Eye, FolderOpen, Pencil, PencilLine, Trash2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,9 +12,8 @@ interface LibraryItemMenuProps {
   onEdit: () => void;
   onPreview: () => void;
   onRename?: () => void;
+  onCopy?: () => void;
   onDownload?: () => void;
-  onShareLink?: () => void;
-  onCopyCloudLink?: () => void;
   onOpenDesktop?: () => void;
   onRemove?: () => void;
 }
@@ -25,35 +24,25 @@ export function LibraryItemMenu({
   onEdit,
   onPreview,
   onRename,
+  onCopy,
   onDownload,
-  onShareLink,
-  onCopyCloudLink,
   onOpenDesktop,
   onRemove,
 }: LibraryItemMenuProps) {
   const [open, setOpen] = useState(false);
-  const [pos, setPos] = useState({ x: 0, y: 0 });
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <div
-        className="contents"
-        onContextMenu={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          setPos({ x: e.clientX, y: e.clientY });
-          setOpen(true);
-        }}
+      <DropdownMenuTrigger render={children as React.ReactElement} />
+      <DropdownMenuContent 
+        align="start" 
+        side="bottom" 
+        sideOffset={0} 
+        className="min-w-44" 
+        onClick={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
+        onPointerUp={(e) => e.stopPropagation()}
       >
-        {children}
-      </div>
-      <DropdownMenuTrigger
-        className="fixed w-0 h-0 p-0 overflow-hidden opacity-0 pointer-events-none"
-        style={{ left: pos.x, top: pos.y }}
-        aria-hidden
-        tabIndex={-1}
-      />
-      <DropdownMenuContent align="start" side="bottom" sideOffset={0} className="min-w-44">
         <DropdownMenuItem onClick={onEdit}>
           <Pencil size={14} />
           Edit
@@ -62,16 +51,10 @@ export function LibraryItemMenu({
           <Eye size={14} />
           Preview
         </DropdownMenuItem>
-        {onShareLink && (
-          <DropdownMenuItem onClick={onShareLink}>
-            <Share2 size={14} />
-            Share Cloud Link
-          </DropdownMenuItem>
-        )}
-        {onCopyCloudLink && (
-          <DropdownMenuItem onClick={onCopyCloudLink}>
-            <Share2 size={14} />
-            Copy Cloud Link (Synced)
+        {onCopy && (
+          <DropdownMenuItem onClick={onCopy}>
+            <Copy size={14} />
+            Copy Image
           </DropdownMenuItem>
         )}
         {onRename && (

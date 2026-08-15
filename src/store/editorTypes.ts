@@ -1,4 +1,4 @@
-export type ToolType = 'select' | 'pan' | 'arrow' | 'measure' | 'rect' | 'circle' | 'triangle' | 'text' | 'brush' | 'blur' | 'image' | 'crop' | 'counter' | 'magnifier' | 'highlight' | 'ocr';
+export type ToolType = 'select' | 'pan' | 'arrow' | 'measure' | 'rect' | 'circle' | 'triangle' | 'text' | 'brush' | 'blur' | 'image' | 'crop' | 'counter' | 'magnifier' | 'highlight' | 'highlight-area' | 'ocr';
 
 // Stickers are placed from the tray rather than by a toolbar tool, so shapes
 // cover one more kind than the tools do
@@ -13,6 +13,7 @@ export interface BaseShape {
   scaleX?: number;
   scaleY?: number;
   isSolid?: boolean;
+  opacity?: number;
   isTwoWay?: boolean;
   /** Arrow drawn as a plain line (no pointer heads). */
   isLine?: boolean;
@@ -116,4 +117,13 @@ export interface HighlightShape extends BaseShape {
   strokeWidth: number;
 }
 
-export type Shape = ArrowShape | HighlightShape | MeasureShape | RectShape | BrushShape | TextShape | StickerShape | ImageShape | CounterShape | MagnifierShape;
+export interface HighlightAreaShape extends BaseShape {
+  type: 'highlight-area';
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  color: string;
+}
+
+export type Shape = ArrowShape | HighlightShape | HighlightAreaShape | MeasureShape | RectShape | BrushShape | TextShape | StickerShape | ImageShape | CounterShape | MagnifierShape;

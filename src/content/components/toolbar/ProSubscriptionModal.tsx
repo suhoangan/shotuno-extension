@@ -6,7 +6,6 @@ import {
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../../../components/ui/alert-dialog';
@@ -95,7 +94,7 @@ export function ProSubscriptionModal({
           </div>
         </div>
 
-        <AlertDialogFooter className="mt-4 -mx-5 -mb-5 p-5 flex flex-wrap sm:flex-nowrap flex-col-reverse sm:flex-row gap-2 sm:justify-end">
+        <div className="mt-4 -mx-5 -mb-5 p-5 flex flex-col-reverse sm:flex-row gap-2 justify-center bg-muted/30 border-t border-border/50 rounded-b-2xl">
           <AlertDialogCancel className="w-full sm:w-auto text-xs font-medium text-muted-foreground hover:bg-accent rounded-xl py-2.5 px-4 border border-border/60 m-0">
             Continue with Free Tools
           </AlertDialogCancel>
@@ -105,7 +104,7 @@ export function ProSubscriptionModal({
           >
             Log In / Upgrade to Pro
           </AlertDialogAction>
-        </AlertDialogFooter>
+        </div>
       </AlertDialogContent>
     </AlertDialog>
   );

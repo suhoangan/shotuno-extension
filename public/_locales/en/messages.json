@@ -1,0 +1,22 @@
+{
+  "extensionName": {
+    "message": "Shotuno",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Capture visible, area, or full-page screenshots and annotate them in-tab - arrows, blur, OCR, pins, and more.",
+    "description": "Description of the extension"
+  },
+  "actionTitle": {
+    "message": "Shotuno - Capture & annotate",
+    "description": "Title for action popup"
+  },
+  "contextMenuCaptureArea": {
+    "message": "Capture selected area",
+    "description": "Context menu title for capturing selected area"
+  },
+  "contextMenuCaptureFull": {
+    "message": "Capture full page",
+    "description": "Context menu title for capturing full page"
+  }
+}

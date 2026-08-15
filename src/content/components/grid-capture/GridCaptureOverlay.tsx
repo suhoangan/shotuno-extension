@@ -24,9 +24,11 @@ export default function GridCaptureOverlay({
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
-    handleWheel,
     handleRegionMouseDown,
+    registerBackdrop,
   } = useGridDrag();
+
+
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -57,11 +59,11 @@ export default function GridCaptureOverlay({
     <>
       <div
         id="grid-capture-overlay-backdrop"
+        ref={registerBackdrop}
         className="fixed inset-0 z-[9999999] cursor-crosshair pointer-events-auto"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onWheel={handleWheel}
       >
         <svg className="absolute inset-0 w-full h-full pointer-events-none">
           <defs>

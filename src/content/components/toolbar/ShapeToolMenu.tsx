@@ -4,13 +4,12 @@ import { Button } from '../../../components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/tooltip';
 import { ICON, ICON_SM, ICON_XS } from './toolbarUi';
 import { StickerPicker } from './StickerMenu';
+import { useUIStore } from '../../../store/useUIStore';
 
 const SHAPE_TOOLS: ToolType[] = ['rect', 'circle', 'triangle'];
 
 interface ShapeToolMenuProps {
   activeTool: ToolType;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   onSelect: (tool: ToolType) => void;
   onAddSticker?: (emoji: string) => void;
   isVertical?: boolean;
@@ -18,12 +17,12 @@ interface ShapeToolMenuProps {
 
 export function ShapeToolMenu({
   activeTool,
-  open,
-  onOpenChange,
   onSelect,
   onAddSticker,
   isVertical,
 }: ShapeToolMenuProps) {
+  const { activeMenu, setActiveMenu } = useUIStore();
+  const open = activeMenu === 'shape';
   const isShape = SHAPE_TOOLS.includes(activeTool);
   const ActiveIcon =
     activeTool === 'circle' ? Circle : activeTool === 'triangle' ? Triangle : Square;
@@ -34,10 +33,11 @@ export function ShapeToolMenu({
         <TooltipTrigger
           render={
             <Button
+              data-tool="shape"
               variant={isShape ? 'default' : 'ghost'}
               size="icon"
               onClick={() => {
-                if (isShape) onOpenChange(!open);
+                if (isShape) setActiveMenu(open ? null : 'shape');
                 else onSelect('rect');
               }}
               className={`h-8 w-8 transition-colors flex items-center justify-center ${isVertical ? 'rounded-b-none' : 'rounded-r-none'} ${
@@ -51,12 +51,13 @@ export function ShapeToolMenu({
           <ActiveIcon size={ICON} />
         </TooltipTrigger>
         <TooltipContent side="bottom" sideOffset={8}>
-          Shapes
+          Shapes & Stickers
         </TooltipContent>
       </Tooltip>
       <Button
+        data-tool="shape-toggle"
         variant={isShape ? 'default' : 'ghost'}
-        onClick={() => onOpenChange(!open)}
+        onClick={() => setActiveMenu(open ? null : 'shape')}
         className={`px-0 transition-colors flex items-center justify-center ${isVertical ? 'h-4 w-8 rounded-t-none border-t' : 'h-8 w-6 rounded-l-none border-l'} ${
           isShape
             ? 'bg-primary text-primary-foreground hover:bg-primary/80 border-primary/50'
@@ -77,10 +78,11 @@ export function ShapeToolMenu({
           ).map(([tool, Icon, label]) => (
             <Button
               key={tool}
+              data-tool={tool}
               variant="ghost"
               onClick={() => {
                 onSelect(tool);
-                onOpenChange(false);
+                setActiveMenu(null);
               }}
               className={`h-8 justify-start gap-2 px-2 ${
                 activeTool === tool
@@ -88,6 +90,7 @@ export function ShapeToolMenu({
                   : 'text-muted-foreground hover:bg-accent hover:text-foreground'
               }`}
             >
+
               <Icon size={ICON_SM} /> <span className="text-sm whitespace-nowrap">{label}</span>
             </Button>
           ))}
@@ -95,7 +98,7 @@ export function ShapeToolMenu({
             <>
               <div className="h-px bg-border/40 my-0.5" />
               <StickerPicker
-                onPicked={() => onOpenChange(false)}
+                onPicked={() => setActiveMenu(null)}
                 onAddSticker={onAddSticker}
               />
             </>

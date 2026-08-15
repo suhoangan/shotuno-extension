@@ -1,0 +1,22 @@
+{
+  "extensionName": {
+    "message": "Shotuno",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "表示領域、選択領域、または全画面のスクリーンショットをキャプチャして直接注釈 - 矢印、ぼかし、OCR、ピン管理。",
+    "description": "Description of the extension"
+  },
+  "actionTitle": {
+    "message": "Shotuno - キャプチャ＆注釈",
+    "description": "Title for action popup"
+  },
+  "contextMenuCaptureArea": {
+    "message": "選択領域をキャプチャ",
+    "description": "Context menu title for capturing selected area"
+  },
+  "contextMenuCaptureFull": {
+    "message": "全画面をキャプチャ",
+    "description": "Context menu title for capturing full page"
+  }
+}

@@ -10,7 +10,7 @@ import {
 
 describe('proFeatures', () => {
   it('lists extension features in sync with the API catalog size', () => {
-    expect(PRO_FEATURE_IDS.length).toBe(23);
+    expect(PRO_FEATURE_IDS.length).toBe(24);
     expect(PRO_FEATURE_IDS).toContain('window_border');
     expect(PRO_FEATURE_IDS).not.toContain('cloud_drive');
     expect(PRO_FEATURE_IDS).not.toContain('cloud_s3');

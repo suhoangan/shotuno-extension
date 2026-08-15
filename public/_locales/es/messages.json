@@ -1,0 +1,22 @@
+{
+  "extensionName": {
+    "message": "Shotuno",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Captura contenido visible, área o página completa y anota en la pestaña: flechas, desenfoque, OCR y más.",
+    "description": "Description of the extension"
+  },
+  "actionTitle": {
+    "message": "Shotuno - Captura y anota",
+    "description": "Title for action popup"
+  },
+  "contextMenuCaptureArea": {
+    "message": "Capturar área seleccionada",
+    "description": "Context menu title for capturing selected area"
+  },
+  "contextMenuCaptureFull": {
+    "message": "Capturar página completa",
+    "description": "Context menu title for capturing full page"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "extensionName": {
+    "message": "Shotuno",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Nehmen Sie sichtbare Inhalte, Bereiche oder ganze Seiten auf und annotieren Sie direkt im Tab.",
+    "description": "Description of the extension"
+  },
+  "actionTitle": {
+    "message": "Shotuno - Aufnehmen & annotieren",
+    "description": "Title for action popup"
+  },
+  "contextMenuCaptureArea": {
+    "message": "Ausgewählten Bereich aufnehmen",
+    "description": "Context menu title for capturing selected area"
+  },
+  "contextMenuCaptureFull": {
+    "message": "Gesamte Seite aufnehmen",
+    "description": "Context menu title for capturing full page"
+  }
+}

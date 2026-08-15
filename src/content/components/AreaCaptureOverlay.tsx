@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../../components/ui/button';
 import { X } from 'lucide-react';
+import { useTranslation } from '../../lib/i18n';
 
 export default function AreaCaptureOverlay({ 
   onCapture,
@@ -9,6 +10,7 @@ export default function AreaCaptureOverlay({
   onCapture: (rect: { x: number, y: number, w: number, h: number }) => void;
   onClose?: () => void;
 }) {
+  const { t } = useTranslation();
   const [isDragging, setIsDragging] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   const [currentPos, setCurrentPos] = useState({ x: 0, y: 0 });
@@ -145,7 +147,7 @@ function getAreaHoverRect(clientX: number, clientY: number): { x: number; y: num
         onMouseDown={(e) => e.stopPropagation()}
       >
         <Button size="sm" onClick={() => onClose && onClose()} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground border-transparent shadow-lg">
-          <X size={16} className="mr-1" /> Cancel
+          <X size={16} className="mr-1" /> {t('dialogs.cancel')}
         </Button>
       </div>
     </div>

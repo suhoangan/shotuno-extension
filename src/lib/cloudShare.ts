@@ -1,7 +1,5 @@
 import { toast } from 'sonner';
-import { apiUrl, webUrl } from './api';
-import { storage } from '../lib/chromeStorage';
-
+import { apiClient, webUrl } from './api';
 
 export async function uploadAndShareCloudLink(dataUrlOrBlob: string | Blob): Promise<{ url: string; id: string }> {
   let blob: Blob;
@@ -16,27 +14,12 @@ export async function uploadAndShareCloudLink(dataUrlOrBlob: string | Blob): Pro
   const formData = new FormData();
   formData.append('file', blob, 'screenshot.webp');
 
-  const authData = await new Promise<{ authToken?: string }>((resolve) => {
-    storage.local.get(['authToken'], (res) => resolve(res));
+  const json = await apiClient.post<any, { id: string; url?: string }>('/screenshots/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
 
-  const headers: Record<string, string> = {};
-  if (authData.authToken) {
-    headers['Authorization'] = `Bearer ${authData.authToken}`;
-  }
-
-  const uploadRes = await fetch(apiUrl('/screenshots/upload'), {
-    method: 'POST',
-    headers,
-    body: formData,
-  });
-
-  if (!uploadRes.ok) {
-    const errJson = (await uploadRes.json().catch(() => ({}))) as { message?: string };
-    throw new Error(errJson.message || `Upload failed (HTTP ${uploadRes.status})`);
-  }
-
-  const json = (await uploadRes.json()) as { id: string; url?: string };
   const shortId = json.id;
   const publicShareUrl = webUrl(`/s/${shortId}`);
 

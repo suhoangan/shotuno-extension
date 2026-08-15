@@ -95,7 +95,7 @@ export function startBoxTool(tool: ToolType, ctx: StartDrawContext): boolean {
   const settings = store.toolSettings[tool];
   ctx.addShape({
     id,
-    type: tool as 'rect' | 'circle' | 'triangle' | 'blur' | 'magnifier',
+    type: tool as 'rect' | 'circle' | 'triangle' | 'blur' | 'magnifier' | 'highlight-area',
     x: ctx.pos.x,
     y: ctx.pos.y,
     width: 0,

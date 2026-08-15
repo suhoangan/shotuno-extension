@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Crop } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   PINS_STORAGE_KEY,
@@ -7,17 +6,14 @@ import {
   deletePins,
   downloadPinImages,
   getPinFullImage,
-  startPinAreaCapture,
   syncPins,
   type PinImage,
 } from '../../lib/pinDb';
-import { Button } from '../ui/button';
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '../ui/alert-dialog';
 import { GalleryChrome } from '../gallery/GalleryChrome';
-import { GalleryPreview } from '../gallery/GalleryPreview';
 import {
   DEFAULT_GALLERY_UI_PREFS,
   loadGalleryUiPrefs,
@@ -29,10 +25,9 @@ import { useActiveTabEditing } from './useActiveTabEditing';
 import { useLibraryImageDrop } from '../library/useLibraryImageDrop';
 import { setShotunoDragData } from '../../lib/shotunoDrag';
 import { openEditorWithDataUrl } from '../../lib/openEditor';
+import { openPreviewWithUrl } from '../../lib/openPreview';
 import { PinList } from './PinList';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { storage } from '../../lib/chromeStorage';
-
 
 async function openPinInEditor(id: string) {
   const dataUrl = await getPinFullImage(id);
@@ -40,12 +35,20 @@ async function openPinInEditor(id: string) {
   await openEditorWithDataUrl(dataUrl);
 }
 
-export function PinPanel({ className = '' }: { className?: string }) {
+export function PinPanel({
+  className = '',
+  headerTitle,
+  headerAction,
+  onPreviewImage,
+}: {
+  className?: string;
+  headerTitle?: React.ReactNode;
+  headerAction?: React.ReactNode;
+  onPreviewImage?: (id: string) => void;
+}) {
   const [pins, setPins] = useState<PinImage[]>([]);
   const [prefs, setPrefs] = useState<GalleryUiPrefs>(DEFAULT_GALLERY_UI_PREFS);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [previewId, setPreviewId] = useState<string | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
   const fileCache = useRef(createPinFileCache());
   const editorBusy = useActiveTabEditing();
@@ -69,6 +72,15 @@ export function PinPanel({ className = '' }: { className?: string }) {
   }, [pins]);
 
   useEffect(() => {
+    if (selectedIds.length === 0) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedIds([]);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [selectedIds.length]);
+
+  useEffect(() => {
     for (const pin of pins.slice(0, 20)) {
       fileCache.current.prefetch(pin.id, pin.filename || `pin-${pin.id}.png`);
     }
@@ -86,23 +98,24 @@ export function PinPanel({ className = '' }: { className?: string }) {
     });
   }, []);
 
-  const handleCapture = useCallback(async () => {
-    if (editorBusy) {
-      toast.message('Close the editor on the active tab first');
-      return;
-    }
-    try {
-      const tabs = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-      await startPinAreaCapture(tabs[0]?.id);
-      toast.message('Draw an area on the active tab');
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Could not start pin capture');
-    }
-  }, [editorBusy]);
-
   const editPin = (id: string) => {
     void openPinInEditor(id).catch((e) =>
       toast.error(e instanceof Error ? e.message : 'Could not edit'));
+  };
+
+  const copyPin = async (id: string) => {
+    try {
+      const dataUrl = await getPinFullImage(id);
+      if (!dataUrl) throw new Error('Image missing');
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      await navigator.clipboard.write([
+        new ClipboardItem({ [blob.type || 'image/png']: blob })
+      ]);
+      toast.success('Image copied to clipboard');
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Could not copy image');
+    }
   };
 
   const handleDragStart = (e: React.DragEvent, pin: PinImage, selected: boolean) => {
@@ -121,7 +134,7 @@ export function PinPanel({ className = '' }: { className?: string }) {
   const subtitle = importing
     ? 'Importing…'
     : editorBusy
-      ? 'Editor open — close it to capture'
+      ? 'Editor open'
       : `${pins.length} pin${pins.length === 1 ? '' : 's'} · drop images from the web`;
 
   return (
@@ -133,7 +146,7 @@ export function PinPanel({ className = '' }: { className?: string }) {
       )}
 
       <GalleryChrome
-        title="Pins"
+        title={headerTitle || 'Pins'}
         subtitle={subtitle}
         view={prefs.view}
         selectedCount={selectedIds.length}
@@ -159,55 +172,42 @@ export function PinPanel({ className = '' }: { className?: string }) {
         }}
         bulkDeleteLabel="Remove"
         headerAction={(
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Button
-                  size="sm"
-                  className="h-7 px-2 text-xs"
-                  disabled={editorBusy || importing}
-                  onClick={() => void handleCapture()}
-                >
-                  <Crop size={12} className="mr-1" /> Capture
-                </Button>
-              }
-            />
-            <TooltipContent side="bottom" sideOffset={8}>
-              {editorBusy ? 'Close the editor on the active tab first' : 'Pin area on the active tab'}
-            </TooltipContent>
-          </Tooltip>
+          <>
+            {headerAction}
+          </>
         )}
       />
 
-      <div className="flex-1 overflow-y-auto p-3 custom-scrollbar">
+      <div 
+        className="flex-1 overflow-y-auto p-3 custom-scrollbar"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) setSelectedIds([]);
+        }}
+      >
         <PinList
           pins={pins}
           view={prefs.view}
           selectedIds={selectedIds}
           onSelectedIdsChange={setSelectedIds}
-          onPreview={(id, fallback) => {
-            setPreviewId(id);
-            void getPinFullImage(id).then((full) => setPreviewUrl(full || fallback));
+          onPreview={async (id, fallback) => {
+            if (onPreviewImage) {
+              onPreviewImage(id);
+              return;
+            }
+            const full = await getPinFullImage(id);
+            try {
+              await openPreviewWithUrl(full || fallback);
+            } catch (e) {
+              toast.error(e instanceof Error ? e.message : 'Preview failed — refresh the active tab and try again');
+            }
           }}
           onEdit={editPin}
+          onCopy={copyPin}
           onDragStart={handleDragStart}
         />
       </div>
 
-      <GalleryPreview
-        open={previewId !== null}
-        url={previewUrl}
-        onOpenChange={(open) => { if (!open) { setPreviewId(null); setPreviewUrl(null); } }}
-        footer={previewId ? (
-          <Button size="sm" className="w-full mt-2" onClick={() => {
-            void openPinInEditor(previewId)
-              .then(() => setPreviewId(null))
-              .catch((e) => toast.error(e instanceof Error ? e.message : 'Could not edit'));
-          }}>
-            Edit in Shotuno
-          </Button>
-        ) : null}
-      />
+
 
       <AlertDialog open={bulkDeleteOpen} onOpenChange={setBulkDeleteOpen}>
         <AlertDialogContent>

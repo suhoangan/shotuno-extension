@@ -1,6 +1,9 @@
 import { Hash, ZoomIn, ShieldOff, LayoutTemplate, ScanText, Bot, Move, Ruler } from 'lucide-react';
+import { useTranslation } from '../../lib/i18n';
 
 export function OnboardingFeatureCards() {
+  const { t } = useTranslation();
+
   const features = [
     {
       icon: Hash,
@@ -47,8 +50,8 @@ export function OnboardingFeatureCards() {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-foreground">Core Tools & Features</h2>
-        <p className="text-sm text-muted-foreground mt-1">Everything built for developer & designer workflows.</p>
+        <h2 className="text-2xl font-bold text-foreground">{t('onboarding.featuresTitle')}</h2>
+        <p className="text-sm text-muted-foreground mt-1">{t('onboarding.featuresSubtitle')}</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

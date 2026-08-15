@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useEditorStore } from '../../store/useEditorStore';
 import type { StageBounds } from './canvas/stageBounds';
 import { Button } from '../../components/ui/button';
+import { useTranslation } from '../../lib/i18n';
 
 interface CropOverlayProps {
   bounds: StageBounds;
@@ -9,6 +10,7 @@ interface CropOverlayProps {
 }
 
 export const CropOverlay: React.FC<CropOverlayProps> = ({ bounds, scale }) => {
+  const { t } = useTranslation();
   const { cropRect, setCropRect } = useEditorStore();
   const [isDragging, setIsDragging] = useState<string | null>(null);
   const dragStartRef = useRef<{ x: number, y: number, rect: {x: number, y: number, w: number, h: number} } | null>(null);
@@ -163,7 +165,7 @@ export const CropOverlay: React.FC<CropOverlayProps> = ({ bounds, scale }) => {
               useEditorStore.getState().setActiveTool('select');
             }}
           >
-            Cancel
+            {t('dialogs.cancel')}
           </Button>
           <Button
             variant="default"
@@ -175,7 +177,7 @@ export const CropOverlay: React.FC<CropOverlayProps> = ({ bounds, scale }) => {
             className="flex items-center gap-1"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            Apply
+            {t('resize.apply')}
           </Button>
         </div>
       </div>

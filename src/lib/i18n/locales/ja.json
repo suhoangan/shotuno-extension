@@ -1,0 +1,187 @@
+{
+  "language": {
+    "select": "言語",
+    "en": "English",
+    "vi": "Tiếng Việt",
+    "ja": "日本語",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ko": "한국어",
+    "zh": "中文"
+  },
+  "popup": {
+    "title": "Shotuno",
+    "captureMode": "キャプチャモード",
+    "visibleContent": {
+      "title": "表示領域",
+      "description": "現在画面をキャプチャ"
+    },
+    "selectedArea": {
+      "title": "選択領域",
+      "description": "領域を指定して編集"
+    },
+    "gridCapture": {
+      "title": "マルチグリッド",
+      "description": "複数エリアを同時に撮影"
+    },
+    "fullPage": {
+      "title": "ページ全体",
+      "description": "縦長ページ全体をスクロール撮影"
+    },
+    "openGallery": {
+      "title": "ピン ＆ ギャラリーを開く",
+      "description": "キャプチャをウェブページへドラッグ"
+    },
+    "openImage": {
+      "title": "画像を開く",
+      "description": "PCの画像ファイルを編集"
+    },
+    "noActiveTab": "キャプチャ対象のタブがありません",
+    "invalidTab": "このページはキャプチャできません — 通常のウェブページを開いてください",
+    "extensionError": "拡張機能エラー — chrome://extensions で Shotuno を再読み込みしてください",
+    "captureFailed": "キャプチャ失敗 — タブを再読み込みして再試行してください",
+    "refreshTabPrompt": "タブを再読み込みしてから「画像を開く」を再試行してください"
+  },
+  "toolbar": {
+    "styles": {
+      "solidRedact": "塗りつぶし隠蔽",
+      "pixelate": "モザイク",
+      "blur": "ぼかし",
+      "circleBadge": "円形バッジ",
+      "pinBadge": "ピンバッジ",
+      "twoWayArrow": "双方向矢印",
+      "singleArrow": "片方向矢印",
+      "dashedLine": "破線 / 直線",
+      "solidFill": "塗りつぶし",
+      "borderOnly": "枠線のみ"
+    },
+    "undoTooltip": "元に戻す (Ctrl+Z)",
+    "redoTooltip": "やり直し (Ctrl+Y)",
+    "deleteTooltip": "選択中の図形を削除 (Del)",
+    "shareCloudLink": "共有リンクを作成",
+    "copyTooltip": "クリップボードにコピー (Ctrl+C)",
+    "saveFile": "画像ファイルを保存 (Ctrl+S)",
+    "closeTooltip": "エディタを閉じる (Esc)",
+    "clearTool": "すべての描画を消去",
+    "select": "選択 ＆ 移動",
+    "rectangle": "長方形",
+    "ellipse": "楕円",
+    "arrow": "矢印",
+    "line": "直線",
+    "text": "テキスト",
+    "counter": "ステップカウンター",
+    "blur": "ぼかし ＆ モザイク",
+    "highlighter": "蛍光ペン",
+    "crop": "キャンバスカット",
+    "watermark": "透かし",
+    "color": "カラー",
+    "strokeWidth": "線の太さ",
+    "undo": "元に戻す",
+    "redo": "やり直す",
+    "clear": "すべて消去",
+    "export": "画像をエクスポート",
+    "close": "エディタを閉じる"
+  },
+  "dialogs": {
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "delete": "削除",
+    "close": "閉じる",
+    "clearCanvasTitle": "キャンバスを消去",
+    "clearCanvasDescription": "キャンバス上のすべての図形を消去してもよろしいですか？",
+    "exportTitle": "画像をエクスポート",
+    "copyClipboard": "クリップボードにコピー",
+    "download": "PNGをダウンロード",
+    "ocrTitle": "テキスト抽出",
+    "ocrDescription": "選択領域から認識されたテキスト。",
+    "scanning": "画像をスキャン中...",
+    "copied": "コピー完了！",
+    "copyToClipboard": "クリップボードにコピー"
+  },
+  "sidepanel": {
+    "galleryTitle": "ピン ＆ ギャラリー",
+    "noItems": "キャプチャ画像がまだありません",
+    "dragTip": "画像をウェブページにドラッグ＆ドロップ"
+  },
+  "onboarding": {
+    "welcome": "SHOTUNO へようこそ",
+    "title": "キャプチャ。注釈。素早く共有。",
+    "subtitle": "高精度なスクリーンショット ＆ 注釈ツール。ページ内フローティングエディタ、Chrome サイドパネルライブラリ、スマートぼかし、1クリック AI 自動貼り付けを搭載。",
+    "pinButton": "ツールバーに Shotuno をピン留め",
+    "inTabFloating": "ページ内エディタ",
+    "sidePanelDrag": "サイドパネルドラッグ＆ドロップ",
+    "localPrivacy": "100% ローカルプライバシー",
+    "footer": "© 2026 Shotuno Extension. ローカルファーストのキャプチャ ＆ 注釈ツール。",
+    "stepsTitle": "簡単な 4 ステップで開始",
+    "stepsSubtitle": "60 秒以内に Shotuno をマスター。",
+    "featuresTitle": "コアツール ＆ 機能",
+    "featuresSubtitle": "開発者とデザイナーのワークフローに最適化。",
+    "shortcutsTitle": "キーボードショートカット一覧"
+  },
+  "userAccount": {
+    "login": "ログイン",
+    "loginViaWeb": "ウェブ経由でログイン",
+    "openDashboard": "ウェブダッシュボードを開く",
+    "logout": "ログアウト",
+    "signInPromptTitle": "サインインで毎日15回の無料 AI クレジットを取得",
+    "signInPromptSubtitle": "アカウントを同期して AI 解析、OCR、プライバシーぼかしを解放。",
+    "unlimitedCredits": "無制限クレジット",
+    "creditsLeft": "残り {credits} クレジット"
+  },
+  "modals": {
+    "sendToAI": {
+      "title": "AI にスクリーンショットを送信",
+      "subtitle": "お気に入りの AI アシスタントに整形して自動貼り付け",
+      "chatgpt": "ChatGPT",
+      "claude": "Claude",
+      "gemini": "Gemini",
+      "copyPrompt": "プロンプト ＆ 画像をコピー"
+    },
+    "proUpgrade": {
+      "title": "Shotuno Pro にアップグレード",
+      "subtitle": "無制限の AI ぼかし、即時 OCR、カスタム透かし、ブラウザフレームを解放",
+      "upgradeButton": "今すぐ Pro にアップグレード $4.99/月"
+    }
+  },
+  "watermark": {
+    "title": "透かしテキスト＆ロゴ",
+    "enable": "透かしを有効にする",
+    "modeText": "テキスト",
+    "modeImage": "ロゴ画像",
+    "textPlaceholder": "透かし文字（例：社外秘）",
+    "uploadLogo": "ロゴ画像(PNG/SVG)をアップロード",
+    "opacity": "不透明度",
+    "position": "配置位置",
+    "text": "透かしテキスト",
+    "placeholder": "例：社外秘 / Confidential"
+  },
+  "common": {
+    "loading": "読み込み中...",
+    "success": "成功",
+    "error": "エラー"
+  },
+  "border": {
+    "title": "ウィンドウフレーム＆枠線",
+    "macos": "macOS ウィンドウ枠",
+    "windows": "Windows ウィンドウ枠",
+    "padding": "余白サイズ",
+    "shadow": "ドロップシャドウ",
+    "radius": "角の丸み",
+    "gradient": "グラデーション背景"
+  },
+  "resize": {
+    "title": "キャンバスサイズの変更",
+    "width": "幅 (px)",
+    "height": "高さ (px)",
+    "maintainAspect": "縦横比を維持",
+    "presets": "プリセット解像度",
+    "apply": "リサイズを適用"
+  },
+  "capture": {
+    "dragToSelect": "ドラッグしてキャプチャ領域を選択",
+    "pressEsc": "ESCキーでキャンセル",
+    "scrollCapture": "下にスクロールして追加キャプチャ、またはクリックで完了",
+    "capturing": "キャプチャ処理中..."
+  }
+}

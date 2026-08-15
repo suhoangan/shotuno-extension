@@ -64,6 +64,22 @@ function ensureMounted(message: BootstrapMessage) {
   reactRoot.render(<App bootstrap={message} onCloseEditor={destroyContentScript} />);
 }
 
+if (typeof window !== 'undefined') {
+  window.addEventListener('message', (event) => {
+    if (event.source !== window || !event.data) return;
+    if (
+      event.data.type === 'TOGGLE_EDITOR' ||
+      event.data.type === 'TOGGLE_PREVIEW' ||
+      event.data.type === 'START_AREA_SELECTION' ||
+      event.data.type === 'START_PIN_AREA_SELECTION' ||
+      event.data.type === 'START_FULL_PAGE_CAPTURE' ||
+      event.data.type === 'START_GRID_CAPTURE'
+    ) {
+      ensureMounted(event.data as BootstrapMessage);
+    }
+  });
+}
+
 chrome.runtime.onMessage.addListener((message: BootstrapMessage | { type: string }, _sender, sendResponse) => {
   if (message.type === 'SHOTUNO_PING' || message.type === 'SHOTUNO_EDITOR_STATUS') {
     sendResponse({ ok: true, editing: Boolean(hostEl) });
@@ -75,6 +91,7 @@ chrome.runtime.onMessage.addListener((message: BootstrapMessage | { type: string
     hostEl &&
     !reactRoot &&
     (message.type === 'TOGGLE_EDITOR' ||
+      message.type === 'TOGGLE_PREVIEW' ||
       message.type === 'START_AREA_SELECTION' ||
       message.type === 'START_PIN_AREA_SELECTION' ||
       message.type === 'START_FULL_PAGE_CAPTURE' ||
@@ -88,6 +105,7 @@ chrome.runtime.onMessage.addListener((message: BootstrapMessage | { type: string
   }
   if (
     message.type === 'TOGGLE_EDITOR' ||
+    message.type === 'TOGGLE_PREVIEW' ||
     message.type === 'START_AREA_SELECTION' ||
     message.type === 'START_PIN_AREA_SELECTION' ||
     message.type === 'START_FULL_PAGE_CAPTURE' ||
@@ -97,3 +115,4 @@ chrome.runtime.onMessage.addListener((message: BootstrapMessage | { type: string
   }
   return false;
 });
+

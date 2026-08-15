@@ -1,0 +1,187 @@
+{
+  "language": {
+    "select": "Langue",
+    "en": "English",
+    "vi": "Tiếng Việt",
+    "ja": "日本語",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ko": "한국어",
+    "zh": "中文"
+  },
+  "popup": {
+    "title": "Shotuno",
+    "captureMode": "Mode de Capture",
+    "visibleContent": {
+      "title": "Contenu Visible",
+      "description": "Capturer ce qui est à l'écran"
+    },
+    "selectedArea": {
+      "title": "Zone Sélectionnée",
+      "description": "Tracer une zone à éditer"
+    },
+    "gridCapture": {
+      "title": "Capture en Grille",
+      "description": "Capturer plusieurs zones"
+    },
+    "fullPage": {
+      "title": "Page Entière",
+      "description": "Toute la page défilante"
+    },
+    "openGallery": {
+      "title": "Ouvrir Galerie & Épingles",
+      "description": "Glisser des captures sur des pages web"
+    },
+    "openImage": {
+      "title": "Ouvrir une Image",
+      "description": "Éditer un fichier depuis votre ordinateur"
+    },
+    "noActiveTab": "Aucun onglet actif à capturer",
+    "invalidTab": "Impossible de capturer cette page — ouvrez un onglet web normal",
+    "extensionError": "Erreur d'extension — rechargez Shotuno sur chrome://extensions",
+    "captureFailed": "Échec de la capture — rechargez l'onglet et réessayez",
+    "refreshTabPrompt": "Rechargezt l'onglet puis réessayez"
+  },
+  "toolbar": {
+    "styles": {
+      "solidRedact": "Masquage opaque",
+      "pixelate": "Pixelliser",
+      "blur": "Flouter",
+      "circleBadge": "Badge circulaire",
+      "pinBadge": "Badge épingle",
+      "twoWayArrow": "Flèche double",
+      "singleArrow": "Flèche simple",
+      "dashedLine": "Ligne pointillée",
+      "solidFill": "Remplissage plein",
+      "borderOnly": "Bordure seule"
+    },
+    "undoTooltip": "Annuler (Ctrl+Z)",
+    "redoTooltip": "Rétablir (Ctrl+Y)",
+    "deleteTooltip": "Supprimer la sélection (Suppr)",
+    "shareCloudLink": "Partager le lien cloud",
+    "copyTooltip": "Copier dans le presse-papiers (Ctrl+C)",
+    "saveFile": "Enregistrer l'image (Ctrl+S)",
+    "closeTooltip": "Fermer l'éditeur (Échap)",
+    "clearTool": "Effacer tous les tracés",
+    "select": "Sélectionner & déplacer",
+    "rectangle": "Rectangle",
+    "ellipse": "Ellipse",
+    "arrow": "Flèche",
+    "line": "Ligne",
+    "text": "Texte",
+    "counter": "Compteur d'étapes",
+    "blur": "Floutage & Pixellisation",
+    "highlighter": "Surligneur",
+    "crop": "Rogner le canevas",
+    "watermark": "Filigrane",
+    "color": "Couleur",
+    "strokeWidth": "Épaisseur du trait",
+    "undo": "Annuler",
+    "redo": "Rétablir",
+    "clear": "Tout effacer",
+    "export": "Exporter l'image",
+    "close": "Fermer l'éditeur"
+  },
+  "dialogs": {
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "delete": "Supprimer",
+    "close": "Fermer",
+    "clearCanvasTitle": "Effacer le Canevas",
+    "clearCanvasDescription": "Voulez-vous vraiment effacer toutes les formes du canevas ?",
+    "exportTitle": "Exporter l'Image",
+    "copyClipboard": "Copier dans le presse-papiers",
+    "download": "Télécharger PNG",
+    "ocrTitle": "Extraire le Texte",
+    "ocrDescription": "Texte reconnu à partir de votre sélection.",
+    "scanning": "Analyse de l'image...",
+    "copied": "Copié !",
+    "copyToClipboard": "Copier dans le presse-papiers"
+  },
+  "sidepanel": {
+    "galleryTitle": "Épingles & Galerie",
+    "noItems": "Aucune capture pour le moment",
+    "dragTip": "Glisser les captures sur les pages web"
+  },
+  "onboarding": {
+    "welcome": "BIENVENUE SUR SHOTUNO",
+    "title": "Capturez. Annotez. Partagez.",
+    "subtitle": "Votre outil de précision pour captures & annotations. Éditeur flottant, galerie dans le panneau latéral Chrome, flou intelligent et collage IA en 1 clic.",
+    "pinButton": "Épingler Shotuno à la barre d'outils",
+    "inTabFloating": "Éditeur flottant dans l'onglet",
+    "sidePanelDrag": "Glisser-déposer depuis le panneau latéral",
+    "localPrivacy": "100% Confidentialité Locale",
+    "footer": "© 2026 Shotuno Extension. Outils locaux de capture et d'annotation.",
+    "stepsTitle": "Commencez en 4 étapes simples",
+    "stepsSubtitle": "Maîtrisez Shotuno en moins de 60 secondes.",
+    "featuresTitle": "Outils & Fonctionnalités Clés",
+    "featuresSubtitle": "Conçu pour les flux de travail des développeurs et designers.",
+    "shortcutsTitle": "Aide-mémoire des raccourcis clavier"
+  },
+  "userAccount": {
+    "login": "Se connecter",
+    "loginViaWeb": "Se connecter via le Web",
+    "openDashboard": "Ouvrir le Tableau de Bord Web",
+    "logout": "Se déconnecter",
+    "signInPromptTitle": "Connectez-vous pour 15 crédits IA gratuits par jour",
+    "signInPromptSubtitle": "Synchronisez votre compte et débloquez l'analyse IA, l'OCR et le floutage.",
+    "unlimitedCredits": "Crédits illimités",
+    "creditsLeft": "{credits} crédits restants"
+  },
+  "modals": {
+    "sendToAI": {
+      "title": "Envoyer la capture à l'IA",
+      "subtitle": "Formatez et collez automatiquement dans votre assistant IA préféré",
+      "chatgpt": "ChatGPT",
+      "claude": "Claude",
+      "gemini": "Gemini",
+      "copyPrompt": "Copier le prompt et l'image"
+    },
+    "proUpgrade": {
+      "title": "Passer à Shotuno Pro",
+      "subtitle": "Débloquez le flou IA illimité, l'OCR instantané, les filigranes et cadres de navigateur",
+      "upgradeButton": "Passer à Pro pour 4,99 $/mois"
+    }
+  },
+  "watermark": {
+    "title": "Filigrane et logo",
+    "enable": "Activer le filigrane",
+    "modeText": "Texte",
+    "modeImage": "Image Logo",
+    "textPlaceholder": "Texte du filigrane",
+    "uploadLogo": "Téléverser logo PNG/SVG",
+    "opacity": "Opacité",
+    "position": "Position",
+    "text": "Texte du filigrane",
+    "placeholder": "Ex. Confidentiel"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "success": "Succès",
+    "error": "Erreur"
+  },
+  "border": {
+    "title": "Cadre de fenêtre et bordures",
+    "macos": "Cadre macOS",
+    "windows": "Cadre Windows",
+    "padding": "Marge interne",
+    "shadow": "Ombre portée",
+    "radius": "Rayon des coins",
+    "gradient": "Arrière-plan dégradé"
+  },
+  "resize": {
+    "title": "Redimensionner le canevas",
+    "width": "Largeur (px)",
+    "height": "Hauteur (px)",
+    "maintainAspect": "Conserver les proportions",
+    "presets": "Résolutions prédéfinies",
+    "apply": "Appliquer"
+  },
+  "capture": {
+    "dragToSelect": "Cliquez et glissez pour sélectionner la zone",
+    "pressEsc": "Appuyez sur Échap pour annuler",
+    "scrollCapture": "Faites défiler pour capturer plus, ou cliquez pour terminer",
+    "capturing": "Capture en cours..."
+  }
+}

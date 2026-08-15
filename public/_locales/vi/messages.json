@@ -1,0 +1,22 @@
+{
+  "extensionName": {
+    "message": "Shotuno",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Chụp ảnh màn hình trực tiếp, khu vực chọn hoặc toàn bộ trang web và chú thích trong tab - mũi tên, làm mờ, OCR, ghim ảnh.",
+    "description": "Description of the extension"
+  },
+  "actionTitle": {
+    "message": "Shotuno - Chụp & chú thích ảnh",
+    "description": "Title for action popup"
+  },
+  "contextMenuCaptureArea": {
+    "message": "Chụp vùng đã chọn",
+    "description": "Context menu title for capturing selected area"
+  },
+  "contextMenuCaptureFull": {
+    "message": "Chụp toàn bộ trang",
+    "description": "Context menu title for capturing full page"
+  }
+}

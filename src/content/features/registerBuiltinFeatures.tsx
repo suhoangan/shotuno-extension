@@ -3,6 +3,7 @@ import { MeasureShape } from '../components/canvas/shapes/MeasureShape';
 import { RectShape } from '../components/canvas/shapes/RectShape';
 import { BlurShape } from '../components/canvas/shapes/BlurShape';
 import { BrushShape } from '../components/canvas/shapes/BrushShape';
+import { HighlightAreaShape } from '../components/canvas/shapes/HighlightAreaShape';
 import { TextShape } from '../components/canvas/shapes/TextShape';
 import { StickerShape } from '../components/canvas/shapes/StickerShape';
 import { ImageShape } from '../components/canvas/shapes/ImageShape';
@@ -59,6 +60,11 @@ export function ensureBuiltinFeaturesRegistered(): void {
     id: 'highlight', tools: ['highlight'], shapeTypes: ['highlight'],
     startDraw: startStrokeTool, moveDraw: moveStroke,
     renderShape: (p) => <BrushShape shape={p.shape as any} commonProps={p.commonProps} />,
+  });
+  registerFeature({
+    id: 'highlight-area', tools: ['highlight-area'], shapeTypes: ['highlight-area'],
+    startDraw: startBoxTool, moveDraw: moveBox,
+    renderShape: (p) => <HighlightAreaShape shape={p.shape as any} commonProps={p.commonProps} />,
   });
   registerFeature({
     id: 'text', tools: ['text'], shapeTypes: ['text'],

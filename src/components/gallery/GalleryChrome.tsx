@@ -5,8 +5,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/
 import type { GalleryDateFilter, GalleryViewMode } from './galleryPrefs';
 
 interface GalleryChromeProps {
-  title: string;
-  subtitle: string;
+  title: ReactNode;
+  subtitle?: ReactNode;
   view: GalleryViewMode;
   selectedCount: number;
   onViewChange: (view: GalleryViewMode) => void;
@@ -44,19 +44,26 @@ export function GalleryChrome({
 
   return (
     <TooltipProvider delay={300}>
-      <div className="px-3 pt-2.5 pb-2 border-b border-border/60 flex flex-col gap-2">
-        <div className="flex items-center justify-between gap-2 min-h-9">
-          <div className="min-w-0">
-            <h2 className="font-semibold text-foreground text-sm leading-tight">
-              {selecting ? `${selectedCount} selected` : title}
-            </h2>
-            <p className="text-[10px] text-muted-foreground truncate">
-              {selecting ? 'Bulk actions' : subtitle}
-            </p>
-          </div>
-          <div className="flex items-center gap-0.5 shrink-0">
-            {selecting ? (
-              <>
+      <div className="px-3 py-2 border-b border-border flex items-center justify-between gap-2 h-10">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          {selecting ? (
+            <span className="text-sm font-medium text-foreground whitespace-nowrap">
+              {selectedCount} selected
+            </span>
+          ) : (
+            <div className="flex items-center gap-2 min-w-0">
+              {title}
+              {subtitle && (
+                <span className="text-xs text-muted-foreground truncate hidden sm:inline-block">
+                  {subtitle}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          {selecting ? (
+            <>
                 <Tooltip>
                   <TooltipTrigger
                     render={
@@ -140,18 +147,22 @@ export function GalleryChrome({
             ) : (
               <>
                 {headerAction}
-                <div className="flex items-center p-0.5 rounded-md bg-muted">
+                <div className="flex items-center p-0.5 rounded-lg bg-muted border border-border/60">
                   <Tooltip>
                     <TooltipTrigger
                       render={
                         <Button
-                          variant="ghost"
-                          size="icon"
-                          className={`h-7 w-7 ${view === 'grid' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground'}`}
+                          variant={view === 'grid' ? 'default' : 'ghost'}
+                          size="sm"
+                          className={`h-6 px-1.5 rounded-md transition-all flex items-center justify-center ${
+                            view === 'grid'
+                              ? 'shadow-xs font-semibold'
+                              : 'text-muted-foreground hover:text-foreground'
+                          }`}
                           onClick={() => onViewChange('grid')}
                           aria-pressed={view === 'grid'}
                         >
-                          <LayoutGrid size={14} />
+                          <LayoutGrid size={13} />
                         </Button>
                       }
                     />
@@ -161,46 +172,51 @@ export function GalleryChrome({
                     <TooltipTrigger
                       render={
                         <Button
-                          variant="ghost"
-                          size="icon"
-                          className={`h-7 w-7 ${view === 'list' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground'}`}
+                          variant={view === 'list' ? 'default' : 'ghost'}
+                          size="sm"
+                          className={`h-6 px-1.5 rounded-md transition-all flex items-center justify-center ${
+                            view === 'list'
+                              ? 'shadow-xs font-semibold'
+                              : 'text-muted-foreground hover:text-foreground'
+                          }`}
                           onClick={() => onViewChange('list')}
                           aria-pressed={view === 'list'}
                         >
-                          <List size={14} />
+                          <List size={13} />
                         </Button>
                       }
                     />
                     <TooltipContent side="bottom" sideOffset={8}>List view</TooltipContent>
                   </Tooltip>
                 </div>
+                {showFilters && onFilterChange && (
+                  <div className="flex items-center p-0.5 rounded-lg bg-muted border border-border/60">
+                    {([
+                      ['all', 'All'],
+                      ['today', 'Today'],
+                      ['week', 'Week'],
+                    ] as const).map(([value, label]) => (
+                      <Button
+                        key={value}
+                        variant={filter === value ? 'default' : 'ghost'}
+                        size="sm"
+                        className={`h-6 px-2.5 text-[11px] rounded-md transition-all ${
+                          filter === value
+                            ? 'shadow-xs font-semibold'
+                            : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                        onClick={() => onFilterChange(value)}
+                        aria-pressed={filter === value}
+                      >
+                        {label}
+                      </Button>
+                    ))}
+                  </div>
+                )}
               </>
             )}
           </div>
         </div>
-
-        {showFilters && onFilterChange && (
-          <div className="flex gap-1">
-            {([
-              ['all', 'All'],
-              ['today', 'Today'],
-              ['week', 'Week'],
-            ] as const).map(([value, label]) => (
-              <Button
-                key={value}
-                variant={filter === value ? 'secondary' : 'ghost'}
-                size="sm"
-                className={`h-7 px-2 text-[11px] flex-1 ${
-                  filter === value ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''
-                }`}
-                onClick={() => onFilterChange(value)}
-              >
-                {label}
-              </Button>
-            ))}
-          </div>
-        )}
-      </div>
     </TooltipProvider>
   );
 }

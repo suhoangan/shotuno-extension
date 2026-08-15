@@ -23,6 +23,8 @@ export interface EditorState {
   setIsTwoWay: (twoWay: boolean, opts?: { persistToTool?: boolean }) => void;
   isLine: boolean;
   setIsLine: (line: boolean, opts?: { persistToTool?: boolean }) => void;
+  opacity?: number;
+  setOpacity: (opacity: number, opts?: { persistToTool?: boolean }) => void;
   blurType: 'pixelate' | 'blur' | 'solid';
   setBlurType: (type: 'pixelate' | 'blur' | 'solid', opts?: { persistToTool?: boolean }) => void;
   counterStyle: 'circle' | 'square' | 'waterpoint';
@@ -83,4 +85,10 @@ export interface EditorState {
   setWatermarkMode: (mode: WatermarkMode) => void;
   watermarkImageUrl: string | null;
   setWatermarkImageUrl: (url: string | null) => void;
+
+  // Pro License & Paywall Gating
+  proLicenseStatus: 'free' | 'pro';
+  setProLicenseStatus: (status: 'free' | 'pro') => void;
+  showUpgradeModal: boolean;
+  setShowUpgradeModal: (show: boolean) => void;
 }

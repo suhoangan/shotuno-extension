@@ -16,16 +16,18 @@ import { Label } from '../../../components/ui/label';
 import { Slider } from '../../../components/ui/slider';
 import { BTN, ICON } from './toolbarUi';
 import { ProBadge } from './ProBadge';
+import type { ProFeatureId } from '../../../lib/entitlements/proFeatures';
+import { useUIStore } from '../../../store/useUIStore';
+import { useTranslation } from '../../../lib/i18n';
 
 export function BorderMenu({
-  showBorderMenu,
-  setShowBorderMenu,
   isPro,
+  runPro,
 }: {
-  showBorderMenu: boolean;
-  setShowBorderMenu: (show: boolean) => void;
   isPro?: boolean;
+  runPro: (featureId: ProFeatureId, action: () => void | Promise<void>) => Promise<boolean>;
 }) {
+  const { t } = useTranslation();
   const {
     borderEnabled, setBorderEnabled, borderStyle, setBorderStyle,
     borderPadding, setBorderPadding, borderPaddingPreset, setBorderPaddingPreset,
@@ -34,10 +36,12 @@ export function BorderMenu({
   } = useEditorStore();
 
   const paddingSize = snapBorderPaddingSize(borderPaddingSize);
+  const { activeMenu, setActiveMenu } = useUIStore();
+  const showBorderMenu = activeMenu === 'border';
   const isActive = showBorderMenu || borderEnabled;
 
   return (
-    <Popover open={showBorderMenu} onOpenChange={setShowBorderMenu}>
+    <Popover open={showBorderMenu} onOpenChange={(open) => setActiveMenu(open ? 'border' : null)}>
       <Tooltip>
         <TooltipTrigger
           render={
@@ -60,16 +64,22 @@ export function BorderMenu({
           }
         />
         <TooltipContent side="bottom" sideOffset={8} className="z-[99999999]">
-          Window Border & Padding
+          {t('border.title')}
         </TooltipContent>
       </Tooltip>
 
       <PopoverContent className="w-72 bg-background border-border p-3 flex flex-col gap-3 text-foreground" sideOffset={8}>
         <div className="flex items-center justify-between">
-          <Label className="text-foreground font-medium">Border</Label>
+          <Label className="text-foreground font-medium">{t('border.title')}</Label>
           <Switch
             checked={borderEnabled}
-            onCheckedChange={setBorderEnabled}
+            onCheckedChange={(checked) => {
+              if (checked) {
+                void runPro('window_border', () => setBorderEnabled(true));
+              } else {
+                setBorderEnabled(false);
+              }
+            }}
           />
         </div>
 
@@ -134,9 +144,8 @@ export function BorderMenu({
 
         <div className="h-px bg-border/40 w-full" />
 
-        {/* Padding is its own section — size + background color stay interactive. */}
         <div className="flex items-center justify-between">
-          <Label className="text-foreground text-sm font-medium">Padding</Label>
+          <Label className="text-foreground text-sm font-medium">{t('border.padding')}</Label>
           <Switch
             checked={borderPadding && borderEnabled}
             onCheckedChange={setBorderPadding}
@@ -146,7 +155,7 @@ export function BorderMenu({
         <div className={`flex flex-col gap-3 transition-opacity ${borderPadding && borderEnabled ? 'opacity-100' : 'opacity-50 pointer-events-none'}`}>
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <Label className="text-xs font-medium text-muted-foreground">Padding size</Label>
+              <Label className="text-xs font-medium text-muted-foreground">{t('border.padding')}</Label>
               <span className="text-xs font-semibold tabular-nums text-foreground">{paddingSize}px</span>
             </div>
             <Slider
@@ -164,7 +173,7 @@ export function BorderMenu({
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label className="text-xs font-medium text-muted-foreground">Background color</Label>
+            <Label className="text-xs font-medium text-muted-foreground">{t('border.gradient')}</Label>
             <div className="grid grid-cols-6 gap-2">
               {BORDER_PADDING_PRESETS.map((preset) => (
                 <Button

@@ -1,0 +1,187 @@
+{
+  "language": {
+    "select": "Idioma",
+    "en": "English",
+    "vi": "Tiếng Việt",
+    "ja": "日本語",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ko": "한국어",
+    "zh": "中文"
+  },
+  "popup": {
+    "title": "Shotuno",
+    "captureMode": "Modo de Captura",
+    "visibleContent": {
+      "title": "Contenido Visible",
+      "description": "Captura lo que está en pantalla"
+    },
+    "selectedArea": {
+      "title": "Área Seleccionada",
+      "description": "Dibuja un área para editar"
+    },
+    "gridCapture": {
+      "title": "Captura en Cuadrícula",
+      "description": "Captura múltiples áreas"
+    },
+    "fullPage": {
+      "title": "Página Completa",
+      "description": "Captura toda la página desplazable"
+    },
+    "openGallery": {
+      "title": "Abrir Galería y Fijaciones",
+      "description": "Arrastra capturas a páginas web"
+    },
+    "openImage": {
+      "title": "Abrir Imagen",
+      "description": "Edita un archivo de tu equipo"
+    },
+    "noActiveTab": "No hay pestaña activa para capturar",
+    "invalidTab": "No se puede capturar esta página — abre una pestaña web normal",
+    "extensionError": "Error de extensión — recarga Shotuno en chrome://extensions",
+    "captureFailed": "Error al capturar — recarga la pestaña e inténtalo de nuevo",
+    "refreshTabPrompt": "Recarga la pestaña e inténtalo de nuevo"
+  },
+  "toolbar": {
+    "styles": {
+      "solidRedact": "Ocultar sólido",
+      "pixelate": "Pixelar",
+      "blur": "Desenfocar",
+      "circleBadge": "Insignia circular",
+      "pinBadge": "Insignia pin",
+      "twoWayArrow": "Flecha bidireccional",
+      "singleArrow": "Flecha simple",
+      "dashedLine": "Línea punteada",
+      "solidFill": "Relleno sólido",
+      "borderOnly": "Solo borde"
+    },
+    "undoTooltip": "Deshacer (Ctrl+Z)",
+    "redoTooltip": "Rehacer (Ctrl+Y)",
+    "deleteTooltip": "Eliminar selección (Del)",
+    "shareCloudLink": "Compartir enlace en la nube",
+    "copyTooltip": "Copiar al portapapeles (Ctrl+C)",
+    "saveFile": "Guardar imagen (Ctrl+S)",
+    "closeTooltip": "Cerrar editor (Esc)",
+    "clearTool": "Borrar todos los dibujos",
+    "select": "Seleccionar y mover",
+    "rectangle": "Rectángulo",
+    "ellipse": "Elipse",
+    "arrow": "Flecha",
+    "line": "Línea",
+    "text": "Texto",
+    "counter": "Contador de pasos",
+    "blur": "Desenfoque y Pixelado",
+    "highlighter": "Resaltador",
+    "crop": "Recortar lienzo",
+    "watermark": "Marca de agua",
+    "color": "Color",
+    "strokeWidth": "Grosor de línea",
+    "undo": "Deshacer",
+    "redo": "Rehacer",
+    "clear": "Borrar todo",
+    "export": "Exportar imagen",
+    "close": "Cerrar editor"
+  },
+  "dialogs": {
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "delete": "Eliminar",
+    "close": "Cerrar",
+    "clearCanvasTitle": "Borrar Lienzo",
+    "clearCanvasDescription": "¿Estás seguro de que quieres borrar todas las formas del lienzo?",
+    "exportTitle": "Exportar Imagen",
+    "copyClipboard": "Copiar al portapapeles",
+    "download": "Descargar PNG",
+    "ocrTitle": "Extraer Texto",
+    "ocrDescription": "Texto reconocido en tu selección.",
+    "scanning": "Escaneando imagen...",
+    "copied": "¡Copiado!",
+    "copyToClipboard": "Copiar al portapapeles"
+  },
+  "sidepanel": {
+    "galleryTitle": "Fijaciones y Galería",
+    "noItems": "Aún no hay capturas",
+    "dragTip": "Arrastra capturas a las páginas web"
+  },
+  "onboarding": {
+    "welcome": "BIENVENIDO A SHOTUNO",
+    "title": "Captura. Anota. Envía.",
+    "subtitle": "Tu herramienta de captura y anotación de precisión. Con editor flotante, panel lateral en Chrome, desenfoque inteligente y pegado en IA en 1 clic.",
+    "pinButton": "Fijar Shotuno en la barra",
+    "inTabFloating": "Editor flotante en pestaña",
+    "sidePanelDrag": "Arrastrar desde panel lateral",
+    "localPrivacy": "100% Privacidad Local",
+    "footer": "© 2026 Shotuno Extension. Herramientas de captura y anotación local.",
+    "stepsTitle": "Comienza en 4 sencillos pasos",
+    "stepsSubtitle": "Domina Shotuno en menos de 60 segundos.",
+    "featuresTitle": "Herramientas y Funciones Clave",
+    "featuresSubtitle": "Diseñado para flujos de trabajo de desarrolladores y diseñadores.",
+    "shortcutsTitle": "Hoja de atajos de teclado"
+  },
+  "userAccount": {
+    "login": "Iniciar sesión",
+    "loginViaWeb": "Iniciar sesión vía Web",
+    "openDashboard": "Abrir Panel Web",
+    "logout": "Cerrar sesión",
+    "signInPromptTitle": "Inicia sesión para recibir 15 créditos gratis de IA diarios",
+    "signInPromptSubtitle": "Sincroniza tu cuenta y desbloquea análisis por IA, OCR y desenfoque.",
+    "unlimitedCredits": "Créditos ilimitados",
+    "creditsLeft": "Quedan {credits} créditos"
+  },
+  "modals": {
+    "sendToAI": {
+      "title": "Enviar captura a IA",
+      "subtitle": "Da formato y pega automáticamente en tu asistente de IA favorito",
+      "chatgpt": "ChatGPT",
+      "claude": "Claude",
+      "gemini": "Gemini",
+      "copyPrompt": "Copiar Prompt e Imagen"
+    },
+    "proUpgrade": {
+      "title": "Actualizar a Shotuno Pro",
+      "subtitle": "Desbloquea desenfoque ilimitado por IA, OCR instantáneo, marcas de agua y marcos de navegador",
+      "upgradeButton": "Actualizar a Pro por $4.99/mes"
+    }
+  },
+  "watermark": {
+    "title": "Marca de agua y logo",
+    "enable": "Activar marca de agua",
+    "modeText": "Texto",
+    "modeImage": "Logo",
+    "textPlaceholder": "Texto de marca de agua",
+    "uploadLogo": "Subir logo PNG/SVG",
+    "opacity": "Opacidad",
+    "position": "Posición",
+    "text": "Texto de la marca",
+    "placeholder": "Ej. Confidencial"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "success": "Éxito",
+    "error": "Error"
+  },
+  "border": {
+    "title": "Marco de ventana y bordes",
+    "macos": "Marco macOS",
+    "windows": "Marco Windows",
+    "padding": "Relleno del lienzo",
+    "shadow": "Sombra paralela",
+    "radius": "Radio de esquinas",
+    "gradient": "Fondo degradado"
+  },
+  "resize": {
+    "title": "Cambiar tamaño de lienzo",
+    "width": "Ancho (px)",
+    "height": "Alto (px)",
+    "maintainAspect": "Mantener proporción",
+    "presets": "Resoluciones predefinidas",
+    "apply": "Aplicar cambio"
+  },
+  "capture": {
+    "dragToSelect": "Arrastra para seleccionar el área de captura",
+    "pressEsc": "Presiona ESC para cancelar",
+    "scrollCapture": "Desplázate para capturar más o haz clic para terminar",
+    "capturing": "Capturando..."
+  }
+}

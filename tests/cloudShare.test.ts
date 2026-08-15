@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { uploadAndShareCloudLink } from '../src/lib/cloudShare';
+import { apiClient } from '../src/lib/api';
 
 describe('uploadAndShareCloudLink helper', () => {
   beforeEach(() => {
@@ -19,17 +20,13 @@ describe('uploadAndShareCloudLink helper', () => {
   });
 
   it('should upload blob and copy short link to clipboard', async () => {
-    const fakeFetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: vi.fn().mockResolvedValue({ id: 'abc123xyz' }),
-    });
-    vi.stubGlobal('fetch', fakeFetch);
+    vi.spyOn(apiClient, 'post').mockResolvedValue({ id: 'abc123xyz' } as any);
 
     const dummyBlob = new Blob(['dummy content'], { type: 'image/webp' });
-    const url = await uploadAndShareCloudLink(dummyBlob);
+    const result = await uploadAndShareCloudLink(dummyBlob);
 
-    expect(url).toBe('http://localhost:3001/s/abc123xyz');
-    expect(fakeFetch).toHaveBeenCalled();
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('http://localhost:3001/s/abc123xyz');
+    expect(result.id).toBe('abc123xyz');
+    expect(result.url).toContain('/s/abc123xyz');
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(result.url);
   });
 });

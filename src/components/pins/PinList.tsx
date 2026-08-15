@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pin } from 'lucide-react';
+import { MoreHorizontal, Pin } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   deletePin,
@@ -7,13 +7,12 @@ import {
   renamePin,
   type PinImage,
 } from '../../lib/pinDb';
-import { uploadAndShareCloudLink } from '../../lib/cloudShare';
 import { GalleryItem } from '../gallery/GalleryItem';
 import { LibraryItemMenu } from '../gallery/GalleryItemMenu';
 import type { GalleryViewMode } from '../gallery/galleryPrefs';
 import { RenameImageDialog } from '../library/RenameImageDialog';
-import { useAuthUser } from '../../lib/useAuthUser';
-import { updatePin } from '../../lib/pinDb';
+import { Button } from '../ui/button';
+import { useActiveTabEditing } from './useActiveTabEditing';
 
 interface PinListProps {
   pins: PinImage[];
@@ -22,6 +21,7 @@ interface PinListProps {
   onSelectedIdsChange: (ids: string[] | ((prev: string[]) => string[])) => void;
   onPreview: (id: string, fallbackUrl: string) => void;
   onEdit: (id: string) => void;
+  onCopy: (id: string) => void;
   onDragStart: (e: React.DragEvent, pin: PinImage, selected: boolean) => void;
 }
 
@@ -32,10 +32,11 @@ export function PinList({
   onSelectedIdsChange,
   onPreview,
   onEdit,
+  onCopy,
   onDragStart,
 }: PinListProps) {
   const [renameTarget, setRenameTarget] = useState<PinImage | null>(null);
-  const { authUser } = useAuthUser();
+  const editorBusy = useActiveTabEditing();
 
   if (pins.length === 0) {
     return (
@@ -59,52 +60,45 @@ export function PinList({
             onSelectedIdsChange((prev) => prev.filter((id) => id !== pin.id));
           };
           return (
-            <LibraryItemMenu
+            <GalleryItem
               key={pin.id}
-              onEdit={() => onEdit(pin.id)}
+              image={pin}
+              selected={selected}
+              view={view}
+              selectedCount={selectedIds.length}
+              selectMode={selectedIds.length > 0}
+              onToggleSelect={() => onSelectedIdsChange((prev) => (
+                prev.includes(pin.id) ? prev.filter((x) => x !== pin.id) : [...prev, pin.id]
+              ))}
               onPreview={openPreview}
-              onRename={() => setRenameTarget(pin)}
-              onShareLink={
-                authUser && !pin.cloudUrl
-                  ? () => {
-                      void uploadAndShareCloudLink(pin.url)
-                        .then(({ url, id }) => {
-                          void updatePin(pin.id, { cloudUrl: url, shareId: id });
-                        })
-                        .catch((e) => toast.error(e instanceof Error ? e.message : 'Share failed'));
-                    }
-                  : undefined
+              onDelete={removePin}
+              onDragStart={(e) => onDragStart(e, pin, selected)}
+              draggable={editorBusy}
+              dragHint={selectedIds.length > 1 && selected ? `Drag ${selectedIds.length}` : 'Drag to editor'}
+              menu={
+                <LibraryItemMenu
+                  onEdit={() => onEdit(pin.id)}
+                  onCopy={() => onCopy(pin.id)}
+                  onPreview={openPreview}
+                  onRename={() => setRenameTarget(pin)}
+                  onDownload={() => {
+                    void downloadPinImage(pin.id)
+                      .then(() => toast.success('Saved to Downloads'))
+                      .catch((e) => toast.error(e instanceof Error ? e.message : 'Download failed'));
+                  }}
+                  onRemove={removePin}
+                >
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    data-item-action
+                    className={`absolute top-1.5 right-1.5 z-10 h-7 w-7 rounded-full bg-background/80 text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 ${view === 'list' ? 'relative top-0 right-0' : ''}`}
+                  >
+                    <MoreHorizontal size={14} />
+                  </Button>
+                </LibraryItemMenu>
               }
-              onCopyCloudLink={
-                authUser && pin.cloudUrl
-                  ? () => {
-                      void navigator.clipboard.writeText(pin.cloudUrl!);
-                      toast.success('Cloud link copied to clipboard!');
-                    }
-                  : undefined
-              }
-              onDownload={() => {
-                void downloadPinImage(pin.id)
-                  .then(() => toast.success('Saved to Downloads'))
-                  .catch((e) => toast.error(e instanceof Error ? e.message : 'Download failed'));
-              }}
-              onRemove={removePin}
-            >
-              <GalleryItem
-                image={pin}
-                selected={selected}
-                view={view}
-                selectedCount={selectedIds.length}
-                selectMode={selectedIds.length > 0}
-                onToggleSelect={() => onSelectedIdsChange((prev) => (
-                  prev.includes(pin.id) ? prev.filter((x) => x !== pin.id) : [...prev, pin.id]
-                ))}
-                onPreview={openPreview}
-                onDelete={removePin}
-                onDragStart={(e) => onDragStart(e, pin, selected)}
-                dragHint={selectedIds.length > 1 && selected ? `Drag ${selectedIds.length}` : 'Drag to editor or page'}
-              />
-            </LibraryItemMenu>
+            />
           );
         })}
       </div>

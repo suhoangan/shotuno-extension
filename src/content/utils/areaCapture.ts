@@ -5,8 +5,8 @@ export function cropVisibleCapture(
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
-      const viewportW = document.documentElement.clientWidth || window.innerWidth;
-      const viewportH = document.documentElement.clientHeight || window.innerHeight;
+      const viewportW = window.innerWidth;
+      const viewportH = window.innerHeight;
       const scaleX = img.naturalWidth / viewportW;
       const scaleY = img.naturalHeight / viewportH;
       const canvas = document.createElement('canvas');

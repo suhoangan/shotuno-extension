@@ -1,6 +1,7 @@
 export type ToolSettings = {
   color: string;
   strokeWidth: number;
+  opacity?: number;
   isSolid: boolean;
   isTwoWay: boolean;
   /** Arrow tool: plain line with no pointer heads. */
@@ -20,6 +21,7 @@ export const defaultToolSettings: Record<string, ToolSettings> = {
   text: { color: '#ef4444', strokeWidth: 4, isSolid: true, isTwoWay: false, blurType: 'pixelate' },
   brush: { color: '#ef4444', strokeWidth: 4, isSolid: false, isTwoWay: false, blurType: 'pixelate' },
   highlight: { color: '#facc15', strokeWidth: 8, isSolid: false, isTwoWay: false, blurType: 'pixelate' },
+  'highlight-area': { color: '#facc15', strokeWidth: 8, isSolid: false, opacity: 0.2, isTwoWay: false, blurType: 'pixelate' },
   blur: { color: '#ef4444', strokeWidth: 8, isSolid: false, isTwoWay: false, blurType: 'pixelate' as const },
   // isSolid true = border off (same convention as magnifier)
   image: { color: '#ef4444', strokeWidth: 4, isSolid: true, isTwoWay: false, blurType: 'pixelate' as const },
@@ -53,6 +55,7 @@ function sanitizeToolSettings(raw: Partial<ToolSettings> | undefined, fallback: 
     strokeWidth: snapStrokeWidth(
       typeof raw.strokeWidth === 'number' ? raw.strokeWidth : fallback.strokeWidth,
     ),
+    opacity: typeof raw.opacity === 'number' ? raw.opacity : fallback.opacity,
     isSolid: typeof raw.isSolid === 'boolean' ? raw.isSolid : fallback.isSolid,
     isTwoWay: typeof raw.isTwoWay === 'boolean' ? raw.isTwoWay : fallback.isTwoWay,
     isLine: typeof raw.isLine === 'boolean' ? raw.isLine : (fallback.isLine ?? false),

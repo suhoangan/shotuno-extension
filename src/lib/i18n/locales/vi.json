@@ -1,0 +1,201 @@
+{
+  "language": {
+    "select": "Ngôn ngữ",
+    "en": "English",
+    "vi": "Tiếng Việt",
+    "ja": "日本語",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ko": "한국어",
+    "zh": "中文"
+  },
+  "popup": {
+    "title": "Shotuno",
+    "captureMode": "Chế độ chụp",
+    "visibleContent": {
+      "title": "Màn hình hiển thị",
+      "description": "Chụp vùng màn hình đang xem"
+    },
+    "selectedArea": {
+      "title": "Vùng tùy chọn",
+      "description": "Kéo vùng tùy chỉnh để chỉnh sửa"
+    },
+    "gridCapture": {
+      "title": "Chụp nhiều vùng",
+      "description": "Chụp cùng lúc nhiều khu vực"
+    },
+    "fullPage": {
+      "title": "Toàn bộ trang web",
+      "description": "Tự động cuộn chụp toàn bộ trang"
+    },
+    "openGallery": {
+      "title": "Thư viện Ghim & Ảnh",
+      "description": "Kéo thả ảnh vào trang web"
+    },
+    "openImage": {
+      "title": "Mở ảnh từ máy tính",
+      "description": "Chỉnh sửa tệp ảnh từ máy tính"
+    },
+    "noActiveTab": "Không tìm thấy thẻ đang hoạt động",
+    "invalidTab": "Không thể chụp trang này — hãy mở trang web bình thường",
+    "extensionError": "Lỗi tiện ích — hãy tải lại Shotuno tại chrome://extensions",
+    "captureFailed": "Chụp thất bại — hãy tải lại trang và thử lại",
+    "refreshTabPrompt": "Vui lòng tải lại trang và thử mở lại ảnh"
+  },
+  "toolbar": {
+    "styles": {
+      "solidRedact": "Che kín đặc",
+      "pixelate": "Làm mờ hạt",
+      "blur": "Làm mờ",
+      "circleBadge": "Huy hiệu tròn",
+      "pinBadge": "Huy hiệu ghim",
+      "twoWayArrow": "Mũi tên 2 chiều",
+      "singleArrow": "Mũi tên 1 chiều",
+      "dashedLine": "Nét đứt / Thẳng",
+      "solidFill": "Tô màu kín",
+      "borderOnly": "Chỉ viền ngoài"
+    },
+    "undoTooltip": "Hoàn tác (Ctrl+Z)",
+    "redoTooltip": "Làm lại (Ctrl+Y)",
+    "deleteTooltip": "Xóa hình đã chọn (Del)",
+    "shareCloudLink": "Chia sẻ liên kết đám mây",
+    "copyTooltip": "Sao chép vào khay nhớ tạm (Ctrl+C)",
+    "saveFile": "Lưu tệp ảnh (Ctrl+S)",
+    "closeTooltip": "Đóng trình chỉnh sửa (Esc)",
+    "clearTool": "Xóa toàn bộ hình vẽ",
+    "select": "Chọn & Di chuyển",
+    "pan": "Di chuyển bản vẽ (H)",
+    "rectangle": "Hình chữ nhật",
+    "ellipse": "Hình elip",
+    "arrow": "Mũi tên",
+    "line": "Đường thẳng",
+    "text": "Văn bản",
+    "brush": "Bút vẽ (B)",
+    "counter": "Đếm bước",
+    "blur": "Làm mờ & Điểm ảnh",
+    "magnifier": "Kính lúp phóng đại 2X (Z)",
+    "ocr": "Trích xuất chữ OCR (E)",
+    "measure": "Thước đo điểm ảnh Pixel (M)",
+    "highlighter": "Bút dạ quang",
+    "crop": "Cắt khung vẽ",
+    "resize": "Thay đổi kích thước khung vẽ",
+    "sendToAI": "Gửi tới AI & SaaS",
+    "watermark": "Đóng dấu bản quyền",
+    "color": "Màu sắc",
+    "strokeWidth": "Độ dày nét",
+    "undo": "Hoàn tác",
+    "redo": "Làm lại",
+    "clear": "Xóa tất cả",
+    "export": "Xuất hình ảnh",
+    "close": "Đóng trình chỉnh sửa"
+  },
+  "dialogs": {
+    "cancel": "Hủy bỏ",
+    "confirm": "Xác nhận",
+    "delete": "Xóa",
+    "close": "Đóng",
+    "clearCanvasTitle": "Xóa bản vẽ",
+    "clearCanvasDescription": "Bạn có chắc chắn muốn xóa toàn bộ hình vẽ trên bản vẽ không?",
+    "exportTitle": "Xuất hình ảnh",
+    "copyClipboard": "Sao chép vào bộ nhớ tạm",
+    "download": "Tải ảnh PNG",
+    "ocrTitle": "Trích xuất chữ OCR",
+    "ocrDescription": "Văn bản đã nhận diện từ vùng chọn.",
+    "scanning": "Đang quét hình ảnh...",
+    "copied": "Đã sao chép!",
+    "copyToClipboard": "Sao chép vào bộ nhớ tạm"
+  },
+  "sidepanel": {
+    "galleryTitle": "Thư viện Ghim & Ảnh",
+    "pins": "Ghim",
+    "downloads": "Tải xuống",
+    "openImage": "Mở ảnh để chỉnh sửa",
+    "emptyHint": "Ảnh tải xuống sẽ hiển thị tại đây. Chọn nhiều ảnh và kéo thả vào trình chỉnh sửa hoặc trang web.",
+    "preview": "Xem trước",
+    "expand": "Phóng to toàn màn hình",
+    "loadingImage": "Đang tải hình ảnh...",
+    "noItems": "Chưa có ảnh chụp nào",
+    "dragTip": "Kéo thả ảnh trực tiếp vào trang web"
+  },
+  "onboarding": {
+    "welcome": "CHÀO MỪNG ĐẾN VỚI SHOTUNO",
+    "title": "Chụp. Chú thích. Hoàn thành.",
+    "subtitle": "Công cụ chụp ảnh web và chú thích chính xác. Tích hợp trình chỉnh sửa nổi trên thẻ, thư viện ghim ở bảng bên Chrome, làm mờ tự động và dán AI 1-click.",
+    "pinButton": "Ghim Shotuno vào thanh công cụ",
+    "inTabFloating": "Trình chỉnh sửa nổi trên thẻ",
+    "sidePanelDrag": "Kéo thả từ Bảng bên",
+    "localPrivacy": "100% Bảo mật Cục bộ",
+    "footer": "© 2026 Shotuno Extension. Công cụ chụp & chú thích ảnh cục bộ.",
+    "stepsTitle": "Bắt đầu với 4 bước đơn giản",
+    "stepsSubtitle": "Làm chủ Shotuno trong chưa đầy 60 giây.",
+    "featuresTitle": "Công cụ & Tính năng cốt lõi",
+    "featuresSubtitle": "Tối ưu hóa cho quy trình làm việc của lập trình viên và nhà thiết kế.",
+    "shortcutsTitle": "Bảng tra cứu phím tắt"
+  },
+  "userAccount": {
+    "login": "Đăng nhập",
+    "loginViaWeb": "Đăng nhập qua Web",
+    "openDashboard": "Mở Bảng điều khiển Web",
+    "logout": "Đăng xuất",
+    "signInPromptTitle": "Đăng nhập để nhận 15 lượt AI miễn phí mỗi ngày",
+    "signInPromptSubtitle": "Đồng bộ tài khoản để mở khóa trích xuất OCR, làm mờ AI và xử lý thông minh.",
+    "unlimitedCredits": "Không giới hạn lượt dùng",
+    "creditsLeft": "Hôm nay còn lại {credits} lượt"
+  },
+  "modals": {
+    "sendToAI": {
+      "title": "Gửi ảnh chụp tới AI",
+      "subtitle": "Tự động định dạng và dán trực tiếp vào trợ lý AI yêu thích",
+      "chatgpt": "ChatGPT",
+      "claude": "Claude",
+      "gemini": "Gemini",
+      "copyPrompt": "Sao chép Prompt & Ảnh"
+    },
+    "proUpgrade": {
+      "title": "Nâng cấp lên Shotuno Pro",
+      "subtitle": "Mở khóa không giới hạn làm mờ AI, OCR tức thì, đóng dấu bản quyền và khung trình duyệt",
+      "upgradeButton": "Nâng cấp Pro $4.99/tháng"
+    }
+  },
+  "watermark": {
+    "title": "Hình mờ & Logo",
+    "enable": "Bật hình mờ",
+    "modeText": "Chữ",
+    "modeImage": "Ảnh Logo",
+    "textPlaceholder": "Nhập chữ hình mờ (ví dụ: Bảo mật)",
+    "uploadLogo": "Tải lên Logo PNG/SVG",
+    "opacity": "Độ mờ đục",
+    "position": "Vị trí",
+    "text": "Nội dung đóng dấu",
+    "placeholder": "Ví dụ: Bảo mật / Confidential"
+  },
+  "common": {
+    "loading": "Đang tải...",
+    "success": "Thành công",
+    "error": "Lỗi"
+  },
+  "border": {
+    "title": "Khung trình duyệt & Viền",
+    "macos": "Khung cửa sổ macOS",
+    "windows": "Khung Windows",
+    "padding": "Khoảng đệm khung",
+    "shadow": "Đổ bóng",
+    "radius": "Bo góc",
+    "gradient": "Màu nền chuyển sắc"
+  },
+  "resize": {
+    "title": "Thay đổi kích thước ảnh",
+    "width": "Chiều rộng (px)",
+    "height": "Chiều cao (px)",
+    "maintainAspect": "Giữ nguyên tỷ lệ khung hình",
+    "presets": "Độ phân giải mẫu",
+    "apply": "Áp dụng kích thước"
+  },
+  "capture": {
+    "dragToSelect": "Nhấp và kéo chuột để chọn vùng chụp",
+    "pressEsc": "Nhấn phím ESC để hủy",
+    "scrollCapture": "Cuộn xuống để chụp tiếp hoặc nhấp để hoàn tất",
+    "capturing": "Đang chụp..."
+  }
+}

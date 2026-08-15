@@ -6,6 +6,8 @@ import { calculateClampedDragRegion } from '../gridCollisionUtils';
 import { getMainScrollContainer, getScrollState } from '../../../utils/scrollUtils';
 import { calculateWheelScroll, performScrollStep } from './gridAutoScroll';
 
+type ScrollTarget = Element | Window;
+
 export function useGridDrag() {
   const [regions, setRegions] = useState<Region[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -19,7 +21,8 @@ export function useGridDrag() {
 
   const lastMousePosRef = useRef({ clientX: 0, clientY: 0 });
   const autoScrollFrameRef = useRef<number | null>(null);
-  const scrollContainerRef = useRef<Element | Window | null>(null);
+  const scrollContainerRef = useRef<ScrollTarget | null>(null);
+  const backdropElRef = useRef<HTMLElement | null>(null);
 
   // Sync scroll position cleanly via native scroll events
   useEffect(() => {
@@ -89,18 +92,36 @@ function getTargetHoverRect(
   regions: Region[]
 ): { x: number; y: number; w: number; h: number } | null {
   const elements = document.elementsFromPoint(clientX, clientY);
-  const target = elements.find((el) => el.id !== 'shotuno-root' && !el.closest('#shotuno-root'));
-  if (!target || typeof target.getBoundingClientRect !== 'function') return null;
-  if (target.tagName === 'HTML' || target.tagName === 'BODY') return null;
 
-  const rect = target.getBoundingClientRect();
-  if (rect.width <= 0 || rect.height <= 0) return null;
+  // Collect all page elements (exclude Shotuno overlay and html/body)
+  const candidates = elements.filter((el) => {
+    if (el.id === 'shotuno-root' || el.closest('#shotuno-root')) return false;
+    const tag = el.tagName;
+    if (tag === 'HTML' || tag === 'BODY') return false;
+    return typeof el.getBoundingClientRect === 'function';
+  });
 
+  // Pick the smallest element whose rect still contains the cursor —
+  // this gives the tightest visual snap rather than snapping to a large wrapper.
+  let best: Element | null = null;
+  let bestArea = Infinity;
+  for (const el of candidates) {
+    const r = el.getBoundingClientRect();
+    if (r.width <= 0 || r.height <= 0) continue;
+    if (clientX < r.left || clientX > r.right || clientY < r.top || clientY > r.bottom) continue;
+    const area = r.width * r.height;
+    if (area < bestArea) {
+      bestArea = area;
+      best = el;
+    }
+  }
+
+  if (!best) return null;
+  const rect = best.getBoundingClientRect();
   const docRect = viewportToDocument(
     { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
     scrollState
   );
-
   return checkRegionOverlap(docRect, regions) ? null : docRect;
 }
 
@@ -147,18 +168,31 @@ function getTargetHoverRect(
     handleDragUpdate(e.clientX, e.clientY);
   };
 
-  const handleWheel = (e: React.WheelEvent) => {
+  const handleWheelScroll = useCallback((e: WheelEvent) => {
+    e.preventDefault();
     const container = scrollContainerRef.current || window;
     const { dx, dy } = calculateWheelScroll(e);
 
     if (container === window) {
-      window.scrollBy(dx, dy);
+      window.scrollBy({ top: dy, left: dx, behavior: 'instant' });
     } else {
       const el = container as Element;
-      el.scrollLeft += dx;
-      el.scrollTop += dy;
+      el.scrollBy({ top: dy, left: dx, behavior: 'instant' });
     }
-  };
+  }, []);
+
+  // Attach non-passive wheel listener so preventDefault() is allowed,
+  // preventing double-scroll from simultaneous native + programmatic scroll.
+  useEffect(() => {
+    const el = backdropElRef.current;
+    if (!el) return;
+    el.addEventListener('wheel', handleWheelScroll, { passive: false });
+    return () => el.removeEventListener('wheel', handleWheelScroll);
+  }, [handleWheelScroll]);
+
+  const registerBackdrop = useCallback((el: HTMLElement | null) => {
+    backdropElRef.current = el;
+  }, []);
 
   const handleMouseUp = () => {
     if (activeRegionId) {
@@ -228,7 +262,7 @@ function getTargetHoverRect(
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
-    handleWheel,
     handleRegionMouseDown,
+    registerBackdrop,
   };
 }

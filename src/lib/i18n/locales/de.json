@@ -1,0 +1,187 @@
+{
+  "language": {
+    "select": "Sprache",
+    "en": "English",
+    "vi": "Tiếng Việt",
+    "ja": "日本語",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ko": "한국어",
+    "zh": "中文"
+  },
+  "popup": {
+    "title": "Shotuno",
+    "captureMode": "Aufnahmemodus",
+    "visibleContent": {
+      "title": "Sichtbarer Bereich",
+      "description": "Bildschirminhalt aufnehmen"
+    },
+    "selectedArea": {
+      "title": "Gewählter Bereich",
+      "description": "Bereich aufziehen und bearbeiten"
+    },
+    "gridCapture": {
+      "title": "Gitter-Aufnahme",
+      "description": "Mehrere Bereiche gleichzeitig"
+    },
+    "fullPage": {
+      "title": "Ganze Seite",
+      "description": "Ganze scrollbare Seite"
+    },
+    "openGallery": {
+      "title": "Galerie & Pins öffnen",
+      "description": "Screenshots in Webseiten ziehen"
+    },
+    "openImage": {
+      "title": "Bild öffnen",
+      "description": "Lokale Bilddatei bearbeiten"
+    },
+    "noActiveTab": "Kein aktiver Tab für Aufnahme",
+    "invalidTab": "Diese Seite kann nicht aufgenommen werden — bitte normalen Web-Tab öffnen",
+    "extensionError": "Erweiterungsfehler — Shotuno unter chrome://extensions neu laden",
+    "captureFailed": "Aufnahme fehlgeschlagen — Tab neu laden und erneut versuchen",
+    "refreshTabPrompt": "Bitte Tab neu laden und erneut versuchen"
+  },
+  "toolbar": {
+    "styles": {
+      "solidRedact": "Vollflächig schwärzen",
+      "pixelate": "Verpixeln",
+      "blur": "Weichzeichnen",
+      "circleBadge": "Kreis-Badge",
+      "pinBadge": "Pin-Badge",
+      "twoWayArrow": "Doppelpfeil",
+      "singleArrow": "Einfacher Pfeil",
+      "dashedLine": "Gestrichelte Linie",
+      "solidFill": "Ausgefüllt",
+      "borderOnly": "Nur Rahmen"
+    },
+    "undoTooltip": "Rückgängig (Ctrl+Z)",
+    "redoTooltip": "Wiederholen (Ctrl+Y)",
+    "deleteTooltip": "Auswahl löschen (Entf)",
+    "shareCloudLink": "Cloud-Link teilen",
+    "copyTooltip": "In die Zwischenablage kopieren (Ctrl+C)",
+    "saveFile": "Bild speichern (Ctrl+S)",
+    "closeTooltip": "Editor schließen (Esc)",
+    "clearTool": "Alle Zeichnungen löschen",
+    "select": "Auswählen & Bewegen",
+    "rectangle": "Rechteck",
+    "ellipse": "Ellipse",
+    "arrow": "Pfeil",
+    "line": "Linie",
+    "text": "Text",
+    "counter": "Schrittzähler",
+    "blur": "Weichzeichnen & Verpixeln",
+    "highlighter": "Textmarker",
+    "crop": "Zuschneiden",
+    "watermark": "Wasserzeichen",
+    "color": "Farbe",
+    "strokeWidth": "Strichstärke",
+    "undo": "Rückgängig",
+    "redo": "Wiederholen",
+    "clear": "Alles löschen",
+    "export": "Bild exportieren",
+    "close": "Editor schließen"
+  },
+  "dialogs": {
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "delete": "Löschen",
+    "close": "Schließen",
+    "clearCanvasTitle": "Zeichenfläche löschen",
+    "clearCanvasDescription": "Möchten Sie wirklich alle Formen von der Zeichenfläche löschen?",
+    "exportTitle": "Bild exportieren",
+    "copyClipboard": "In Zwischenablage kopieren",
+    "download": "PNG herunterladen",
+    "ocrTitle": "Text extrahieren",
+    "ocrDescription": "Erkannter Text aus Ihrer Auswahl.",
+    "scanning": "Bild wird gescannt...",
+    "copied": "Kopiert!",
+    "copyToClipboard": "In Zwischenablage kopieren"
+  },
+  "sidepanel": {
+    "galleryTitle": "Pins & Galerie",
+    "noItems": "Noch keine Screenshots",
+    "dragTip": "Screenshots in Webseiten ziehen"
+  },
+  "onboarding": {
+    "welcome": "WILLKOMMEN BEI SHOTUNO",
+    "title": "Aufnehmen. Anmerken. Teilen.",
+    "subtitle": "Ihr Präzisionswerkzeug für Screenshots & Anmerkungen. Floating-Editor im Tab, Chrome-Seitenleiste, Weichzeichner und 1-Klick KI-Einfügen.",
+    "pinButton": "Shotuno an Symbolleiste anheften",
+    "inTabFloating": "Floating-Editor im Tab",
+    "sidePanelDrag": "Drag & Drop aus Seitenleiste",
+    "localPrivacy": "100% Lokaler Datenschutz",
+    "footer": "© 2026 Shotuno Extension. Lokale Screenshot- & Anmerkungswerkzeuge.",
+    "stepsTitle": "In 4 einfachen Schritten starten",
+    "stepsSubtitle": "Meistern Sie Shotuno in unter 60 Sekunden.",
+    "featuresTitle": "Wichtige Werkzeuge & Funktionen",
+    "featuresSubtitle": "Für den Workflow von Entwicklern & Designern entwickelt.",
+    "shortcutsTitle": "Tastaturkürzel-Übersicht"
+  },
+  "userAccount": {
+    "login": "Anmelden",
+    "loginViaWeb": "Über Web anmelden",
+    "openDashboard": "Web-Dashboard öffnen",
+    "logout": "Abmelden",
+    "signInPromptTitle": "Anmelden für täglich 15 kostenlose KI-Credits",
+    "signInPromptSubtitle": "Konto synchronisieren für KI-Analyse, OCR und Weichzeichnen.",
+    "unlimitedCredits": "Unbegrenzte Credits",
+    "creditsLeft": "Noch {credits} Credits übrig"
+  },
+  "modals": {
+    "sendToAI": {
+      "title": "Screenshot an KI senden",
+      "subtitle": "Automatisch formatieren und in Ihren Lieblings-KI-Assistenten einfügen",
+      "chatgpt": "ChatGPT",
+      "claude": "Claude",
+      "gemini": "Gemini",
+      "copyPrompt": "Prompt & Bild kopieren"
+    },
+    "proUpgrade": {
+      "title": "Auf Shotuno Pro upgraden",
+      "subtitle": "Unbegrenztes KI-Weichzeichnen, Sofort-OCR, Wasserzeichen und Browser-Rahmen freischalten",
+      "upgradeButton": "Jetzt auf Pro upgraden für 4,99 $/Monat"
+    }
+  },
+  "watermark": {
+    "title": "Wasserzeichen & Logo",
+    "enable": "Wasserzeichen aktivieren",
+    "modeText": "Text",
+    "modeImage": "Logo-Bild",
+    "textPlaceholder": "Wasserzeichen-Text",
+    "uploadLogo": "Logo PNG/SVG hochladen",
+    "opacity": "Deckkraft",
+    "position": "Position",
+    "text": "Wasserzeichen-Text",
+    "placeholder": "Z.B. Vertraulich"
+  },
+  "common": {
+    "loading": "Laden...",
+    "success": "Erfolg",
+    "error": "Fehler"
+  },
+  "border": {
+    "title": "Fensterrahmen & Ränder",
+    "macos": "macOS-Fensterrahmen",
+    "windows": "Windows-Fensterrahmen",
+    "padding": "Leinwand-Abstand",
+    "shadow": "Schlagschatten",
+    "radius": "Eckenradius",
+    "gradient": "Farbverlauf-Hintergrund"
+  },
+  "resize": {
+    "title": "Leinwandgröße anpassen",
+    "width": "Breite (px)",
+    "height": "Höhe (px)",
+    "maintainAspect": "Seitenverhältnis beibehalten",
+    "presets": "Vordefinierte Auflösungen",
+    "apply": "Größe anwenden"
+  },
+  "capture": {
+    "dragToSelect": "Klicken und ziehen, um Bereich auszuwählen",
+    "pressEsc": "ESC zum Abbrechen drücken",
+    "scrollCapture": "Nach unten scrollen für mehr Aufnahme, oder klicken zum Beenden",
+    "capturing": "Aufnahme läuft..."
+  }
+}

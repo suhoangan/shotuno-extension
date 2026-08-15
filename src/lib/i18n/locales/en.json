@@ -1,0 +1,201 @@
+{
+  "language": {
+    "select": "Language",
+    "en": "English",
+    "vi": "Tiếng Việt",
+    "ja": "日本語",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ko": "한국어",
+    "zh": "中文"
+  },
+  "popup": {
+    "title": "Shotuno",
+    "captureMode": "Capture Mode",
+    "visibleContent": {
+      "title": "Visible Content",
+      "description": "Capture what's on screen"
+    },
+    "selectedArea": {
+      "title": "Selected Area",
+      "description": "Draw a region to edit"
+    },
+    "gridCapture": {
+      "title": "Grid Capture",
+      "description": "Capture multiple regions"
+    },
+    "fullPage": {
+      "title": "Full Page",
+      "description": "Entire scrollable page"
+    },
+    "openGallery": {
+      "title": "Open Pins & Gallery",
+      "description": "Drag captures into web pages"
+    },
+    "openImage": {
+      "title": "Open Local Image",
+      "description": "Edit an image from your computer"
+    },
+    "noActiveTab": "No active tab to capture",
+    "invalidTab": "Cannot capture this page — open a normal website tab",
+    "extensionError": "Extension error — reload Shotuno on chrome://extensions",
+    "captureFailed": "Capture failed — refresh the tab and try again",
+    "refreshTabPrompt": "Please refresh the tab and try opening the image again"
+  },
+  "toolbar": {
+    "styles": {
+      "solidRedact": "Solid Redact",
+      "pixelate": "Pixelate",
+      "blur": "Blur",
+      "circleBadge": "Circle Badge",
+      "pinBadge": "Pin Badge",
+      "twoWayArrow": "Two-way Arrow",
+      "singleArrow": "Single Arrow",
+      "dashedLine": "Dashed / Arrow Line",
+      "solidFill": "Solid Fill",
+      "borderOnly": "Border Only"
+    },
+    "undoTooltip": "Undo (Ctrl+Z)",
+    "redoTooltip": "Redo (Ctrl+Y)",
+    "deleteTooltip": "Delete Selected (Del)",
+    "shareCloudLink": "Share Cloud Link",
+    "copyTooltip": "Copy to Clipboard (Ctrl+C)",
+    "saveFile": "Save File (Ctrl+S)",
+    "closeTooltip": "Close Editor (Esc)",
+    "clearTool": "Clear All Drawings",
+    "select": "Select & Move",
+    "pan": "Pan Canvas (H)",
+    "rectangle": "Rectangle",
+    "ellipse": "Ellipse",
+    "arrow": "Arrow",
+    "line": "Line",
+    "text": "Text",
+    "brush": "Brush (B)",
+    "counter": "Step Counter",
+    "blur": "Blur & Pixelate",
+    "magnifier": "Zoom Loupe Magnifier (Z)",
+    "ocr": "Instant OCR Text Extract (E)",
+    "measure": "Pixel Measurement Ruler (M)",
+    "highlighter": "Highlighter",
+    "crop": "Crop Canvas",
+    "resize": "Resize Canvas",
+    "sendToAI": "Send to AI & SaaS",
+    "watermark": "Watermark",
+    "color": "Color",
+    "strokeWidth": "Stroke Width",
+    "undo": "Undo",
+    "redo": "Redo",
+    "clear": "Clear All",
+    "export": "Export Image",
+    "close": "Close Editor"
+  },
+  "dialogs": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "close": "Close",
+    "clearCanvasTitle": "Clear Canvas",
+    "clearCanvasDescription": "Are you sure you want to clear all shapes from the canvas?",
+    "exportTitle": "Export Image",
+    "copyClipboard": "Copy to Clipboard",
+    "download": "Download PNG",
+    "ocrTitle": "OCR Text Extraction",
+    "ocrDescription": "Recognized text from your selection.",
+    "scanning": "Scanning image...",
+    "copied": "Copied!",
+    "copyToClipboard": "Copy to Clipboard"
+  },
+  "sidepanel": {
+    "galleryTitle": "Pins & Gallery",
+    "pins": "Pins",
+    "downloads": "Downloads",
+    "openImage": "Open image to edit",
+    "emptyHint": "Saved downloads appear here. Multi-select, then drag into the editor or a page input.",
+    "preview": "Preview",
+    "expand": "Expand to Full Screen",
+    "loadingImage": "Loading image...",
+    "noItems": "No captures yet",
+    "dragTip": "Drag captures directly into web pages"
+  },
+  "onboarding": {
+    "welcome": "WELCOME TO SHOTUNO",
+    "title": "Capture. Annotate. Ship.",
+    "subtitle": "Precision web screenshot & annotation tool. Built with in-page floating editor, Chrome side-panel pin library, smart privacy blur, and 1-click AI auto-paste.",
+    "pinButton": "Pin Shotuno to Toolbar",
+    "inTabFloating": "In-Tab Floating Editor",
+    "sidePanelDrag": "Side Panel Drag & Drop",
+    "localPrivacy": "100% Local Privacy",
+    "footer": "© 2026 Shotuno Extension. Local-first capture & annotation tools.",
+    "stepsTitle": "Get Started in 4 Easy Steps",
+    "stepsSubtitle": "Master Shotuno in under 60 seconds.",
+    "featuresTitle": "Core Tools & Features",
+    "featuresSubtitle": "Built for developer and designer workflows.",
+    "shortcutsTitle": "Keyboard Shortcuts Cheatsheet"
+  },
+  "userAccount": {
+    "login": "Log in",
+    "loginViaWeb": "Sign in via Web",
+    "openDashboard": "Open Web Dashboard",
+    "logout": "Log out",
+    "signInPromptTitle": "Sign in to get 15 Daily Free AI Credits",
+    "signInPromptSubtitle": "Sync your account to unlock AI smart parsing, OCR text extraction, and privacy blurring.",
+    "unlimitedCredits": "Unlimited credits",
+    "creditsLeft": "{credits} credits left today"
+  },
+  "modals": {
+    "sendToAI": {
+      "title": "Send Screenshot to AI",
+      "subtitle": "Auto-format and paste directly into your favorite AI assistant",
+      "chatgpt": "ChatGPT",
+      "claude": "Claude",
+      "gemini": "Gemini",
+      "copyPrompt": "Copy Prompt & Image"
+    },
+    "proUpgrade": {
+      "title": "Upgrade to Shotuno Pro",
+      "subtitle": "Unlock unlimited AI privacy blur, instant OCR, custom watermarks, and browser frames",
+      "upgradeButton": "Upgrade to Pro $4.99/mo"
+    }
+  },
+  "watermark": {
+    "title": "Text & Logo Watermark",
+    "enable": "Enable Watermark",
+    "modeText": "Text",
+    "modeImage": "Logo Image",
+    "textPlaceholder": "Watermark text (e.g. Confidential)",
+    "uploadLogo": "Upload Logo PNG/SVG",
+    "opacity": "Opacity",
+    "position": "Position",
+    "text": "Watermark Text",
+    "placeholder": "e.g., Confidential"
+  },
+  "common": {
+    "loading": "Loading...",
+    "success": "Success",
+    "error": "Error"
+  },
+  "border": {
+    "title": "Window Frame & Borders",
+    "macos": "macOS Browser Frame",
+    "windows": "Windows Frame",
+    "padding": "Canvas Padding",
+    "shadow": "Drop Shadow",
+    "radius": "Corner Radius",
+    "gradient": "Background Gradient"
+  },
+  "resize": {
+    "title": "Resize Canvas",
+    "width": "Width (px)",
+    "height": "Height (px)",
+    "maintainAspect": "Maintain aspect ratio",
+    "presets": "Preset Resolutions",
+    "apply": "Apply Resize"
+  },
+  "capture": {
+    "dragToSelect": "Click & drag to select capture area",
+    "pressEsc": "Press ESC to cancel",
+    "scrollCapture": "Scroll down to capture more, or click to finish",
+    "capturing": "Capturing..."
+  }
+}

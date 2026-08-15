@@ -56,6 +56,7 @@ export default defineManifest(async (env) => {
     manifest_version: 3,
     name: 'Shotuno',
     short_name: 'Shotuno',
+    default_locale: 'en',
     version: '1.0.0',
     description:
       'Capture visible, area, or full-page screenshots and annotate them in-tab - arrows, blur, OCR, pins, and more.',

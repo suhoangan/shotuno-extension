@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Copy, Check, ScanText } from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import { useTranslation } from '../../lib/i18n';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +21,7 @@ interface OcrResultDialogProps {
 }
 
 export function OcrResultDialog({ open, onOpenChange, text, loading }: OcrResultDialogProps) {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -38,10 +40,10 @@ export function OcrResultDialog({ open, onOpenChange, text, loading }: OcrResult
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
             <ScanText className="w-5 h-5 text-primary" />
-            Extract Text
+            {t('dialogs.ocrTitle')}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Text recognized from your selection.
+            {t('dialogs.ocrDescription')}
           </AlertDialogDescription>
         </AlertDialogHeader>
         
@@ -49,7 +51,7 @@ export function OcrResultDialog({ open, onOpenChange, text, loading }: OcrResult
           {loading ? (
             <div className="flex flex-col items-center justify-center py-10 space-y-4">
               <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-sm text-muted-foreground animate-pulse">Scanning image...</p>
+              <p className="text-sm text-muted-foreground animate-pulse">{t('dialogs.scanning')}</p>
             </div>
           ) : (
             <div className="relative group">
@@ -75,10 +77,10 @@ export function OcrResultDialog({ open, onOpenChange, text, loading }: OcrResult
         <AlertDialogFooter>
           {!loading && (
             <>
-              <AlertDialogCancel>Close</AlertDialogCancel>
+              <AlertDialogCancel>{t('dialogs.close')}</AlertDialogCancel>
               {text && (
                 <AlertDialogAction onClick={handleCopy}>
-                  {copied ? 'Copied!' : 'Copy to Clipboard'}
+                  {copied ? t('dialogs.copied') : t('dialogs.copyToClipboard')}
                 </AlertDialogAction>
               )}
             </>

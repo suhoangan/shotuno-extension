@@ -12,6 +12,7 @@ import type { CaptureMode } from './capture/types';
 
 export type BootstrapMessage =
   | { type: 'TOGGLE_EDITOR'; payload?: string }
+  | { type: 'TOGGLE_PREVIEW'; payload?: string }
   | { type: 'START_AREA_SELECTION' }
   | { type: 'START_PIN_AREA_SELECTION' }
   | { type: 'START_FULL_PAGE_CAPTURE' }
@@ -24,6 +25,7 @@ const FullPageCaptureOverlay = lazy(() => import('./components/FullPageCaptureOv
 const GridCaptureOverlay = lazy(() => import('./components/grid-capture/GridCaptureOverlay'));
 const ScrollAreaCaptureOverlay = lazy(() => import('./components/ScrollAreaCaptureOverlay'));
 const EditorShell = lazy(() => import('./components/EditorShell'));
+const PreviewOverlay = lazy(() => import('./components/PreviewOverlay'));
 
 function captureModeFromBootstrap(message: BootstrapMessage | null): CaptureMode {
   if (!message) return null;
@@ -36,7 +38,7 @@ function captureModeFromBootstrap(message: BootstrapMessage | null): CaptureMode
 }
 
 function screenshotFromBootstrap(message: BootstrapMessage | null): string | null {
-  if (message?.type === 'TOGGLE_EDITOR') return message.payload ?? null;
+  if (message?.type === 'TOGGLE_EDITOR' || message?.type === 'TOGGLE_PREVIEW') return message.payload ?? null;
   return null;
 }
 
@@ -65,7 +67,10 @@ export default function App({
   onCloseEditor?: () => void;
 }) {
   const [screenshot, setScreenshot] = useState<string | null>(() => screenshotFromBootstrap(bootstrap));
-  const [captureMode, setCaptureMode] = useState<CaptureMode>(() => captureModeFromBootstrap(bootstrap));
+  const [captureMode, setCaptureMode] = useState<CaptureMode | 'preview'>(() => {
+    if (bootstrap?.type === 'TOGGLE_PREVIEW') return 'preview';
+    return captureModeFromBootstrap(bootstrap);
+  });
   const hardLoading = useHardLoadingStore((s) => s.loading);
 
   const openScreenshot = async (dataUrl: string | null) => {
@@ -75,6 +80,7 @@ export default function App({
       return;
     }
     try {
+      useEditorStore.getState().reset();
       setScreenshot(await prepareScreenshot(dataUrl));
     } catch (e) {
       console.error('Failed to prepare image', e);
@@ -85,6 +91,9 @@ export default function App({
     if (!bootstrap) return;
     if (bootstrap.type === 'TOGGLE_EDITOR') {
       void openScreenshot(bootstrap.payload ?? null);
+    } else if (bootstrap.type === 'TOGGLE_PREVIEW') {
+      setCaptureMode('preview');
+      setScreenshot(bootstrap.payload ?? null);
     } else if (bootstrap.type === 'START_AREA_SELECTION') {
       setCaptureMode('area');
     } else if (bootstrap.type === 'START_PIN_AREA_SELECTION') {
@@ -139,9 +148,12 @@ export default function App({
   const onGridCapture = async (
     regions: { id: string; x: number; y: number; w: number; h: number }[],
   ) => {
+    const result = await finishGridCapture(regions);
     setCaptureMode(null);
-    await finishGridCapture(regions);
     onCloseEditor?.();
+    if (result === 'saved') {
+      chrome.runtime.sendMessage({ type: 'OPEN_SIDE_PANEL' });
+    }
   };
 
   const handleFullPageCapture = (dataUrl: string | null) => {
@@ -192,6 +204,16 @@ export default function App({
       <Suspense fallback={<ShellChrome><ChunkFallback /></ShellChrome>}>
         <FullPageCaptureOverlay onCapture={handleFullPageCapture} />
       </Suspense>
+    );
+  }
+
+  if (captureMode === 'preview' && screenshot) {
+    return (
+      <ShellChrome>
+        <Suspense fallback={<ChunkFallback />}>
+          <PreviewOverlay url={screenshot} onClose={closeEditor} />
+        </Suspense>
+      </ShellChrome>
     );
   }
 

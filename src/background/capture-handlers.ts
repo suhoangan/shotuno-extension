@@ -220,5 +220,31 @@ export function handleCaptureMessage(
     return true;
   }
 
+  // Side panel "Preview" — ensure content script, then open preview overlay.
+  if (message.type === 'OPEN_PREVIEW') {
+    const url = (message.payload as { url?: string } | undefined)?.url;
+    if (!url) {
+      sendResponse({ success: false, error: 'Missing image' });
+      return true;
+    }
+    void (async () => {
+      try {
+        const tabId = await resolveTargetTabId(undefined, sender);
+        if (tabId == null) {
+          sendResponse({ success: false, error: 'No active tab' });
+          return;
+        }
+        await sendCaptureToTab(tabId, { type: 'TOGGLE_PREVIEW', payload: url });
+        sendResponse({ success: true });
+      } catch (e) {
+        sendResponse({
+          success: false,
+          error: e instanceof Error ? e.message : 'Could not open preview — refresh the tab',
+        });
+      }
+    })();
+    return true;
+  }
+
   return false;
 }

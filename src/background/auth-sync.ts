@@ -1,5 +1,4 @@
-import { apiUrl, WEB_BASE } from '../lib/api';
-import { unwrapApi } from '../lib/unwrapApi';
+import { apiClient, WEB_BASE } from '../lib/api';
 import { storage } from '../lib/chromeStorage';
 
 
@@ -39,19 +38,20 @@ export async function syncAuthFromCookies(): Promise<void> {
       return;
     }
 
-    const response = await fetch(apiUrl('/auth/profile'), {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (response.ok) {
-      const body: unknown = await response.json();
-      const user = unwrapApi<Record<string, unknown>>(body);
+    try {
+      const user = await apiClient.get<any, Record<string, unknown>>('/auth/profile', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       await storage.local.set({
         authToken: token,
         authUser: user,
       });
-    } else if (response.status === 401) {
-      await storage.local.remove(['authToken', 'authUser']);
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        await storage.local.remove(['authToken', 'authUser']);
+      } else {
+        console.error('Failed to fetch profile during auth sync:', err);
+      }
     }
   } catch (err) {
     console.error('Failed to sync auth cookie:', err);

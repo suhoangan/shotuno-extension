@@ -2,12 +2,12 @@ import { Eraser, Trash2, ChevronDown } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/tooltip';
 import { ICON, ICON_SM, ICON_XS } from './toolbarUi';
+import { useUIStore } from '../../../store/useUIStore';
+import { useTranslation } from '../../../lib/i18n';
 
 interface DeleteControlsProps {
   canDeleteSelected: boolean;
   canClearAll: boolean;
-  menuOpen: boolean;
-  onMenuOpenChange: (open: boolean) => void;
   onDeleteSelected: () => void;
   onRequestClearAll: () => void;
   isVertical?: boolean;
@@ -16,12 +16,14 @@ interface DeleteControlsProps {
 export function DeleteControls({
   canDeleteSelected,
   canClearAll,
-  menuOpen,
-  onMenuOpenChange,
   onDeleteSelected,
   onRequestClearAll,
   isVertical,
 }: DeleteControlsProps) {
+  const { t } = useTranslation();
+  const { activeMenu, setActiveMenu } = useUIStore();
+  const menuOpen = activeMenu === 'delete';
+
   return (
     <div className={`relative flex items-stretch ${isVertical ? 'flex-col' : ''}`}>
       <Tooltip>
@@ -43,12 +45,12 @@ export function DeleteControls({
           <Eraser size={ICON} />
         </TooltipTrigger>
         <TooltipContent side="bottom" sideOffset={8}>
-          Delete Selected (Del)
+          {t('toolbar.deleteTooltip')}
         </TooltipContent>
       </Tooltip>
       <Button
         variant="ghost"
-        onClick={() => onMenuOpenChange(!menuOpen)}
+        onClick={() => setActiveMenu(menuOpen ? null : 'delete')}
         className={`px-0 transition-colors flex items-center justify-center text-destructive hover:bg-destructive/20 ${isVertical ? 'h-4 w-8 rounded-t-none border-t border-destructive/20' : 'h-8 w-6 rounded-l-none border-l border-destructive/20'}`}
       >
         <ChevronDown size={ICON_XS} />
@@ -59,13 +61,13 @@ export function DeleteControls({
             variant="ghost"
             disabled={!canClearAll}
             onClick={() => {
-              onMenuOpenChange(false);
+              setActiveMenu(null);
               onRequestClearAll();
             }}
             className="h-8 justify-start gap-2 px-3 text-destructive hover:bg-destructive/20"
           >
             <Trash2 size={ICON_SM} />{' '}
-            <span className="text-sm whitespace-nowrap font-medium">Clear All</span>
+            <span className="text-sm whitespace-nowrap font-medium">{t('toolbar.clear')}</span>
           </Button>
         </div>
       )}

@@ -26,6 +26,7 @@ export const PRO_FEATURE_IDS = [
   'send_to_saas',
   'export_copy',
   'export_download',
+  'cloudUpload',
   'capture_full_page',
   'pins',
   'gallery',
@@ -67,6 +68,7 @@ export const PRO_FEATURE_LABELS: Record<ProFeatureId, string> = {
   send_to_saas: 'Drag images onto web pages',
   export_copy: 'Copy to clipboard',
   export_download: 'Download / save file',
+  cloudUpload: 'Cloud Storage & Upload',
   capture_full_page: 'Full page capture',
   pins: 'Pins library',
   gallery: 'Downloads gallery',
@@ -93,6 +95,7 @@ export const PRO_FEATURE_GROUPS: Record<ProFeatureId, string> = {
   send_to_saas: 'Library',
   export_copy: 'Export',
   export_download: 'Export',
+  cloudUpload: 'Export',
   capture_full_page: 'Capture',
   pins: 'Library',
   gallery: 'Library',
@@ -154,6 +157,7 @@ export function toolFeatureId(tool: string): ProFeatureId | null {
     case 'brush':
       return 'brush';
     case 'highlight':
+    case 'highlight-area':
       return 'highlight';
     case 'counter':
       return 'counter';
@@ -181,6 +185,10 @@ export function toolFeatureId(tool: string): ProFeatureId | null {
       return 'export_copy';
     case 'export_download':
       return 'export_download';
+    case 'cloudUpload':
+    case 'cloud_upload':
+    case 'cloud':
+      return 'cloudUpload';
     default:
       return null;
   }
@@ -191,6 +199,14 @@ export function toolProFeatureId(
   tool: string,
 ): ProFeatureId | null {
   switch (tool) {
+    case 'counter':
+      return 'counter';
+    case 'magnifier':
+      return 'magnifier';
+    case 'measure':
+      return 'measure';
+    case 'blur':
+      return 'blur';
     case 'ocr':
       return 'ocr';
     case 'smart_blur':

@@ -1,9 +1,9 @@
-export function calculateWheelScroll(e: React.WheelEvent) {
+export function calculateWheelScroll(e: WheelEvent) {
   let dy = e.deltaY;
   let dx = e.deltaX;
 
   const multipliers: Record<number, { y: number; x: number }> = {
-    0: { y: 2.2, x: 2.2 },
+    0: { y: 1, x: 1 },
     1: { y: 60, x: 60 },
     2: { y: window.innerHeight, x: window.innerWidth },
   };

@@ -18,6 +18,7 @@ import { pickSmartMeasureAxis } from './measureTool';
 import type { StageBounds } from './stageBounds';
 import { useHtmlImage } from './useHtmlImage';
 import { TiledTextWatermark } from './TiledTextWatermark';
+import { HighlightOverlay } from './HighlightOverlay';
 
 interface CanvasStageProps {
   stageRef: React.RefObject<any>;
@@ -123,6 +124,10 @@ export function CanvasStage(props: CanvasStageProps) {
             height: bounds.content.height,
           }}
         />
+      </Layer>
+
+      <Layer listening={false}>
+        <HighlightOverlay shapes={shapes} bounds={bounds} />
       </Layer>
 
       <Layer>

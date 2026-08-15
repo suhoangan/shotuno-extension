@@ -39,7 +39,7 @@ export type ShapeRenderProps = {
 
 export type FeatureModule = {
   /** Pro catalog id, or always-on shell tools */
-  id: ProFeatureId | 'select' | 'pan' | 'image' | 'core_shapes';
+  id: ProFeatureId | 'select' | 'pan' | 'image' | 'core_shapes' | 'highlight-area';
   /** Tools this module owns */
   tools?: ToolType[];
   /** Shape types this module can render */

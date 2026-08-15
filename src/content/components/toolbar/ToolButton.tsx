@@ -9,7 +9,7 @@ import { ProBadge } from './ProBadge';
 type IconComponent = LucideIcon | ((props: { size?: number; className?: string }) => ReactNode);
 
 interface ToolButtonProps {
-  tool?: ToolType;
+  tool?: ToolType | string;
   activeTool?: ToolType;
   icon: IconComponent;
   label: string;
@@ -18,14 +18,16 @@ interface ToolButtonProps {
   isPro?: boolean;
 }
 
+
 export function ToolButton({ tool, activeTool, icon: Icon, label, onSelect, onClick, isPro }: ToolButtonProps) {
   const isActive = Boolean(tool && activeTool === tool);
   const handleClick = () => {
     if (onClick) {
       onClick();
     } else if (tool && onSelect) {
-      onSelect(tool);
+      onSelect(tool as ToolType);
     }
+
   };
 
   return (
@@ -33,6 +35,8 @@ export function ToolButton({ tool, activeTool, icon: Icon, label, onSelect, onCl
       <TooltipTrigger
         render={
           <Button
+            data-tool={tool}
+            aria-label={label}
             variant={isActive ? 'default' : 'ghost'}
             size="icon"
             onClick={handleClick}
@@ -42,6 +46,7 @@ export function ToolButton({ tool, activeTool, icon: Icon, label, onSelect, onCl
                 : 'text-muted-foreground hover:bg-accent hover:text-foreground'
             }`}
           >
+
             <Icon size={ICON} className="size-5" />
             <ProBadge show={isPro} />
           </Button>

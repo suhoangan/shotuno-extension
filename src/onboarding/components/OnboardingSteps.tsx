@@ -1,6 +1,9 @@
 import { Pin, MousePointerClick, Edit3, Bot } from 'lucide-react';
+import { useTranslation } from '../../lib/i18n';
 
 export function OnboardingSteps() {
+  const { t } = useTranslation();
+
   const steps = [
     {
       step: '01',
@@ -31,8 +34,8 @@ export function OnboardingSteps() {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-foreground">Getting Started in 4 Easy Steps</h2>
-        <p className="text-sm text-muted-foreground mt-1">Master Shotuno in under 60 seconds.</p>
+        <h2 className="text-2xl font-bold text-foreground">{t('onboarding.stepsTitle')}</h2>
+        <p className="text-sm text-muted-foreground mt-1">{t('onboarding.stepsSubtitle')}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

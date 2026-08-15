@@ -1,5 +1,4 @@
-import { apiUrl } from '../api';
-import { unwrapApi } from '../unwrapApi';
+import { apiClient } from '../api';
 import { storage } from '../../lib/chromeStorage';
 
 import {
@@ -30,10 +29,7 @@ export async function loadProFeatures(force = false): Promise<ProFeaturesMap> {
   }
 
   try {
-    const res = await fetch(apiUrl('/subscriptions/pro-features'));
-    if (!res.ok) return defaultProFeatures();
-    const body: unknown = await res.json();
-    const data = unwrapApi<{ features?: unknown } | ProFeaturesMap>(body);
+    const data = await apiClient.get<any, { features?: unknown } | ProFeaturesMap>('/subscriptions/pro-features');
     const map = normalizeProFeatures(
       data && typeof data === 'object' && 'features' in data
         ? (data as { features: unknown }).features

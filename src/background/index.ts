@@ -7,7 +7,7 @@ import { bindSidePanelLifecycle, handleSidePanelMessage } from './side-panel-han
 import { initTelemetry } from '../lib/telemetry';
 import { bindCookieAuthListener } from './auth-sync';
 import { storage } from '../lib/chromeStorage';
-
+import { LANGUAGE_STORAGE_KEY } from '../lib/i18n';
 
 function routeMessage(
   message: any,
@@ -29,6 +29,12 @@ bindContextMenuClick();
 void initTelemetry();
 
 chrome.runtime.onMessage.addListener((message: any, sender: any, sendResponse: any) => {
+  if (message.type === 'SYNC_LANGUAGE' && message.payload?.language) {
+    storage.local.set({ [LANGUAGE_STORAGE_KEY]: message.payload.language }).then(() => {
+      sendResponse({ success: true });
+    });
+    return true;
+  }
   if (message.type === 'LOGIN_SYNC' && message.token) {
     storage.local
       .set({
@@ -50,6 +56,12 @@ chrome.runtime.onMessage.addListener((message: any, sender: any, sendResponse: a
 });
 
 chrome.runtime.onMessageExternal.addListener((message, _sender, sendResponse) => {
+  if (message.type === 'SYNC_LANGUAGE' && message.payload?.language) {
+    storage.local.set({ [LANGUAGE_STORAGE_KEY]: message.payload.language }).then(() => {
+      sendResponse({ success: true });
+    });
+    return true;
+  }
   if (message.type === 'LOGIN_SYNC' && message.token) {
     storage.local
       .set({

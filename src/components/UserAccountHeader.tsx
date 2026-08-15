@@ -1,6 +1,7 @@
-import { LogIn, Sparkles, ExternalLink, LogOut, Crown, ChevronDown } from 'lucide-react';
+import { LogIn, Sparkles, ExternalLink, LogOut, Crown, ChevronDown, Check, Globe } from 'lucide-react';
 import { useAuthUser } from '../lib/useAuthUser';
 import { webUrl } from '../lib/api';
+import { useTranslation, SUPPORTED_LANGUAGES } from '../lib/i18n';
 import {
   dailyCreditsRemaining,
   hasUnlimitedCredits,
@@ -16,9 +17,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
 } from './ui/dropdown-menu';
 
 export function UserAccountHeader({ compact = false }: { compact?: boolean }) {
+  const { t, language, setLanguage } = useTranslation();
   const { authUser, loading, loginViaWeb, logout } = useAuthUser();
 
   if (loading) {
@@ -32,7 +37,7 @@ export function UserAccountHeader({ compact = false }: { compact?: boolean }) {
       return (
         <Button size="sm" variant="outline" className="h-8 gap-1.5 text-xs" onClick={loginViaWeb}>
           <LogIn size={14} />
-          Log in
+          {t('userAccount.login')}
         </Button>
       );
     }
@@ -40,14 +45,14 @@ export function UserAccountHeader({ compact = false }: { compact?: boolean }) {
       <div className="p-3 rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 flex flex-col gap-2">
         <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
           <Sparkles size={14} className="text-primary" />
-          <span>Sign in for 15 Free AI Credits</span>
+          <span>{t('userAccount.signInPromptTitle')}</span>
         </div>
         <p className="text-[11px] text-muted-foreground leading-snug">
-          Sync your account and unlock AI Smart Parse, OCR &amp; Sensitive Data Blur.
+          {t('userAccount.signInPromptSubtitle')}
         </p>
         <Button size="sm" className="mt-1 w-full gap-2 text-xs" onClick={loginViaWeb}>
           <LogIn size={14} />
-          Log in via Web
+          {t('userAccount.loginViaWeb')}
           <ExternalLink size={12} className="opacity-70" />
         </Button>
       </div>
@@ -61,37 +66,32 @@ export function UserAccountHeader({ compact = false }: { compact?: boolean }) {
   const avatarChar = fullName.charAt(0).toUpperCase();
   const planLabel = license === 'PRO' ? 'PRO' : 'FREE';
   const creditsLabel = unlimited
-    ? 'Unlimited credits'
-    : `${credits} credits left`;
+    ? t('userAccount.unlimitedCredits')
+    : t('userAccount.creditsLeft', { credits });
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={
-          <Button
-            variant="outline"
-            className="h-9 gap-0 rounded-full border-border bg-background p-0 pl-1 pr-1.5 hover:bg-muted"
-            aria-label="Account menu"
-          >
-            <Avatar className="size-7 rounded-full">
-              {authUser.avatarUrl ? (
-                <AvatarImage src={authUser.avatarUrl} alt={fullName} />
-              ) : null}
-              <AvatarFallback className="bg-muted text-[11px] font-semibold text-muted-foreground">
-                {avatarChar}
-              </AvatarFallback>
-              {license === 'PRO' && (
-                <AvatarBadge>
-                  <Crown className="fill-current" />
-                </AvatarBadge>
-              )}
-            </Avatar>
-            <span className="ml-0.5 flex size-6 items-center justify-center rounded-full text-muted-foreground">
-              <ChevronDown className="size-4 shrink-0" aria-hidden />
-            </span>
-          </Button>
-        }
-      />
+        className="inline-flex items-center h-9 gap-0 rounded-full border border-border bg-background p-0 pl-1 pr-1.5 hover:bg-muted outline-none cursor-pointer transition-colors select-none"
+        aria-label="Account menu"
+      >
+        <Avatar className="size-7 rounded-full">
+          {authUser.avatarUrl ? (
+            <AvatarImage src={authUser.avatarUrl} alt={fullName} />
+          ) : null}
+          <AvatarFallback className="bg-muted text-[11px] font-semibold text-muted-foreground">
+            {avatarChar}
+          </AvatarFallback>
+          {license === 'PRO' && (
+            <AvatarBadge>
+              <Crown className="fill-current" />
+            </AvatarBadge>
+          )}
+        </Avatar>
+        <span className="ml-0.5 flex size-6 items-center justify-center rounded-full text-muted-foreground">
+          <ChevronDown className="size-4 shrink-0" aria-hidden />
+        </span>
+      </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
         sideOffset={6}
@@ -123,8 +123,39 @@ export function UserAccountHeader({ compact = false }: { compact?: boolean }) {
           className="flex items-center gap-2 text-xs font-medium cursor-pointer p-2 rounded-lg"
         >
           <ExternalLink size={14} className="text-primary" />
-          <span>Open Web Dashboard</span>
+          <span>{t('userAccount.openDashboard')}</span>
         </DropdownMenuItem>
+
+        <DropdownMenuSeparator className="my-1 bg-border/40" />
+
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger className="flex items-center gap-2 text-xs font-medium cursor-pointer p-2 rounded-lg">
+            <Globe size={14} className="text-primary" />
+            <span>{t('language.select')}</span>
+            <span className="ml-auto text-[11px] text-muted-foreground pr-1">
+              {SUPPORTED_LANGUAGES.find((l) => l.code === language)?.nativeLabel || language}
+            </span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent className="p-1 min-w-36">
+            {SUPPORTED_LANGUAGES.map((lang) => {
+              const isSelected = language === lang.code;
+              return (
+                <DropdownMenuItem
+                  key={lang.code}
+                  onClick={() => setLanguage(lang.code)}
+                  className={`flex items-center justify-between text-xs px-2 py-1.5 rounded-md cursor-pointer ${
+                    isSelected ? 'bg-primary/10 text-primary font-medium' : 'text-foreground'
+                  }`}
+                >
+                  <span>{lang.nativeLabel}</span>
+                  {isSelected && <Check size={12} className="text-primary shrink-0" />}
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+
+        <DropdownMenuSeparator className="my-1 bg-border/40" />
 
         <DropdownMenuItem
           variant="destructive"
@@ -132,7 +163,7 @@ export function UserAccountHeader({ compact = false }: { compact?: boolean }) {
           className="flex items-center gap-2 text-xs font-medium cursor-pointer p-2 rounded-lg"
         >
           <LogOut size={14} />
-          <span>Log out</span>
+          <span>{t('userAccount.logout')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

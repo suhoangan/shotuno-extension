@@ -1,6 +1,9 @@
 import { Command } from 'lucide-react';
+import { useTranslation } from '../../lib/i18n';
 
 export function OnboardingShortcuts() {
+  const { t } = useTranslation();
+
   const shortcuts = [
     { key: 'Alt + Shift + S', mac: 'Option + Shift + S', action: 'Open Shotuno capture popup' },
     { key: 'Esc', mac: 'Esc', action: 'Cancel selection / Close canvas editor' },
@@ -12,7 +15,7 @@ export function OnboardingShortcuts() {
     <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-4">
       <div className="flex items-center gap-2 border-b border-border pb-3">
         <Command className="size-4 text-primary" />
-        <h3 className="font-bold text-base text-foreground">Keyboard Shortcuts Cheatsheet</h3>
+        <h3 className="font-bold text-base text-foreground">{t('onboarding.shortcutsTitle')}</h3>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

@@ -10,16 +10,17 @@ import { Label } from '../../../components/ui/label';
 import { Input } from '../../../components/ui/input';
 import { BTN, ICON } from './toolbarUi';
 import { ProBadge } from './ProBadge';
+import { useUIStore } from '../../../store/useUIStore';
+import { useTranslation } from '../../../lib/i18n';
 
 export function WatermarkMenu({
-  showWatermarkMenu,
-  setShowWatermarkMenu,
   isPro,
+  runPro,
 }: {
-  showWatermarkMenu: boolean;
-  setShowWatermarkMenu: (show: boolean) => void;
   isPro?: boolean;
+  runPro: (featureId: import('../../../lib/entitlements/proFeatures').ProFeatureId, action: () => void | Promise<void>) => Promise<boolean>;
 }) {
+  const { t } = useTranslation();
   const {
     watermarkEnabled, setWatermarkEnabled,
     watermarkMode, setWatermarkMode,
@@ -40,10 +41,12 @@ export function WatermarkMenu({
     reader.readAsDataURL(file);
   };
 
+  const { activeMenu, setActiveMenu } = useUIStore();
+  const showWatermarkMenu = activeMenu === 'watermark';
   const isActive = showWatermarkMenu || watermarkEnabled;
 
   return (
-    <Popover open={showWatermarkMenu} onOpenChange={setShowWatermarkMenu}>
+    <Popover open={showWatermarkMenu} onOpenChange={(open) => setActiveMenu(open ? 'watermark' : null)}>
       <Tooltip>
         <TooltipTrigger
           render={
@@ -66,16 +69,22 @@ export function WatermarkMenu({
           }
         />
         <TooltipContent side="bottom" sideOffset={8} className="z-[99999999]">
-          Watermark
+          {t('watermark.title')}
         </TooltipContent>
       </Tooltip>
 
       <PopoverContent className="w-72 bg-background border-border p-3 flex flex-col gap-3 text-foreground" sideOffset={8}>
         <div className="flex items-center justify-between">
-          <Label className="text-foreground font-medium">Watermark</Label>
+          <Label className="text-foreground font-medium">{t('watermark.enable')}</Label>
           <Switch
             checked={watermarkEnabled}
-            onCheckedChange={setWatermarkEnabled}
+            onCheckedChange={(checked) => {
+              if (checked) {
+                void runPro('watermark', () => setWatermarkEnabled(true));
+              } else {
+                setWatermarkEnabled(false);
+              }
+            }}
           />
         </div>
 
@@ -87,7 +96,7 @@ export function WatermarkMenu({
               onClick={() => setWatermarkMode('text')}
               className={watermarkMode === 'text' ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'}
             >
-              Text
+              {t('watermark.modeText')}
             </Button>
             <Button
               variant={watermarkMode === 'image' ? 'secondary' : 'ghost'}
@@ -95,7 +104,7 @@ export function WatermarkMenu({
               onClick={() => setWatermarkMode('image')}
               className={watermarkMode === 'image' ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'}
             >
-              Image
+              {t('watermark.modeImage')}
             </Button>
           </div>
 
@@ -104,7 +113,7 @@ export function WatermarkMenu({
               <Input
                 value={watermarkText}
                 onChange={(e) => setWatermarkText(e.target.value)}
-                placeholder="© Your brand"
+                placeholder={t('watermark.textPlaceholder')}
                 className="h-8 text-sm"
               />
               <p className="text-[10px] text-muted-foreground">Repeats diagonally across the image.</p>
@@ -136,7 +145,7 @@ export function WatermarkMenu({
                   }}
                 />
                 <Button size="sm" variant="secondary" className="flex-1" onClick={() => fileRef.current?.click()}>
-                  Choose image
+                  {t('watermark.uploadLogo')}
                 </Button>
                 {watermarkImageUrl && (
                   <Button

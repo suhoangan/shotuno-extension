@@ -94,6 +94,41 @@ async function annotateImageFromUrl(tabId: number, srcUrl: string): Promise<void
   }
 }
 
+const PREVIEW_IMAGE_ID = 'shotuno-preview-image';
+
+async function previewImageFromUrl(tabId: number, srcUrl: string): Promise<void> {
+  const { sendCaptureToTab } = await import('./capture-handlers');
+
+  if (srcUrl.startsWith('data:image/')) {
+    await sendCaptureToTab(tabId, { type: 'TOGGLE_PREVIEW', payload: srcUrl });
+    return;
+  }
+
+  if (srcUrl.startsWith('blob:')) {
+    const [{ result }] = await chrome.scripting.executeScript({
+      target: { tabId },
+      func: async (url: string) => {
+        const res = await fetch(url);
+        const blob = await res.blob();
+        return await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result));
+          reader.onerror = () => reject(new Error('Could not read blob image'));
+          reader.readAsDataURL(blob);
+        });
+      },
+      args: [srcUrl],
+    });
+    if (typeof result === 'string' && result.startsWith('data:')) {
+      await sendCaptureToTab(tabId, { type: 'TOGGLE_PREVIEW', payload: result });
+      return;
+    }
+  }
+
+  // Fallback to sending the URL directly to TOGGLE_PREVIEW
+  await sendCaptureToTab(tabId, { type: 'TOGGLE_PREVIEW', payload: srcUrl });
+}
+
 async function openLibrary(windowId: number | undefined): Promise<void> {
   if (windowId != null) {
     await chrome.sidePanel.open({ windowId });
@@ -129,6 +164,12 @@ function createMenus(): Promise<void> {
         parentId: PARENT_ID,
         title: 'Open pins & gallery',
         contexts: [...pageContexts],
+      });
+      create({
+        id: PREVIEW_IMAGE_ID,
+        parentId: PARENT_ID,
+        title: 'Preview image',
+        contexts: ['image'],
       });
       create({
         id: ANNOTATE_IMAGE_ID,
@@ -168,6 +209,12 @@ export function bindContextMenuClick(): void {
         if (String(info.menuItemId) === ANNOTATE_IMAGE_ID) {
           if (!info.srcUrl) return;
           await annotateImageFromUrl(tabId, info.srcUrl);
+          return;
+        }
+
+        if (String(info.menuItemId) === PREVIEW_IMAGE_ID) {
+          if (!info.srcUrl) return;
+          await previewImageFromUrl(tabId, info.srcUrl);
           return;
         }
 

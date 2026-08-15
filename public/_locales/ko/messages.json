@@ -1,0 +1,22 @@
+{
+  "extensionName": {
+    "message": "Shotuno",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "화면 영역, 선택 영역 또는 전체 웹페이지를 캡처하고 탭 내에서 직접 주석을 달아보세요.",
+    "description": "Description of the extension"
+  },
+  "actionTitle": {
+    "message": "Shotuno - 캡처 및 주석",
+    "description": "Title for action popup"
+  },
+  "contextMenuCaptureArea": {
+    "message": "선택 영역 캡처",
+    "description": "Context menu title for capturing selected area"
+  },
+  "contextMenuCaptureFull": {
+    "message": "전체 페이지 캡처",
+    "description": "Context menu title for capturing full page"
+  }
+}

@@ -6,25 +6,28 @@ import { DeleteControls } from './toolbar/DeleteControls';
 import { BAR, BAR_GAP, CHROME } from './toolbar/toolbarUi';
 import { TooltipProvider } from '../../components/ui/tooltip';
 import { ProSubscriptionModal } from './toolbar/ProSubscriptionModal';
+import { ProUpgradeModal } from './ProUpgradeModal';
 import { FilenameInput } from './toolbar/FilenameInput';
 import { CreditsBadge } from './toolbar/CreditsBadge';
 import { ClearAllDialog } from './toolbar/ClearAllDialog';
 import { useToolbarState } from './toolbar/hooks/useToolbarState';
 import { ToolbarToolGroup, ToolDivider } from './toolbar/ToolbarToolGroup';
+import { useUIStore } from '../../store/useUIStore';
 
 const SendToAIModal = lazy(() => import('./SendToAIModal'));
 
 export default function Toolbar({ onClose }: { onClose: () => void }) {
   const {
-    activeTool, setActiveTool, setSelectedShapeIds, setShapes, saveHistory,
-    historyStep, history, shapes, selectedShapeIds, undo, redo, runPro,
-    exportBusy, filename, setFilename, showShapeMenu, setShowShapeMenu,
-    showDeleteMenu, setShowDeleteMenu, showBorderMenu, setShowBorderMenu,
-    showWatermarkMenu, setShowWatermarkMenu, isAIModalOpen, setIsAIModalOpen,
-    isClearAllOpen, setIsClearAllOpen, isUserFreeTier, featureEnabled, creditsRemaining,
-    showSubscriptionPopup, setShowSubscriptionPopup, subscriptionMessage,
+    setSelectedShapeIds, setShapes, saveHistory,
+    historyStep, history, shapes, selectedShapeIds, undo, redo, runPro, checkProAccess,
+    exportBusy, isUserFreeTier, featureEnabled, creditsRemaining,
     throttle, handleSave, handleToolSelect, handleClose,
   } = useToolbarState(onClose);
+
+  const {
+    filename, setFilename, showSubscriptionPopup, setShowSubscriptionPopup, subscriptionMessage,
+    isAIModalOpen, setIsAIModalOpen, isClearAllOpen, setIsClearAllOpen
+  } = useUIStore();
 
   return (
     <TooltipProvider delay={300}>
@@ -37,24 +40,15 @@ export default function Toolbar({ onClose }: { onClose: () => void }) {
           <ToolDivider />
 
           <ToolbarToolGroup
-            activeTool={activeTool}
             handleToolSelect={handleToolSelect}
             featureEnabled={featureEnabled}
             isUserFreeTier={isUserFreeTier}
             runPro={runPro}
-            showShapeMenu={showShapeMenu}
-            setShowShapeMenu={setShowShapeMenu}
-            showBorderMenu={showBorderMenu}
-            setShowBorderMenu={setShowBorderMenu}
-            showWatermarkMenu={showWatermarkMenu}
-            setShowWatermarkMenu={setShowWatermarkMenu}
-            setIsAIModalOpen={setIsAIModalOpen}
-            setActiveTool={setActiveTool}
+            checkProAccess={checkProAccess}
           />
 
           <DeleteControls
             canDeleteSelected={selectedShapeIds.length > 0} canClearAll={shapes.length > 0}
-            menuOpen={showDeleteMenu} onMenuOpenChange={setShowDeleteMenu}
             onDeleteSelected={throttle('delete-selected', 300, () => {
               if (selectedShapeIds.length === 0) return;
               setShapes(shapes.filter((s) => !selectedShapeIds.includes(s.id)));
@@ -76,7 +70,8 @@ export default function Toolbar({ onClose }: { onClose: () => void }) {
 
       <FilenameInput filename={filename} onChange={setFilename} />
       <CreditsBadge creditsRemaining={creditsRemaining} />
-      <ProSubscriptionModal open={showSubscriptionPopup} onOpenChange={setShowSubscriptionPopup} message={subscriptionMessage} />
+      <ProSubscriptionModal open={showSubscriptionPopup} onOpenChange={(open) => setShowSubscriptionPopup(open)} message={subscriptionMessage} />
+      <ProUpgradeModal />
       {isAIModalOpen && (
         <Suspense fallback={null}>
           <SendToAIModal isOpen={isAIModalOpen} onClose={() => setIsAIModalOpen(false)} />

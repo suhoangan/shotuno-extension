@@ -1,0 +1,22 @@
+{
+  "extensionName": {
+    "message": "Shotuno",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Capturez le contenu visible, une zone ou la page entière et annotez directement dans l'onglet.",
+    "description": "Description of the extension"
+  },
+  "actionTitle": {
+    "message": "Shotuno - Capture et annotation",
+    "description": "Title for action popup"
+  },
+  "contextMenuCaptureArea": {
+    "message": "Capturer la zone sélectionnée",
+    "description": "Context menu title for capturing selected area"
+  },
+  "contextMenuCaptureFull": {
+    "message": "Capturer la page entière",
+    "description": "Context menu title for capturing full page"
+  }
+}

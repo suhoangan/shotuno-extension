@@ -1,0 +1,22 @@
+{
+  "extensionName": {
+    "message": "Shotuno",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "截取可视区域、选中区域或整页网页，并在页内直接进行标注 — 箭头、模糊、OCR 文字识别等。",
+    "description": "Description of the extension"
+  },
+  "actionTitle": {
+    "message": "Shotuno - 截图与标注",
+    "description": "Title for action popup"
+  },
+  "contextMenuCaptureArea": {
+    "message": "截取选定区域",
+    "description": "Context menu title for capturing selected area"
+  },
+  "contextMenuCaptureFull": {
+    "message": "截取整页网页",
+    "description": "Context menu title for capturing full page"
+  }
+}

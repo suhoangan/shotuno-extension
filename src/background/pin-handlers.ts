@@ -45,7 +45,7 @@ export function handlePinMessage(
       // Windows ("Unable to add filesystem: <illegal path>") in the SW.
       await idbSet(`pin_full_${newId}`, dataUrl);
       const thumb = thumbnailUrl || await makePinThumbnail(dataUrl);
-      storage.local.get([PINS_STORAGE_KEY], (res) => {
+      storage.local.get([PINS_STORAGE_KEY, 'pro_license_status'], (res) => {
         if (chrome.runtime.lastError) {
           sendResponse({
             success: false,
@@ -54,6 +54,14 @@ export function handlePinMessage(
           return;
         }
         const current = (res[PINS_STORAGE_KEY] as PinImage[] | undefined) || [];
+        const isPro = res.pro_license_status === 'pro';
+        if (!isPro && current.length >= 10) {
+          sendResponse({
+            success: false,
+            error: 'PIN_LIMIT_REACHED',
+          });
+          return;
+        }
         const pin: PinImage = {
           id: newId,
           url: thumb,
@@ -109,7 +117,7 @@ export function handlePinMessage(
         });
       }
 
-      storage.local.get([PINS_STORAGE_KEY], (res) => {
+      storage.local.get([PINS_STORAGE_KEY, 'pro_license_status'], (res) => {
         if (chrome.runtime.lastError) {
           sendResponse({
             success: false,
@@ -118,6 +126,14 @@ export function handlePinMessage(
           return;
         }
         const current = (res[PINS_STORAGE_KEY] as PinImage[] | undefined) || [];
+        const isPro = res.pro_license_status === 'pro';
+        if (!isPro && current.length + newPins.length > 10) {
+          sendResponse({
+            success: false,
+            error: 'PIN_LIMIT_REACHED',
+          });
+          return;
+        }
         const { kept: live } = partitionExpired(current, PIN_RETENTION_MS);
         const updated = [...newPins, ...live].slice(0, MAX_PINS);
         const kept = new Set(updated.map((p) => p.id));

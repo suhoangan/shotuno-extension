@@ -1,0 +1,187 @@
+{
+  "language": {
+    "select": "语言",
+    "en": "English",
+    "vi": "Tiếng Việt",
+    "ja": "日本語",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "ko": "한국어",
+    "zh": "中文"
+  },
+  "popup": {
+    "title": "Shotuno",
+    "captureMode": "截图模式",
+    "visibleContent": {
+      "title": "可视区域",
+      "description": "截取当前屏幕显示内容"
+    },
+    "selectedArea": {
+      "title": "选定区域",
+      "description": "框选区域进行编辑"
+    },
+    "gridCapture": {
+      "title": "多区域截图",
+      "description": "同时截取多个区域"
+    },
+    "fullPage": {
+      "title": "整页截图",
+      "description": "截取长滚动网页"
+    },
+    "openGallery": {
+      "title": "打开固定图库",
+      "description": "拖拽截图至网页中"
+    },
+    "openImage": {
+      "title": "打开本地图片",
+      "description": "编辑电脑上的图片文件"
+    },
+    "noActiveTab": "没有可截图的活动标签页",
+    "invalidTab": "无法截取此页面 — 请打开普通网页标签页",
+    "extensionError": "插件错误 — 请在 chrome://extensions 页面重新加载 Shotuno",
+    "captureFailed": "截图失败 — 请刷新标签页后重试",
+    "refreshTabPrompt": "请刷新标签页，然后重试打开图片"
+  },
+  "toolbar": {
+    "styles": {
+      "solidRedact": "纯色遮盖",
+      "pixelate": "马赛克",
+      "blur": "模糊",
+      "circleBadge": "圆形徽章",
+      "pinBadge": "图钉徽章",
+      "twoWayArrow": "双向箭头",
+      "singleArrow": "单向箭头",
+      "dashedLine": "虚线 / 直线",
+      "solidFill": "纯色填充",
+      "borderOnly": "仅边框"
+    },
+    "undoTooltip": "撤销 (Ctrl+Z)",
+    "redoTooltip": "重做 (Ctrl+Y)",
+    "deleteTooltip": "删除所选形状 (Del)",
+    "shareCloudLink": "分享云端链接",
+    "copyTooltip": "复制到剪贴板 (Ctrl+C)",
+    "saveFile": "保存图片 (Ctrl+S)",
+    "closeTooltip": "关闭编辑器 (Esc)",
+    "clearTool": "清空所有画笔",
+    "select": "选择与移动",
+    "rectangle": "矩形",
+    "ellipse": "椭圆",
+    "arrow": "箭头",
+    "line": "直线",
+    "text": "文本",
+    "counter": "步骤计数器",
+    "blur": "模糊与马赛克",
+    "highlighter": "荧光笔",
+    "crop": "裁剪画布",
+    "watermark": "水印",
+    "color": "颜色",
+    "strokeWidth": "线条粗细",
+    "undo": "撤销",
+    "redo": "重做",
+    "clear": "清除全部",
+    "export": "导出图片",
+    "close": "关闭编辑器"
+  },
+  "dialogs": {
+    "cancel": "取消",
+    "confirm": "确认",
+    "delete": "删除",
+    "close": "关闭",
+    "clearCanvasTitle": "清空画布",
+    "clearCanvasDescription": "确定要清除画布上的所有图形吗？",
+    "exportTitle": "导出图片",
+    "copyClipboard": "复制到剪贴板",
+    "download": "下载 PNG",
+    "ocrTitle": "提取文字",
+    "ocrDescription": "从选区识别出的文字内容。",
+    "scanning": "正在扫描图片...",
+    "copied": "已复制！",
+    "copyToClipboard": "复制到剪贴板"
+  },
+  "sidepanel": {
+    "galleryTitle": "固定图库",
+    "noItems": "暂无截图记录",
+    "dragTip": "直接拖拽截图到网页中"
+  },
+  "onboarding": {
+    "welcome": "欢迎使用 SHOTUNO",
+    "title": "截图。标注。高效完成。",
+    "subtitle": "精准网页截图与标注工具。内置页内悬浮编辑器、Chrome 侧边栏固定图库、智能隐私模糊与一键 AI 自动粘贴。",
+    "pinButton": "固定 Shotuno 到工具栏",
+    "inTabFloating": "页内悬浮编辑器",
+    "sidePanelDrag": "侧边栏拖拽",
+    "localPrivacy": "100% 本地隐私安全",
+    "footer": "© 2026 Shotuno Extension. 本地优先截图与标注工具。",
+    "stepsTitle": "简单 4 步轻松上手",
+    "stepsSubtitle": "在 60 秒内掌握 Shotuno 的全部核心用法。",
+    "featuresTitle": "核心工具与功能特性",
+    "featuresSubtitle": "专为开发者与设计师的工作流打造。",
+    "shortcutsTitle": "快捷键速查表"
+  },
+  "userAccount": {
+    "login": "登录",
+    "loginViaWeb": "通过网页登录",
+    "openDashboard": "打开网页控制台",
+    "logout": "退出登录",
+    "signInPromptTitle": "登录即可每日免费获得 15 个 AI 积分",
+    "signInPromptSubtitle": "同步您的账号，解锁 AI 智能解析、OCR 文字提取与敏感数据模糊。",
+    "unlimitedCredits": "无限积分",
+    "creditsLeft": "今日剩余 {credits} 积分"
+  },
+  "modals": {
+    "sendToAI": {
+      "title": "发送截图至 AI",
+      "subtitle": "自动格式化并一键粘贴至您喜爱的 AI 助手",
+      "chatgpt": "ChatGPT",
+      "claude": "Claude",
+      "gemini": "Gemini",
+      "copyPrompt": "复制提示词与图片"
+    },
+    "proUpgrade": {
+      "title": "升级至 Shotuno Pro",
+      "subtitle": "解锁无限 AI 智能模糊、实时 OCR、自定义水印与浏览器外框",
+      "upgradeButton": "立即升级 $4.99/月"
+    }
+  },
+  "watermark": {
+    "title": "水印文字与 Logo",
+    "enable": "启用水印",
+    "modeText": "文字水印",
+    "modeImage": "Logo 图像",
+    "textPlaceholder": "输入水印文字（如：机密文档）",
+    "uploadLogo": "上传 Logo PNG/SVG",
+    "opacity": "不透明度",
+    "position": "显示位置",
+    "text": "水印文本",
+    "placeholder": "例如：机密 / Confidential"
+  },
+  "common": {
+    "loading": "加载中...",
+    "success": "成功",
+    "error": "错误"
+  },
+  "border": {
+    "title": "窗口外框与边框",
+    "macos": "macOS 窗口外框",
+    "windows": "Windows 窗口外框",
+    "padding": "画布内边距",
+    "shadow": "投影阴影",
+    "radius": "圆角半径",
+    "gradient": "渐变背景色"
+  },
+  "resize": {
+    "title": "调整画布尺寸",
+    "width": "宽度 (px)",
+    "height": "高度 (px)",
+    "maintainAspect": "锁定宽高比例",
+    "presets": "常用分辨率预设",
+    "apply": "应用新尺寸"
+  },
+  "capture": {
+    "dragToSelect": "按住鼠标左键拖拽选择截图区域",
+    "pressEsc": "按 ESC 键取消",
+    "scrollCapture": "向下滚动以截取更多，或点击以完成截取",
+    "capturing": "正在截取中..."
+  }
+}

@@ -8,6 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../../../components/ui/alert-dialog';
+import { useTranslation } from '../../../lib/i18n';
 
 interface ClearAllDialogProps {
   open: boolean;
@@ -19,27 +20,26 @@ interface ClearAllDialogProps {
 export function ClearAllDialog({
   open,
   onOpenChange,
-  shapeCount,
+  shapeCount: _shapeCount,
   onConfirm,
 }: ClearAllDialogProps) {
+  const { t } = useTranslation();
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Clear all annotations?</AlertDialogTitle>
+          <AlertDialogTitle>{t('dialogs.clearCanvasTitle')}</AlertDialogTitle>
           <AlertDialogDescription>
-            {shapeCount === 1
-              ? 'This removes the 1 annotation on this screenshot. You can still undo it afterwards.'
-              : `This removes all ${shapeCount} annotations on this screenshot. You can still undo it afterwards.`}
+            {t('dialogs.clearCanvasDescription')}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t('dialogs.cancel')}</AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
             onClick={onConfirm}
           >
-            Clear all
+            {t('toolbar.clear')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

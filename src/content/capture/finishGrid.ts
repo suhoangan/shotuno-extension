@@ -110,7 +110,6 @@ export async function finishGridCapture(
     showHardLoading({ title: 'Capturing grid', message: 'Saving images...' });
     await savePinImagesBatch(croppedUrls, batchId);
     hideHardLoading();
-    chrome.runtime.sendMessage({ type: 'OPEN_SIDE_PANEL' });
     toast.success(`Saved ${croppedUrls.length} regions to pins`);
     return 'saved';
   } catch (e) {

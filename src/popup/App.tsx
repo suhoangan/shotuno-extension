@@ -1,23 +1,33 @@
 import { useRef, useState } from 'react';
-import { Maximize, Crop, AlignVerticalSpaceAround, Images, FolderOpen, Pin, Loader2, LayoutGrid } from 'lucide-react';
+import { Maximize, Crop, AlignVerticalSpaceAround, Images, FolderOpen, Loader2, LayoutGrid } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Separator } from '../components/ui/separator';
 import { UserAccountHeader } from '../components/UserAccountHeader';
+import { useTranslation } from '../lib/i18n';
+import { LanguageSwitcher } from '../components/LanguageSwitcher';
 
 const CAPTURE_OPTIONS = [
-  { type: 'pin_area', icon: Pin, title: 'Pin area', description: 'Save to side panel for any tab', className: 'ring-1 ring-primary/30' },
-  { type: 'visible', icon: Maximize, title: 'Visible Content', description: 'Capture what\'s on screen' },
-  { type: 'area', icon: Crop, title: 'Selected Area', description: 'Draw a region to edit' },
-  { type: 'grid', icon: LayoutGrid, title: 'Grid Capture', description: 'Capture multiple regions' },
-  { type: 'full', icon: AlignVerticalSpaceAround, title: 'Full Page', description: 'Like DevTools full-size screenshot' },
+  { type: 'visible', icon: Maximize, titleKey: 'popup.visibleContent.title', descKey: 'popup.visibleContent.description' },
+  { type: 'area', icon: Crop, titleKey: 'popup.selectedArea.title', descKey: 'popup.selectedArea.description' },
+  { type: 'grid', icon: LayoutGrid, titleKey: 'popup.gridCapture.title', descKey: 'popup.gridCapture.description' },
+  { type: 'full', icon: AlignVerticalSpaceAround, titleKey: 'popup.fullPage.title', descKey: 'popup.fullPage.description' },
 ] as const;
 
-function CaptureButton({ option, loading, onClick }: { option: typeof CAPTURE_OPTIONS[number], loading: string | null, onClick: () => void }) {
+function CaptureButton({
+  option,
+  loading,
+  onClick,
+}: {
+  option: (typeof CAPTURE_OPTIONS)[number];
+  loading: string | null;
+  onClick: () => void;
+}) {
+  const { t } = useTranslation();
   const Icon = option.icon;
   return (
     <Button
       variant="outline"
-      className={`h-auto justify-start gap-3 py-2.5 px-3 ${'className' in option ? option.className : ''}`}
+      className="h-auto justify-start gap-3 py-2.5 px-3"
       onClick={onClick}
       disabled={loading !== null}
     >
@@ -27,9 +37,9 @@ function CaptureButton({ option, loading, onClick }: { option: typeof CAPTURE_OP
         <Icon size={18} className="text-primary shrink-0" />
       )}
       <div className="flex flex-col items-start text-left">
-        <span className="font-medium text-sm">{option.title}</span>
+        <span className="font-medium text-sm">{t(option.titleKey)}</span>
         <span className="text-xs text-muted-foreground font-normal">
-          {option.description}
+          {t(option.descKey)}
         </span>
       </div>
     </Button>
@@ -37,18 +47,19 @@ function CaptureButton({ option, loading, onClick }: { option: typeof CAPTURE_OP
 }
 
 export default function App() {
+  const { t } = useTranslation();
   const fileRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
 
-  const startCapture = async (type: 'visible' | 'area' | 'full' | 'pin_area' | 'grid') => {
+  const startCapture = async (type: 'visible' | 'area' | 'full' | 'grid') => {
     setError(null);
     setLoading(type);
     try {
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
       const activeTab = tabs[0];
       if (!activeTab?.id) {
-        setError('No active tab to capture');
+        setError(t('popup.noActiveTab'));
         return;
       }
       if (
@@ -56,7 +67,7 @@ export default function App() {
         activeTab.url?.startsWith('chrome-extension://') ||
         activeTab.url?.startsWith('edge://')
       ) {
-        setError('Cannot capture this page — open a normal website tab');
+        setError(t('popup.invalidTab'));
         return;
       }
 
@@ -68,14 +79,11 @@ export default function App() {
         (response) => {
           setLoading(null);
           if (chrome.runtime.lastError) {
-            setError(
-              chrome.runtime.lastError.message ||
-                'Extension error — reload Shotuno on chrome://extensions',
-            );
+            setError(chrome.runtime.lastError.message || t('popup.extensionError'));
             return;
           }
           if (response && response.success === false) {
-            setError(response.error || 'Capture failed — refresh the tab and try again');
+            setError(response.error || t('popup.captureFailed'));
             return;
           }
           window.close();
@@ -84,7 +92,7 @@ export default function App() {
     } catch (e) {
       setLoading(null);
       console.error('Failed to initiate capture', e);
-      setError(e instanceof Error ? e.message : 'Failed to start capture');
+      setError(e instanceof Error ? e.message : t('popup.captureFailed'));
     }
   };
 
@@ -96,7 +104,7 @@ export default function App() {
       window.close();
     } catch (e) {
       console.error('Failed to open side panel', e);
-      setError(e instanceof Error ? e.message : 'Could not open side panel');
+      setError(e instanceof Error ? e.message : t('popup.captureFailed'));
     }
   };
 
@@ -108,12 +116,12 @@ export default function App() {
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
       const tabId = tabs[0]?.id;
       if (!tabId) {
-        setError('No active tab');
+        setError(t('popup.noActiveTab'));
         return;
       }
       chrome.tabs.sendMessage(tabId, { type: 'TOGGLE_EDITOR', payload: reader.result }, () => {
         if (chrome.runtime.lastError) {
-          setError('Refresh the tab, then try Open image again');
+          setError(t('popup.refreshTabPrompt'));
           return;
         }
         window.close();
@@ -125,12 +133,15 @@ export default function App() {
   return (
     <div className="w-72 p-4 bg-background text-foreground font-sans flex flex-col gap-3">
       <div className="flex items-center justify-between gap-2">
-        <h1 className="text-sm font-bold text-foreground tracking-tight">Shotuno</h1>
-        <UserAccountHeader compact />
+        <h1 className="text-sm font-bold text-foreground tracking-tight">{t('popup.title')}</h1>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+          <UserAccountHeader compact />
+        </div>
       </div>
 
       <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-0.5">
-        Capture Mode
+        {t('popup.captureMode')}
       </h2>
 
       {error && (
@@ -153,9 +164,9 @@ export default function App() {
       <Button variant="outline" className="justify-start gap-2 h-auto py-2.5" onClick={() => void openGallery()}>
         <Images size={16} className="shrink-0" />
         <div className="flex flex-col items-start">
-          <span className="text-sm font-medium">Open pins & gallery</span>
+          <span className="text-sm font-medium">{t('popup.openGallery.title')}</span>
           <span className="text-[10px] text-muted-foreground font-normal">
-            Drag shots onto web pages
+            {t('popup.openGallery.description')}
           </span>
         </div>
       </Button>
@@ -178,9 +189,9 @@ export default function App() {
       >
         <FolderOpen size={16} className="shrink-0" />
         <div className="flex flex-col items-start">
-          <span className="text-sm font-medium">Open image</span>
+          <span className="text-sm font-medium">{t('popup.openImage.title')}</span>
           <span className="text-[10px] text-muted-foreground font-normal">
-            Edit a file from your desktop
+            {t('popup.openImage.description')}
           </span>
         </div>
       </Button>

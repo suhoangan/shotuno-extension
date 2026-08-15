@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 import type { ProFeatureId } from '../../../lib/entitlements/proFeatures';
-import { apiUrl } from '../../../lib/api';
-import { unwrapApi } from '../../../lib/unwrapApi';
+import { apiClient } from '../../../lib/api';
 import { storage } from '../../../lib/chromeStorage';
+import { useUIStore } from '../../../store/useUIStore';
 
 
 type ToolUseSnapshot = {
@@ -14,9 +14,39 @@ type ToolUseSnapshot = {
 };
 
 export function useProGate() {
-  const [showSubscriptionPopup, setShowSubscriptionPopup] = useState(false);
-  const [subscriptionMessage, setSubscriptionMessage] = useState('');
+  const setShowSubscriptionPopup = useUIStore((s) => s.setShowSubscriptionPopup);
   const [creditsRemaining, setCreditsRemaining] = useState<number | null>(null);
+
+  const checkProAccess = useCallback(async () => {
+    try {
+      const data = await storage.local.get('authToken');
+      const token = data.authToken as string | undefined;
+
+      if (!token) {
+        setShowSubscriptionPopup(
+          true,
+          'Please log in on the website to use Pro features and claim your 15 daily free credits.'
+        );
+        return false;
+      }
+
+      const { authUser } = await storage.local.get('authUser');
+      const entitlements = (authUser as { entitlements?: ToolUseSnapshot })?.entitlements || {};
+      
+      if (!entitlements.unlimitedCredits && typeof entitlements.dailyCreditsRemaining === 'number' && entitlements.dailyCreditsRemaining <= 0) {
+        setShowSubscriptionPopup(
+          true,
+          'You have run out of free credits for today. Please upgrade to Pro or wait until tomorrow.'
+        );
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      console.error('checkProAccess error:', err);
+      return false;
+    }
+  }, []);
 
   const runPro = useCallback(
     async (featureId: ProFeatureId, action: () => void | Promise<void>) => {
@@ -25,40 +55,14 @@ export function useProGate() {
         const token = data.authToken as string | undefined;
 
         if (!token) {
-          setSubscriptionMessage(
-            'Please log in on the website to use Pro features and claim your 15 daily free credits.',
+          setShowSubscriptionPopup(
+            true,
+            'Please log in on the website to use Pro features and claim your 15 daily free credits.'
           );
-          setShowSubscriptionPopup(true);
           return false;
         }
 
-        const response = await fetch(apiUrl('/subscriptions/tool-use'), {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ featureId }),
-        });
-
-        if (response.status === 401 || response.status === 403) {
-          const body = await response.json().catch(() => ({}));
-          const unwrapped = unwrapApi<{ message?: string }>(body);
-          setSubscriptionMessage(
-            unwrapped?.message ||
-              (body as { message?: string }).message ||
-              'You have run out of free credits for today. Please upgrade to Pro or wait until tomorrow.',
-          );
-          setShowSubscriptionPopup(true);
-          return false;
-        }
-
-        if (!response.ok) {
-          console.error('Failed to consume credit');
-          return false;
-        }
-
-        const resData = unwrapApi<ToolUseSnapshot>(await response.json());
+        const resData = await apiClient.post<any, ToolUseSnapshot>('/subscriptions/tool-use', { featureId });
         if (typeof resData.dailyCreditsRemaining === 'number') {
           setCreditsRemaining(
             resData.unlimitedCredits ? null : resData.dailyCreditsRemaining,
@@ -80,7 +84,15 @@ export function useProGate() {
 
         await action();
         return true;
-      } catch (err) {
+      } catch (err: any) {
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          setShowSubscriptionPopup(
+            true,
+            err.message ||
+              'You have run out of free credits for today. Please upgrade to Pro or wait until tomorrow.'
+          );
+          return false;
+        }
         console.error('ProGate error:', err);
         return false;
       }
@@ -90,9 +102,7 @@ export function useProGate() {
 
   return {
     runPro,
-    showSubscriptionPopup,
-    setShowSubscriptionPopup,
-    subscriptionMessage,
+    checkProAccess,
     creditsRemaining,
   };
 }

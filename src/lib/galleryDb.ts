@@ -11,6 +11,7 @@ export interface GalleryImage {
   batchId?: string;
   cloudUrl?: string;
   shareId?: string;
+  expiresAt?: number;
 }
 
 type MessageResponse = {
@@ -19,6 +20,8 @@ type MessageResponse = {
   images?: GalleryImage[];
   dataUrl?: string;
   error?: string;
+  url?: string;
+  id?: string;
 };
 
 function sendRuntimeMessage<T = MessageResponse>(message: unknown): Promise<T> {
@@ -69,7 +72,21 @@ export async function loadGalleryImages(): Promise<GalleryImage[]> {
         resolve([]);
         return;
       }
-      resolve((result['canvas_gallery_images'] as GalleryImage[] | undefined) || []);
+      const raw = (result['canvas_gallery_images'] as GalleryImage[] | undefined) || [];
+      const now = Date.now();
+      let changed = false;
+      const cleaned = raw.map((img) => {
+        if (img.expiresAt && img.expiresAt < now) {
+          changed = true;
+          const { cloudUrl, shareId, expiresAt, ...rest } = img;
+          return rest as GalleryImage;
+        }
+        return img;
+      });
+      if (changed) {
+        storage.local.set({ canvas_gallery_images: cleaned });
+      }
+      resolve(cleaned);
     });
   });
 }
@@ -136,4 +153,14 @@ export async function openGalleryOnDesktop(id: string): Promise<void> {
 /** Prefetch full images so dragstart can attach Files synchronously. */
 export function createFullImageCache() {
   return createPrefetchedFileCache(getFullImage);
+}
+export async function shareGalleryImage(id: string): Promise<{ url: string; id: string }> {
+  const response = await sendRuntimeMessage({
+    type: 'SHARE_GALLERY_IMAGE',
+    payload: { id },
+  });
+  if (!response?.success) {
+    throw new Error(response?.error || 'Failed to share image');
+  }
+  return { url: response.url as string, id: response.id as string };
 }

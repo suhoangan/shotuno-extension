@@ -30,3 +30,6 @@ store-listing/assets/*.jpeg
 *.njsproj
 *.sln
 *.sw?
+.playwright-user*
+playwright-report/
+test-results/
