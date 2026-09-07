@@ -64,7 +64,7 @@ export function BorderMenu({
           }
         />
         <TooltipContent side="bottom" sideOffset={8} className="z-[99999999]">
-          {t('border.title')}
+          {t('border.title')} {isPro && <span className="ml-1 text-amber-600 dark:text-amber-400 font-bold">PRO</span>}
         </TooltipContent>
       </Tooltip>
 

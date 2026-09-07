@@ -51,7 +51,7 @@ export function PinList({
 
   return (
     <>
-      <div className={view === 'grid' ? 'grid gap-2 grid-cols-2' : 'flex flex-col gap-1.5'}>
+      <div className={view === 'grid' ? 'grid gap-2 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]' : 'flex flex-col gap-1.5'}>
         {pins.map((pin) => {
           const selected = selectedIds.includes(pin.id);
           const openPreview = () => onPreview(pin.id, pin.url);

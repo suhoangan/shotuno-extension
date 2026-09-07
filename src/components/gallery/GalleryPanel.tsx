@@ -204,7 +204,7 @@ export function GalleryPanel({
         </div>
       )}
       <GalleryChrome
-        title={headerTitle || 'Downloads'}
+        title={headerTitle}
         subtitle={subtitle}
         view={prefs.view}
         filter={prefs.filter}
@@ -231,7 +231,7 @@ export function GalleryPanel({
             <p className="text-xs text-center">{emptyHint}</p>
           </div>
         ) : (
-          <div className={prefs.view === 'grid' ? 'grid gap-2 grid-cols-2' : 'flex flex-col gap-1.5'}>
+          <div className={prefs.view === 'grid' ? 'grid gap-2 [grid-template-columns:repeat(auto-fill,minmax(240px,1fr))]' : 'flex flex-col gap-1.5'}>
             {filtered.map((img) => {
               const selected = selectedIds.includes(img.id);
               return (

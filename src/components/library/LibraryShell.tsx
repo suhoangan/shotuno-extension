@@ -28,33 +28,6 @@ export function LibraryShell({
 
   const handleImagesChange = useCallback((next: GalleryImage[]) => setImages(next), []);
 
-  const tabsNode = (
-    <div className="flex items-center gap-4 shrink-0">
-      <button
-        className={`text-sm font-medium pb-1 ${
-          tab === 'pins'
-            ? 'text-foreground border-b-2 border-primary'
-            : 'text-muted-foreground hover:text-foreground border-b-2 border-transparent'
-        }`}
-        onClick={() => setTab('pins')}
-        aria-pressed={tab === 'pins'}
-      >
-        {t('sidepanel.pins')}
-      </button>
-      <button
-        className={`text-sm font-medium pb-1 ${
-          tab === 'downloads'
-            ? 'text-foreground border-b-2 border-primary'
-            : 'text-muted-foreground hover:text-foreground border-b-2 border-transparent'
-        }`}
-        onClick={() => setTab('downloads')}
-        aria-pressed={tab === 'downloads'}
-      >
-        {t('sidepanel.downloads')}
-      </button>
-    </div>
-  );
-
   const openFileNode = onOpenImageFile ? (
     <>
       <input
@@ -71,7 +44,7 @@ export function LibraryShell({
       <Button
         variant="ghost"
         size="icon"
-        className="h-7 w-7 shrink-0 text-muted-foreground"
+        className="h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground"
         title={t('sidepanel.openImage')}
         onClick={() => fileRef.current?.click()}
       >
@@ -82,25 +55,53 @@ export function LibraryShell({
 
   return (
     <div className={`flex flex-col h-full min-h-0 bg-background text-foreground ${className}`}>
-      {tab === 'pins' ? (
-        <PinPanel
-          className="flex-1 min-h-0"
-          headerTitle={tabsNode}
-          headerAction={openFileNode}
-          onPreviewImage={onPreviewImage}
-        />
-      ) : (
-        <GalleryPanel
-          images={images}
-          onImagesChange={handleImagesChange}
-          dragMode={dragMode}
-          emptyHint={t('sidepanel.emptyHint')}
-          className="flex-1 min-h-0"
-          headerTitle={tabsNode}
-          headerAction={openFileNode}
-          onPreviewImage={onPreviewImage}
-        />
-      )}
+      {/* Top Tabs Bar */}
+      <div className="px-3 border-b border-border flex items-center justify-between gap-2 h-10 bg-background shrink-0">
+        <div className="flex items-center gap-4">
+          <button
+            className={`text-sm font-medium h-10 flex items-center transition-colors relative ${
+              tab === 'pins'
+                ? 'text-foreground font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+            onClick={() => setTab('pins')}
+            aria-pressed={tab === 'pins'}
+          >
+            {t('sidepanel.pins')}
+          </button>
+          <button
+            className={`text-sm font-medium h-10 flex items-center transition-colors relative ${
+              tab === 'downloads'
+                ? 'text-foreground font-semibold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+            onClick={() => setTab('downloads')}
+            aria-pressed={tab === 'downloads'}
+          >
+            {t('sidepanel.downloads')}
+          </button>
+        </div>
+        {openFileNode}
+      </div>
+
+      {/* Tab Panels */}
+      <div className="flex-1 min-h-0">
+        {tab === 'pins' ? (
+          <PinPanel
+            className="h-full"
+            onPreviewImage={onPreviewImage}
+          />
+        ) : (
+          <GalleryPanel
+            images={images}
+            onImagesChange={handleImagesChange}
+            dragMode={dragMode}
+            emptyHint={t('sidepanel.emptyHint')}
+            className="h-full"
+            onPreviewImage={onPreviewImage}
+          />
+        )}
+      </div>
     </div>
   );
 }

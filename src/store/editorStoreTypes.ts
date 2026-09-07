@@ -29,6 +29,8 @@ export interface EditorState {
   setBlurType: (type: 'pixelate' | 'blur' | 'solid', opts?: { persistToTool?: boolean }) => void;
   counterStyle: 'circle' | 'square' | 'waterpoint';
   setCounterStyle: (style: 'circle' | 'square' | 'waterpoint', opts?: { persistToTool?: boolean }) => void;
+  continueCounter: boolean;
+  setContinueCounter: (continueCounter: boolean, opts?: { persistToTool?: boolean }) => void;
   isDragging: boolean;
   setIsDragging: (dragging: boolean) => void;
   

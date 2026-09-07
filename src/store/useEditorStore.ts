@@ -21,7 +21,8 @@ export const useEditorStore = create<EditorState>((set) => ({
       isLine: settings.isLine ?? false,
       opacity: settings.opacity,
       blurType: settings.blurType || 'pixelate',
-      counterStyle: settings.counterStyle || 'circle'
+      counterStyle: settings.counterStyle || 'circle',
+      continueCounter: typeof settings.continueCounter === 'boolean' ? settings.continueCounter : true,
     };
   }),
   
@@ -50,6 +51,7 @@ export const useEditorStore = create<EditorState>((set) => ({
       opacity: settings.opacity,
       blurType: settings.blurType || 'pixelate',
       counterStyle: settings.counterStyle || 'circle',
+      continueCounter: typeof settings.continueCounter === 'boolean' ? settings.continueCounter : true,
     };
   }),
   isSolid: false,
@@ -75,6 +77,10 @@ export const useEditorStore = create<EditorState>((set) => ({
   counterStyle: 'circle',
   setCounterStyle: (style, opts) => set((state) =>
     withToolStylePersist(state, { counterStyle: style }, { counterStyle: style }, opts?.persistToTool !== false),
+  ),
+  continueCounter: true,
+  setContinueCounter: (continueCounter, opts) => set((state) =>
+    withToolStylePersist(state, { continueCounter }, { continueCounter }, opts?.persistToTool !== false),
   ),
   isDragging: false,
   setIsDragging: (dragging) => set({ isDragging: dragging }),

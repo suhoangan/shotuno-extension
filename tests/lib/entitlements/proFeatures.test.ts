@@ -27,8 +27,9 @@ describe('proFeatures', () => {
   it('maps gated ToolType to ProFeatureId', () => {
     expect(toolProFeatureId('ocr')).toBe('ocr');
     expect(toolProFeatureId('smart_blur')).toBe('smart_blur');
-    expect(toolProFeatureId('stickers')).toBe('stickers');
-    // Free annotation tools are not credit-gated via toolProFeatureId
+    expect(toolProFeatureId('watermark')).toBe('watermark');
+    // Free annotation tools (including stickers, shapes, select) are not credit-gated via toolProFeatureId
+    expect(toolProFeatureId('stickers')).toBeNull();
     expect(toolProFeatureId('rect')).toBeNull();
     expect(toolProFeatureId('select')).toBeNull();
   });

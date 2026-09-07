@@ -50,6 +50,7 @@
       "blur": "Blur",
       "circleBadge": "Circle Badge",
       "pinBadge": "Pin Badge",
+      "continueCount": "Continue Numbering",
       "twoWayArrow": "Two-way Arrow",
       "singleArrow": "Single Arrow",
       "dashedLine": "Dashed / Arrow Line",
@@ -137,6 +138,7 @@
     "login": "Log in",
     "loginViaWeb": "Sign in via Web",
     "openDashboard": "Open Web Dashboard",
+    "openOnboarding": "Getting Started Guide",
     "logout": "Log out",
     "signInPromptTitle": "Sign in to get 15 Daily Free AI Credits",
     "signInPromptSubtitle": "Sync your account to unlock AI smart parsing, OCR text extraction, and privacy blurring.",
@@ -190,7 +192,13 @@
     "height": "Height (px)",
     "maintainAspect": "Maintain aspect ratio",
     "presets": "Preset Resolutions",
-    "apply": "Apply Resize"
+    "apply": "Apply Resize",
+    "freeLimit": "Free Tier Limit: Full HD (1920 × 1080)",
+    "proLimit": "Pro Tier Limit: Up to 4K UHD (3840 × 2160)",
+    "requiresPro": "Resolutions exceeding Full HD (1920×1080) require Shotuno Pro.",
+    "exceedsMax": "Canvas size exceeds maximum supported 4K resolution (3840×2160).",
+    "upgradeToPro": "Upgrade for 4K",
+    "currentDimensions": "Current Size"
   },
   "capture": {
     "dragToSelect": "Click & drag to select capture area",

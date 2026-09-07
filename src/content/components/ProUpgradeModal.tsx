@@ -25,10 +25,10 @@ export function ProUpgradeModal() {
         <AlertDialogHeader className="space-y-3 text-left">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-primary/15 text-primary ring-1 ring-primary/30">
-                <Crown size={20} className="fill-primary/20" />
+              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 ring-1 ring-amber-500/30">
+                <Crown size={20} className="fill-amber-500/20" />
               </div>
-              <span className="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-2.5 py-0.5 rounded-full border border-primary/20">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
                 Shotuno Pro
               </span>
             </div>

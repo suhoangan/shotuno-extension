@@ -50,6 +50,7 @@
       "blur": "Desenfocar",
       "circleBadge": "Insignia circular",
       "pinBadge": "Insignia pin",
+      "continueCount": "Continuar numeración",
       "twoWayArrow": "Flecha bidireccional",
       "singleArrow": "Flecha simple",
       "dashedLine": "Línea punteada",
@@ -122,7 +123,8 @@
   "userAccount": {
     "login": "Iniciar sesión",
     "loginViaWeb": "Iniciar sesión vía Web",
-    "openDashboard": "Abrir Panel Web",
+    "openDashboard": "Abrir panel de control web",
+    "openOnboarding": "Guía de inicio y bienvenida",
     "logout": "Cerrar sesión",
     "signInPromptTitle": "Inicia sesión para recibir 15 créditos gratis de IA diarios",
     "signInPromptSubtitle": "Sincroniza tu cuenta y desbloquea análisis por IA, OCR y desenfoque.",

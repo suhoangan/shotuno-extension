@@ -1,4 +1,4 @@
-import { LogIn, Sparkles, ExternalLink, LogOut, Crown, ChevronDown, Check, Globe } from 'lucide-react';
+import { LogIn, Sparkles, ExternalLink, LogOut, Crown, ChevronDown, Check, Globe, BookOpen } from 'lucide-react';
 import { useAuthUser } from '../lib/useAuthUser';
 import { webUrl } from '../lib/api';
 import { useTranslation, SUPPORTED_LANGUAGES } from '../lib/i18n';
@@ -83,7 +83,7 @@ export function UserAccountHeader({ compact = false }: { compact?: boolean }) {
             {avatarChar}
           </AvatarFallback>
           {license === 'PRO' && (
-            <AvatarBadge>
+            <AvatarBadge className="bg-amber-500 text-white dark:bg-amber-400 dark:text-slate-950 ring-background">
               <Crown className="fill-current" />
             </AvatarBadge>
           )}
@@ -106,7 +106,11 @@ export function UserAccountHeader({ compact = false }: { compact?: boolean }) {
               </div>
             )}
             <div className="flex items-center justify-between gap-2 pt-1">
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full border bg-muted border-border text-foreground">
+              <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${
+                license === 'PRO'
+                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400 font-bold'
+                  : 'bg-muted border-border text-foreground'
+              }`}>
                 {planLabel}
               </span>
               <span className="text-[10px] font-semibold text-primary">
@@ -124,6 +128,25 @@ export function UserAccountHeader({ compact = false }: { compact?: boolean }) {
         >
           <ExternalLink size={14} className="text-primary" />
           <span>{t('userAccount.openDashboard')}</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem
+          onClick={() => {
+            try {
+              if (typeof chrome !== 'undefined' && chrome.tabs?.create) {
+                chrome.tabs.create({ url: chrome.runtime.getURL('src/onboarding/index.html') });
+                return;
+              }
+            } catch {}
+            const url = typeof chrome !== 'undefined' && chrome.runtime?.getURL
+              ? chrome.runtime.getURL('src/onboarding/index.html')
+              : '/src/onboarding/index.html';
+            window.open(url, '_blank');
+          }}
+          className="flex items-center gap-2 text-xs font-medium cursor-pointer p-2 rounded-lg"
+        >
+          <BookOpen size={14} className="text-primary" />
+          <span>{t('userAccount.openOnboarding')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator className="my-1 bg-border/40" />

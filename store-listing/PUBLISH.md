@@ -18,19 +18,19 @@ VITE_WEB_URL=https://shotuno.suhoangan.com
 
 ## 1. Build & package
 
-From `shotuno-extension/`:
+From `extension/`:
 
 ```bash
-npm run build
-npm run package:store
+npm run publish
+# (Runs build and packages into release/shotuno-1.0.0.zip)
 ```
 
-This produces `shotuno-extension/store-listing/shotuno-1.0.0.zip` from `dist/` (manifest + assets only — no `node_modules`, no `.env`).
+This produces `extension/release/shotuno-1.0.0.zip` from `dist/` (manifest + assets only — no `node_modules`, no `.env`).
 
 Manual zip (PowerShell) if needed:
 
 ```powershell
-Compress-Archive -Path dist\* -DestinationPath store-listing\shotuno-1.0.0.zip -Force
+Compress-Archive -Path dist\* -DestinationPath release\shotuno-1.0.0.zip -Force
 ```
 
 Load `dist/` unpacked at `chrome://extensions` and smoke-test:
@@ -66,4 +66,4 @@ Load `dist/` unpacked at `chrome://extensions` and smoke-test:
 
 - Save the extension ID; set `NEXT_PUBLIC_EXTENSION_ID` on the marketing site if you deep-link install.
 - Keep `store-listing/` copy in sync when permissions or data practices change.
-- Re-run `npm run package:store` for each release.
+- Re-run `npm run publish` for each release.

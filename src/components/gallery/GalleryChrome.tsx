@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/
 import type { GalleryDateFilter, GalleryViewMode } from './galleryPrefs';
 
 interface GalleryChromeProps {
-  title: ReactNode;
+  title?: ReactNode;
   subtitle?: ReactNode;
   view: GalleryViewMode;
   selectedCount: number;
@@ -44,179 +44,181 @@ export function GalleryChrome({
 
   return (
     <TooltipProvider delay={300}>
-      <div className="px-3 py-2 border-b border-border flex items-center justify-between gap-2 h-10">
+      <div className="px-3 py-1.5 border-b border-border/70 bg-muted/20 flex items-center justify-between gap-2 min-h-[37px] shrink-0">
         <div className="flex items-center gap-2 min-w-0 flex-1">
           {selecting ? (
-            <span className="text-sm font-medium text-foreground whitespace-nowrap">
+            <span className="text-xs font-semibold text-foreground whitespace-nowrap">
               {selectedCount} selected
             </span>
           ) : (
             <div className="flex items-center gap-2 min-w-0">
-              {title}
+              {title && <span className="text-xs font-semibold text-foreground truncate">{title}</span>}
               {subtitle && (
-                <span className="text-xs text-muted-foreground truncate hidden sm:inline-block">
+                <span className="text-[11px] text-muted-foreground truncate">
                   {subtitle}
                 </span>
               )}
             </div>
           )}
         </div>
+
         <div className="flex items-center gap-1 shrink-0">
           {selecting ? (
             <>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 text-muted-foreground"
+                      onClick={onSelectAll}
+                    >
+                      <CheckSquare size={13} />
+                    </Button>
+                  }
+                />
+                <TooltipContent side="bottom" sideOffset={8}>Select all</TooltipContent>
+              </Tooltip>
+              {onBulkEdit && (
                 <Tooltip>
                   <TooltipTrigger
                     render={
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 text-muted-foreground"
-                        onClick={onSelectAll}
+                        className="h-6 w-6 text-muted-foreground"
+                        onClick={onBulkEdit}
                       >
-                        <CheckSquare size={14} />
+                        <Pencil size={13} />
                       </Button>
                     }
                   />
-                  <TooltipContent side="bottom" sideOffset={8}>Select all</TooltipContent>
+                  <TooltipContent side="bottom" sideOffset={8}>Edit</TooltipContent>
                 </Tooltip>
-                {onBulkEdit && (
-                  <Tooltip>
-                    <TooltipTrigger
-                      render={
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-muted-foreground"
-                          onClick={onBulkEdit}
-                        >
-                          <Pencil size={14} />
-                        </Button>
-                      }
-                    />
-                    <TooltipContent side="bottom" sideOffset={8}>Edit</TooltipContent>
-                  </Tooltip>
-                )}
-                {onBulkDownload && (
-                  <Tooltip>
-                    <TooltipTrigger
-                      render={
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-muted-foreground"
-                          onClick={onBulkDownload}
-                        >
-                          <Download size={14} />
-                        </Button>
-                      }
-                    />
-                    <TooltipContent side="bottom" sideOffset={8}>{`Download (${selectedCount})`}</TooltipContent>
-                  </Tooltip>
-                )}
+              )}
+              {onBulkDownload && (
                 <Tooltip>
                   <TooltipTrigger
                     render={
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 text-destructive hover:text-destructive"
-                        onClick={onRequestBulkDelete}
+                        className="h-6 w-6 text-muted-foreground"
+                        onClick={onBulkDownload}
                       >
-                        <Trash2 size={14} />
+                        <Download size={13} />
                       </Button>
                     }
                   />
-                  <TooltipContent side="bottom" sideOffset={8}>{`${bulkDeleteLabel} (${selectedCount})`}</TooltipContent>
+                  <TooltipContent side="bottom" sideOffset={8}>{`Download (${selectedCount})`}</TooltipContent>
                 </Tooltip>
+              )}
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 text-destructive hover:text-destructive"
+                      onClick={onRequestBulkDelete}
+                    >
+                      <Trash2 size={13} />
+                    </Button>
+                  }
+                />
+                <TooltipContent side="bottom" sideOffset={8}>{`${bulkDeleteLabel} (${selectedCount})`}</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 text-muted-foreground"
+                      onClick={onClearSelection}
+                    >
+                      <X size={13} />
+                    </Button>
+                  }
+                />
+                <TooltipContent side="bottom" sideOffset={8}>Clear selection</TooltipContent>
+              </Tooltip>
+            </>
+          ) : (
+            <>
+              {headerAction}
+              <div className="flex items-center p-0.5 rounded-md bg-muted border border-border/60">
                 <Tooltip>
                   <TooltipTrigger
                     render={
                       <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7 text-muted-foreground"
-                        onClick={onClearSelection}
-                      >
-                        <X size={14} />
-                      </Button>
-                    }
-                  />
-                  <TooltipContent side="bottom" sideOffset={8}>Clear selection</TooltipContent>
-                </Tooltip>
-              </>
-            ) : (
-              <>
-                {headerAction}
-                <div className="flex items-center p-0.5 rounded-lg bg-muted border border-border/60">
-                  <Tooltip>
-                    <TooltipTrigger
-                      render={
-                        <Button
-                          variant={view === 'grid' ? 'default' : 'ghost'}
-                          size="sm"
-                          className={`h-6 px-1.5 rounded-md transition-all flex items-center justify-center ${
-                            view === 'grid'
-                              ? 'shadow-xs font-semibold'
-                              : 'text-muted-foreground hover:text-foreground'
-                          }`}
-                          onClick={() => onViewChange('grid')}
-                          aria-pressed={view === 'grid'}
-                        >
-                          <LayoutGrid size={13} />
-                        </Button>
-                      }
-                    />
-                    <TooltipContent side="bottom" sideOffset={8}>Grid view</TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger
-                      render={
-                        <Button
-                          variant={view === 'list' ? 'default' : 'ghost'}
-                          size="sm"
-                          className={`h-6 px-1.5 rounded-md transition-all flex items-center justify-center ${
-                            view === 'list'
-                              ? 'shadow-xs font-semibold'
-                              : 'text-muted-foreground hover:text-foreground'
-                          }`}
-                          onClick={() => onViewChange('list')}
-                          aria-pressed={view === 'list'}
-                        >
-                          <List size={13} />
-                        </Button>
-                      }
-                    />
-                    <TooltipContent side="bottom" sideOffset={8}>List view</TooltipContent>
-                  </Tooltip>
-                </div>
-                {showFilters && onFilterChange && (
-                  <div className="flex items-center p-0.5 rounded-lg bg-muted border border-border/60">
-                    {([
-                      ['all', 'All'],
-                      ['today', 'Today'],
-                      ['week', 'Week'],
-                    ] as const).map(([value, label]) => (
-                      <Button
-                        key={value}
-                        variant={filter === value ? 'default' : 'ghost'}
+                        variant={view === 'grid' ? 'default' : 'ghost'}
                         size="sm"
-                        className={`h-6 px-2.5 text-[11px] rounded-md transition-all ${
-                          filter === value
+                        className={`h-5 px-1.5 rounded transition-all flex items-center justify-center ${
+                          view === 'grid'
                             ? 'shadow-xs font-semibold'
                             : 'text-muted-foreground hover:text-foreground'
                         }`}
-                        onClick={() => onFilterChange(value)}
-                        aria-pressed={filter === value}
+                        onClick={() => onViewChange('grid')}
+                        aria-pressed={view === 'grid'}
                       >
-                        {label}
+                        <LayoutGrid size={12} />
                       </Button>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+                    }
+                  />
+                  <TooltipContent side="bottom" sideOffset={8}>Grid view</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        variant={view === 'list' ? 'default' : 'ghost'}
+                        size="sm"
+                        className={`h-5 px-1.5 rounded transition-all flex items-center justify-center ${
+                          view === 'list'
+                            ? 'shadow-xs font-semibold'
+                            : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                        onClick={() => onViewChange('list')}
+                        aria-pressed={view === 'list'}
+                      >
+                        <List size={12} />
+                      </Button>
+                    }
+                  />
+                  <TooltipContent side="bottom" sideOffset={8}>List view</TooltipContent>
+                </Tooltip>
+              </div>
+
+              {showFilters && onFilterChange && (
+                <div className="flex items-center p-0.5 rounded-md bg-muted border border-border/60">
+                  {([
+                    ['all', 'All'],
+                    ['today', 'Today'],
+                    ['week', 'Week'],
+                  ] as const).map(([value, label]) => (
+                    <Button
+                      key={value}
+                      variant={filter === value ? 'default' : 'ghost'}
+                      size="sm"
+                      className={`h-5 px-2 text-[10px] rounded transition-all ${
+                        filter === value
+                          ? 'shadow-xs font-semibold'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                      onClick={() => onFilterChange(value)}
+                      aria-pressed={filter === value}
+                    >
+                      {label}
+                    </Button>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </div>
+      </div>
     </TooltipProvider>
   );
 }

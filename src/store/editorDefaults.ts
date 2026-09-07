@@ -8,6 +8,7 @@ export type ToolSettings = {
   isLine?: boolean;
   blurType: 'pixelate' | 'blur' | 'solid';
   counterStyle?: 'circle' | 'square' | 'waterpoint';
+  continueCounter?: boolean;
 };
 
 export const defaultToolSettings: Record<string, ToolSettings> = {
@@ -33,6 +34,7 @@ export const defaultToolSettings: Record<string, ToolSettings> = {
     isTwoWay: false,
     blurType: 'pixelate' as const,
     counterStyle: 'circle' as const,
+    continueCounter: true,
   },
   callout: { color: '#ef4444', strokeWidth: 4, isSolid: false, isTwoWay: false, blurType: 'pixelate' as const },
   magnifier: { color: '#ef4444', strokeWidth: 4, isSolid: true, isTwoWay: false, blurType: 'pixelate' as const },
@@ -61,6 +63,7 @@ function sanitizeToolSettings(raw: Partial<ToolSettings> | undefined, fallback: 
     isLine: typeof raw.isLine === 'boolean' ? raw.isLine : (fallback.isLine ?? false),
     blurType,
     ...(counterStyle ? { counterStyle } : {}),
+    ...(typeof raw.continueCounter === 'boolean' ? { continueCounter: raw.continueCounter } : (typeof fallback.continueCounter === 'boolean' ? { continueCounter: fallback.continueCounter } : {})),
   };
 }
 
@@ -204,3 +207,25 @@ export function snapBorderPaddingSize(value: number) {
   const snapped = Math.round(value / BORDER_PADDING_SIZE_STEP) * BORDER_PADDING_SIZE_STEP;
   return Math.min(BORDER_PADDING_SIZE_MAX, Math.max(BORDER_PADDING_SIZE_MIN, snapped));
 }
+
+export const RESOLUTION_LIMIT_FREE = {
+  maxWidth: 1920,
+  maxHeight: 1080,
+  maxPixels: 1920 * 1080,
+  label: 'Full HD (1080p)',
+} as const;
+
+export const RESOLUTION_LIMIT_PRO = {
+  maxWidth: 3840,
+  maxHeight: 2160,
+  maxPixels: 3840 * 2160,
+  label: '4K UHD',
+} as const;
+
+export const RESOLUTION_HARD_CEILING = {
+  maxWidth: 3840,
+  maxHeight: 2160,
+  maxPixels: 3840 * 2160,
+  label: '4K Maximum',
+} as const;
+

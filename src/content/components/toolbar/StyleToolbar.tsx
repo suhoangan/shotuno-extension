@@ -1,6 +1,7 @@
 import { useEditorStore } from '../../../store/useEditorStore';
-import { Square, Grid, Droplets, Circle, MapPin, ArrowLeftRight, Minus, Square as SquareOutline } from 'lucide-react';
+import { Square, Grid, Droplets, ArrowLeftRight, Minus, Square as SquareOutline } from 'lucide-react';
 import { StyleToggle } from './StyleToggle';
+import { CounterStyleControls } from './CounterStyleControls';
 import { StrokeWidthControl } from './StrokeWidthControl';
 import { OpacityControl } from './OpacityControl';
 import { ColorPalettePicker } from './ColorPalettePicker';
@@ -18,6 +19,7 @@ export function StyleToolbar() {
     activeTool, selectedShapeIds, shapes, updateShape, saveHistory,
     blurType, setBlurType,
     counterStyle, setCounterStyle,
+    continueCounter, setContinueCounter,
     isTwoWay, setIsTwoWay,
     isLine, setIsLine,
     isSolid, setIsSolid,
@@ -34,6 +36,8 @@ export function StyleToolbar() {
     setBlurType: state.setBlurType,
     counterStyle: state.counterStyle,
     setCounterStyle: state.setCounterStyle,
+    continueCounter: state.continueCounter,
+    setContinueCounter: state.setContinueCounter,
     isTwoWay: state.isTwoWay,
     setIsTwoWay: state.setIsTwoWay,
     isLine: state.isLine,
@@ -107,18 +111,14 @@ export function StyleToolbar() {
       )}
       
       {appliesTo('counter') && (
-        <>
-          <StyleToggle label={t('toolbar.styles.circleBadge')} active={counterStyle === 'circle'} onClick={() => { setCounterStyle('circle', persistOpts); applyToSelection({ counterStyle: 'circle' }); }}>
-            <Circle size={ICON} />
-          </StyleToggle>
-          <StyleToggle label="Square Style" active={counterStyle === 'square'} onClick={() => { setCounterStyle('square', persistOpts); applyToSelection({ counterStyle: 'square' }); }}>
-            <Square size={ICON} />
-          </StyleToggle>
-          <StyleToggle label={t('toolbar.styles.pinBadge')} active={counterStyle === 'waterpoint'} onClick={() => { setCounterStyle('waterpoint', persistOpts); applyToSelection({ counterStyle: 'waterpoint' }); }}>
-            <MapPin size={ICON} />
-          </StyleToggle>
-          <div className="h-4 w-px shrink-0 bg-border/40" />
-        </>
+        <CounterStyleControls
+          counterStyle={counterStyle}
+          setCounterStyle={setCounterStyle}
+          continueCounter={continueCounter}
+          setContinueCounter={setContinueCounter}
+          applyToSelection={applyToSelection}
+          persistOpts={persistOpts}
+        />
       )}
       
       {appliesTo('arrow') && (

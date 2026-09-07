@@ -50,6 +50,7 @@
       "blur": "Làm mờ",
       "circleBadge": "Huy hiệu tròn",
       "pinBadge": "Huy hiệu ghim",
+      "continueCount": "Tiếp tục đếm số",
       "twoWayArrow": "Mũi tên 2 chiều",
       "singleArrow": "Mũi tên 1 chiều",
       "dashedLine": "Nét đứt / Thẳng",
@@ -136,12 +137,13 @@
   "userAccount": {
     "login": "Đăng nhập",
     "loginViaWeb": "Đăng nhập qua Web",
-    "openDashboard": "Mở Bảng điều khiển Web",
+    "openDashboard": "Mở trang quản lý Web",
+    "openOnboarding": "Hướng dẫn bắt đầu",
     "logout": "Đăng xuất",
     "signInPromptTitle": "Đăng nhập để nhận 15 lượt AI miễn phí mỗi ngày",
-    "signInPromptSubtitle": "Đồng bộ tài khoản để mở khóa trích xuất OCR, làm mờ AI và xử lý thông minh.",
-    "unlimitedCredits": "Không giới hạn lượt dùng",
-    "creditsLeft": "Hôm nay còn lại {credits} lượt"
+    "signInPromptSubtitle": "Đồng bộ tài khoản để sử dụng AI bóc tách văn bản OCR và làm mờ bảo mật.",
+    "unlimitedCredits": "Không giới hạn",
+    "creditsLeft": "Còn lại {credits} lượt hôm nay"
   },
   "modals": {
     "sendToAI": {
@@ -190,7 +192,13 @@
     "height": "Chiều cao (px)",
     "maintainAspect": "Giữ nguyên tỷ lệ khung hình",
     "presets": "Độ phân giải mẫu",
-    "apply": "Áp dụng kích thước"
+    "apply": "Áp dụng kích thước",
+    "freeLimit": "Giới hạn gói Miễn phí: Full HD (1920 × 1080)",
+    "proLimit": "Giới hạn gói Pro: Lên đến 4K UHD (3840 × 2160)",
+    "requiresPro": "Kích thước vượt quá Full HD (1920×1080) yêu cầu tài khoản Shotuno Pro.",
+    "exceedsMax": "Kích thước khung vẽ vượt quá giới hạn tối đa 4K (3840×2160).",
+    "upgradeToPro": "Nâng cấp lên Pro để mở khóa 4K",
+    "currentDimensions": "Kích thước hiện tại"
   },
   "capture": {
     "dragToSelect": "Nhấp và kéo chuột để chọn vùng chụp",

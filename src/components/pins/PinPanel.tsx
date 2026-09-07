@@ -146,7 +146,7 @@ export function PinPanel({
       )}
 
       <GalleryChrome
-        title={headerTitle || 'Pins'}
+        title={headerTitle}
         subtitle={subtitle}
         view={prefs.view}
         selectedCount={selectedIds.length}
@@ -171,11 +171,7 @@ export function PinPanel({
             .catch((e) => toast.error(e instanceof Error ? e.message : 'Could not edit'));
         }}
         bulkDeleteLabel="Remove"
-        headerAction={(
-          <>
-            {headerAction}
-          </>
-        )}
+        headerAction={headerAction}
       />
 
       <div 

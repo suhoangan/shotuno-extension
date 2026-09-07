@@ -8,49 +8,53 @@ export function OnboardingSteps() {
     {
       step: '01',
       icon: Pin,
-      title: 'Pin extension to Chrome bar',
-      desc: 'Click the Chrome puzzle icon (🧩) top-right, then pin Shotuno for 1-click access anytime.',
+      title: 'Pin Extension to Toolbar',
+      desc: 'Click the Chrome puzzle icon (🧩) top-right, then pin Shotuno for instant 1-click access anytime.',
     },
     {
       step: '02',
       icon: MousePointerClick,
-      title: 'Pick a capture mode',
-      desc: 'Choose Pin Area, Visible Content, Selected Area, or Full-Page scrolling capture from the popup.',
+      title: 'Pick a Capture Mode',
+      desc: 'Choose Pin Area, Visible Viewport, Selected Area, Scrolling Full-Page, or Screen Grid capture.',
     },
     {
       step: '03',
       icon: Edit3,
-      title: 'Annotate on the floating editor',
-      desc: 'Add step counters (1-2-3), arrows, text, 2X loupe magnifier, pixel ruler, or Smart Privacy Blur.',
+      title: 'Annotate on Floating Canvas',
+      desc: 'Add step counters (1-2-3), text, 2X magnifier loupe, pixel ruler, or Smart Privacy Blur.',
     },
     {
       step: '04',
       icon: Bot,
       title: 'Drag & Drop or Send to AI',
-      desc: 'Drag pinned captures out of the Chrome Side Panel into web pages, Jira, GitHub, Slack, or ChatGPT.',
+      desc: 'Drag pinned captures from the Chrome Side Panel into web pages, Jira, GitHub, Slack, or ChatGPT.',
     },
   ];
 
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-foreground">{t('onboarding.stepsTitle')}</h2>
-        <p className="text-sm text-muted-foreground mt-1">{t('onboarding.stepsSubtitle')}</p>
+      <div className="text-center space-y-1">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+          {t('onboarding.stepsTitle')}
+        </h2>
+        <p className="text-xs sm:text-sm text-muted-foreground">
+          {t('onboarding.stepsSubtitle')}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {steps.map(({ step, icon: Icon, title, desc }) => (
           <div
             key={step}
-            className="flex items-start gap-4 rounded-xl border border-border bg-card p-5 transition-all hover:border-primary/40 shadow-sm"
+            className="flex items-start gap-4 rounded-2xl border border-border/80 bg-card p-5 transition-colors hover:border-primary/40 shadow-2xs group"
           >
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 font-mono font-bold text-primary">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 font-mono font-bold text-sm text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
               {step}
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1 min-w-0">
               <div className="flex items-center gap-2">
-                <Icon className="size-4 text-primary" />
-                <h3 className="font-semibold text-sm text-foreground">{title}</h3>
+                <Icon className="size-4 text-primary shrink-0" />
+                <h3 className="font-semibold text-sm text-foreground truncate">{title}</h3>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
             </div>

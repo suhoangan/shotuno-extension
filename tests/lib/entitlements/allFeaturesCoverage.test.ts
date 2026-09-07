@@ -78,7 +78,6 @@ describe('Comprehensive Feature Catalog Coverage (All 24 Features)', () => {
       'watermark',
       'window_border',
       'resize',
-      'stickers',
     ];
 
     gatedTools.forEach((tool) => {
@@ -86,7 +85,7 @@ describe('Comprehensive Feature Catalog Coverage (All 24 Features)', () => {
     });
 
     // Ungated free tools
-    const freeTools = ['rect', 'arrow', 'circle', 'text', 'brush', 'select', 'highlight'];
+    const freeTools = ['rect', 'arrow', 'circle', 'text', 'brush', 'select', 'highlight', 'stickers'];
     freeTools.forEach((tool) => {
       expect(toolProFeatureId(tool)).toBeNull();
     });

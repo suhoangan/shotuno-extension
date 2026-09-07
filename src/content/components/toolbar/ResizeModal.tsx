@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
-import { X, Lock, Unlock } from 'lucide-react';
+import { X, Lock, Unlock, AlertTriangle, AlertCircle } from 'lucide-react';
 import { useEditorStore } from '../../../store/useEditorStore';
 import { Button } from '../../../components/ui/button';
 import { useProGate } from '../hooks/useProGate';
+import { useToolbarEntitlements } from './hooks/useToolbarEntitlements';
+import { validateResolution } from '../canvas/resolutionLimits';
 import { useTranslation } from '../../../lib/i18n';
+import { ProBadge } from './ProBadge';
 
 interface ResizeModalProps {
   isOpen: boolean;
@@ -19,6 +22,7 @@ export const ResizeModal = ({ isOpen, onClose, image, setImage }: ResizeModalPro
   const [keepAspectRatio, setKeepAspectRatio] = useState(true);
   const { shapes, setShapes, saveHistory } = useEditorStore();
   const { runPro } = useProGate();
+  const { isUserFreeTier } = useToolbarEntitlements();
 
   useEffect(() => {
     if (isOpen && image) {
@@ -29,8 +33,14 @@ export const ResizeModal = ({ isOpen, onClose, image, setImage }: ResizeModalPro
 
   if (!isOpen || !image) return null;
 
+  const isPro = !isUserFreeTier;
+  const validation = validateResolution(width, height, isPro);
+  const isExceedingMax = validation.status === 'exceeds_max';
+  const isRequiresPro = validation.status === 'requires_pro';
+  const isInvalid = validation.status === 'invalid_dimensions';
+
   const handleWidthChange = (val: string) => {
-    const w = parseInt(val) || 0;
+    const w = parseInt(val, 10) || 0;
     setWidth(w);
     if (keepAspectRatio && image.width > 0) {
       setHeight(Math.round(w * (image.height / image.width)));
@@ -38,98 +48,130 @@ export const ResizeModal = ({ isOpen, onClose, image, setImage }: ResizeModalPro
   };
 
   const handleHeightChange = (val: string) => {
-    const h = parseInt(val) || 0;
+    const h = parseInt(val, 10) || 0;
     setHeight(h);
     if (keepAspectRatio && image.height > 0) {
       setWidth(Math.round(h * (image.width / image.height)));
     }
   };
 
-  const handleResize = () => {
-    if (width <= 0 || height <= 0) return;
+  const performScale = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-    void runPro('resize', () => {
-      // Scale the image via a hidden canvas
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-      
-      ctx.drawImage(image, 0, 0, width, height);
-      const newImageSrc = canvas.toDataURL('image/png');
+    ctx.drawImage(image, 0, 0, width, height);
+    const newImageSrc = canvas.toDataURL('image/png');
+    const scaleX = width / image.width;
+    const scaleY = height / image.height;
 
-      const scaleX = width / image.width;
-      const scaleY = height / image.height;
+    if (setImage) {
+      const newImg = new window.Image();
+      newImg.src = newImageSrc;
+      newImg.onload = () => setImage(newImg);
+    } else {
+      image.src = newImageSrc;
+    }
 
-      if (setImage) {
-        const newImg = new window.Image();
-        newImg.src = newImageSrc;
-        newImg.onload = () => setImage(newImg);
-      } else {
-        image.src = newImageSrc;
+    const newShapes = shapes.map((shape) => {
+      const s = { ...shape } as any;
+      if (s.x !== undefined) s.x *= scaleX;
+      if (s.y !== undefined) s.y *= scaleY;
+      if (s.width !== undefined) s.width *= scaleX;
+      if (s.height !== undefined) s.height *= scaleY;
+      if (s.points) {
+        s.points = s.points.map((p: number, i: number) => (i % 2 === 0 ? p * scaleX : p * scaleY));
       }
-
-      const newShapes = shapes.map(shape => {
-        const s = { ...shape } as any;
-        if (s.x !== undefined) s.x *= scaleX;
-        if (s.y !== undefined) s.y *= scaleY;
-        if (s.width !== undefined) s.width *= scaleX;
-        if (s.height !== undefined) s.height *= scaleY;
-        if (s.points) {
-          s.points = s.points.map((p: number, i: number) => i % 2 === 0 ? p * scaleX : p * scaleY);
-        }
-        if (s.fontSize) s.fontSize *= scaleY;
-        if (s.strokeWidth) s.strokeWidth *= Math.min(scaleX, scaleY);
-        if (s.radius) s.radius *= Math.min(scaleX, scaleY);
-        return s;
-      });
-
-      setShapes(newShapes);
-      saveHistory();
-      onClose();
+      if (s.fontSize) s.fontSize *= scaleY;
+      if (s.strokeWidth) s.strokeWidth *= Math.min(scaleX, scaleY);
+      if (s.radius) s.radius *= Math.min(scaleX, scaleY);
+      return s;
     });
+
+    setShapes(newShapes);
+    saveHistory();
+    onClose();
+  };
+
+  const handleResize = () => {
+    if (isInvalid || isExceedingMax) return;
+    void runPro('resize', performScale);
   };
 
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[999999] flex items-center justify-center p-4">
       <div className="bg-background border border-border rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between p-4 border-b border-border/50 bg-card/50">
-          <h2 className="text-lg font-semibold text-foreground">{t('resize.title')}</h2>
-          <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">{t('resize.title')}</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {t('resize.currentDimensions')}: {image.width} × {image.height}px
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          >
             <X size={20} />
           </Button>
         </div>
 
-        <div className="p-6 flex gap-4 items-center justify-center">
-          <div className="flex flex-col gap-1">
-            <label className="text-xs text-muted-foreground">{t('resize.width')}</label>
-            <input 
-              type="number" 
-              value={width} 
-              onChange={e => handleWidthChange(e.target.value)}
-              className="bg-card border border-border rounded p-2 text-foreground w-24 text-center focus:ring-1 focus:ring-ring outline-none"
-            />
-          </div>
-          
-          <Button 
-            variant={keepAspectRatio ? "secondary" : "ghost"}
-            size="icon"
-            onClick={() => setKeepAspectRatio(!keepAspectRatio)}
-            className="mt-4"
-            title={t('resize.maintainAspect')}
-          >
-            {keepAspectRatio ? <Lock size={16} /> : <Unlock size={16} />}
-          </Button>
+        <div className="p-6 flex flex-col gap-4">
+          <div className="flex gap-4 items-center justify-center">
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-muted-foreground">{t('resize.width')}</label>
+              <input
+                type="number"
+                value={width || ''}
+                onChange={(e) => handleWidthChange(e.target.value)}
+                className="bg-card border border-border rounded p-2 text-foreground w-28 text-center focus:ring-1 focus:ring-ring outline-none"
+              />
+            </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-xs text-muted-foreground">{t('resize.height')}</label>
-            <input 
-              type="number" 
-              value={height} 
-              onChange={e => handleHeightChange(e.target.value)}
-              className="bg-card border border-border rounded p-2 text-foreground w-24 text-center focus:ring-1 focus:ring-ring outline-none"
-            />
+            <Button
+              variant={keepAspectRatio ? 'secondary' : 'ghost'}
+              size="icon"
+              onClick={() => setKeepAspectRatio(!keepAspectRatio)}
+              className="mt-4"
+              title={t('resize.maintainAspect')}
+            >
+              {keepAspectRatio ? <Lock size={16} /> : <Unlock size={16} />}
+            </Button>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-muted-foreground">{t('resize.height')}</label>
+              <input
+                type="number"
+                value={height || ''}
+                onChange={(e) => handleHeightChange(e.target.value)}
+                className="bg-card border border-border rounded p-2 text-foreground w-28 text-center focus:ring-1 focus:ring-ring outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="text-xs text-muted-foreground bg-card/60 p-2.5 rounded-lg border border-border/40 flex items-center justify-between">
+              <span>{isUserFreeTier ? t('resize.freeLimit') : t('resize.proLimit')}</span>
+              <span className="font-semibold text-primary">{isUserFreeTier ? '1080p' : '4K UHD'}</span>
+            </div>
+
+            {isRequiresPro && (
+              <div className="text-xs text-amber-500 bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-lg flex items-center gap-2">
+                <AlertTriangle size={14} className="shrink-0" />
+                <span>{t('resize.requiresPro')}</span>
+              </div>
+            )}
+
+            {isExceedingMax && (
+              <div className="text-xs text-destructive bg-destructive/10 border border-destructive/20 p-2.5 rounded-lg flex items-center gap-2">
+                <AlertCircle size={14} className="shrink-0" />
+                <span>{t('resize.exceedsMax')}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -137,11 +179,14 @@ export const ResizeModal = ({ isOpen, onClose, image, setImage }: ResizeModalPro
           <Button variant="outline" onClick={onClose}>
             {t('dialogs.cancel')}
           </Button>
-          <Button 
+          <Button
             variant="default"
+            disabled={isInvalid || isExceedingMax}
             onClick={handleResize}
+            className="relative"
           >
             {t('resize.apply')}
+            {isRequiresPro && <ProBadge show className="-top-1.5 -right-1.5" />}
           </Button>
         </div>
       </div>

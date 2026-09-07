@@ -136,17 +136,17 @@ export function GalleryItem({
 					else onPreview();
 				}
 			}}
-			className={`group relative aspect-square rounded-xl border overflow-hidden transition-all ${draggable ? 'cursor-grab active:cursor-grabbing' : ''} ${
+			className={`group relative rounded-xl border overflow-hidden transition-all ${draggable ? 'cursor-grab active:cursor-grabbing' : ''} ${
 				selected
 					? 'border-primary ring-2 ring-primary/30'
 					: 'border-border/60 hover:border-border hover:shadow-sm'
 			}`}
 		>
-			<div className='w-full h-full bg-card pointer-events-none'>
+			<div className='w-full bg-muted pointer-events-none overflow-hidden min-h-[80px] max-h-[200px] flex items-center justify-center'>
 				<img
 					src={image.url}
 					alt={label}
-					className='w-full h-full object-contain'
+					className='max-w-full max-h-[200px] w-auto h-auto object-contain'
 				/>
 			</div>
 			<Button

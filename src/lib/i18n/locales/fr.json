@@ -50,6 +50,7 @@
       "blur": "Flouter",
       "circleBadge": "Badge circulaire",
       "pinBadge": "Badge épingle",
+      "continueCount": "Continuer la numérotation",
       "twoWayArrow": "Flèche double",
       "singleArrow": "Flèche simple",
       "dashedLine": "Ligne pointillée",
@@ -122,7 +123,8 @@
   "userAccount": {
     "login": "Se connecter",
     "loginViaWeb": "Se connecter via le Web",
-    "openDashboard": "Ouvrir le Tableau de Bord Web",
+    "openDashboard": "Ouvrir le tableau de bord Web",
+    "openOnboarding": "Guide de démarrage",
     "logout": "Se déconnecter",
     "signInPromptTitle": "Connectez-vous pour 15 crédits IA gratuits par jour",
     "signInPromptSubtitle": "Synchronisez votre compte et débloquez l'analyse IA, l'OCR et le floutage.",

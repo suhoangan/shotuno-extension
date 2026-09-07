@@ -52,16 +52,19 @@ export function ToolbarToolGroup({
       )}
       {featureEnabled('shapes') && (
         <ShapeToolMenu
-          activeTool={activeTool} onSelect={handleToolSelect}
-          onAddSticker={featureEnabled('stickers') ? (emoji) => {
-            void runPro('stickers', () => {
-              import('../../editorActions').then(({ editorActions }) => {
-                editorActions.emitAddSticker(emoji);
-                setActiveTool('select');
-                setActiveMenu(null);
-              });
-            });
-          } : undefined}
+          activeTool={activeTool}
+          onSelect={handleToolSelect}
+          onAddSticker={
+            featureEnabled('stickers')
+              ? (emoji) => {
+                  import('../../editorActions').then(({ editorActions }) => {
+                    editorActions.emitAddSticker(emoji);
+                    setActiveTool('select');
+                    setActiveMenu(null);
+                  });
+                }
+              : undefined
+          }
         />
       )}
       {featureEnabled('text') && (
@@ -86,7 +89,11 @@ export function ToolbarToolGroup({
       )}
       {featureEnabled('counter') && (
         <ToolButton
-          tool="counter" activeTool={activeTool} label={`${t('toolbar.counter')} (C)`} onSelect={handleToolSelect}
+          tool="counter"
+          activeTool={activeTool}
+          label={`${t('toolbar.counter')} (C)`}
+          onSelect={handleToolSelect}
+          isPro={isUserFreeTier && !!toolProFeatureId('counter')}
           icon={({ size = ICON, className = '' }) => (
             <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
               <circle cx="12" cy="12" r="9" />
@@ -98,7 +105,14 @@ export function ToolbarToolGroup({
       <ToolDivider />
 
       {featureEnabled('blur') && (
-        <ToolButton tool="blur" activeTool={activeTool} icon={Droplets} label={`${t('toolbar.blur')} (S)`} onSelect={handleToolSelect} />
+        <ToolButton
+          tool="blur"
+          activeTool={activeTool}
+          icon={Droplets}
+          label={`${t('toolbar.blur')} (S)`}
+          onSelect={handleToolSelect}
+          isPro={isUserFreeTier && !!toolProFeatureId('blur')}
+        />
       )}
       {featureEnabled('smart_blur') && (
         <ToolButton
@@ -114,13 +128,27 @@ export function ToolbarToolGroup({
         />
       )}
       {featureEnabled('magnifier') && (
-        <ToolButton tool="magnifier" activeTool={activeTool} icon={Search} label={`${t('toolbar.magnifier')}`} onSelect={handleToolSelect} />
+        <ToolButton
+          tool="magnifier"
+          activeTool={activeTool}
+          icon={Search}
+          label={`${t('toolbar.magnifier')}`}
+          onSelect={handleToolSelect}
+          isPro={isUserFreeTier && !!toolProFeatureId('magnifier')}
+        />
       )}
       {featureEnabled('ocr') && (
         <ToolButton tool="ocr" activeTool={activeTool} icon={ScanText} label={`${t('toolbar.ocr')}`} onSelect={handleToolSelect} isPro={isUserFreeTier && !!toolProFeatureId('ocr')} />
       )}
       {featureEnabled('measure') && (
-        <ToolButton tool="measure" activeTool={activeTool} icon={Ruler} label={`${t('toolbar.measure')}`} onSelect={handleToolSelect} />
+        <ToolButton
+          tool="measure"
+          activeTool={activeTool}
+          icon={Ruler}
+          label={`${t('toolbar.measure')}`}
+          onSelect={handleToolSelect}
+          isPro={isUserFreeTier && !!toolProFeatureId('measure')}
+        />
       )}
       <ToolDivider />
 

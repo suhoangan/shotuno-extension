@@ -6,7 +6,7 @@ const STICKER_EMOJIS = ['🔥', '✅', '❌', '💡', '💯', '⭐', '❤️', '
 
 interface StickerPickerProps {
   onPicked?: () => void;
-  /** When set, parent handles add (e.g. Pro gate). Otherwise emits editorActions. */
+  /** When set, parent handles add directly. Otherwise emits editorActions. */
   onAddSticker?: (emoji: string) => void;
 }
 
@@ -34,12 +34,8 @@ export function StickerPicker({ onPicked, onAddSticker }: StickerPickerProps) {
             type="button"
             variant="ghost"
             size="icon"
-            draggable={!onAddSticker}
+            draggable
             onDragStart={(e) => {
-              if (onAddSticker) {
-                e.preventDefault();
-                return;
-              }
               e.dataTransfer.setData('text/emoji', emoji);
               e.dataTransfer.effectAllowed = 'copy';
             }}

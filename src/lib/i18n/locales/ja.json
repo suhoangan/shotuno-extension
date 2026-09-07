@@ -50,6 +50,7 @@
       "blur": "ぼかし",
       "circleBadge": "円形バッジ",
       "pinBadge": "ピンバッジ",
+      "continueCount": "番号を継続",
       "twoWayArrow": "双方向矢印",
       "singleArrow": "片方向矢印",
       "dashedLine": "破線 / 直線",
@@ -122,7 +123,8 @@
   "userAccount": {
     "login": "ログイン",
     "loginViaWeb": "ウェブ経由でログイン",
-    "openDashboard": "ウェブダッシュボードを開く",
+    "openDashboard": "Webダッシュボードを開く",
+    "openOnboarding": "スタートガイド・使い方",
     "logout": "ログアウト",
     "signInPromptTitle": "サインインで毎日15回の無料 AI クレジットを取得",
     "signInPromptSubtitle": "アカウントを同期して AI 解析、OCR、プライバシーぼかしを解放。",

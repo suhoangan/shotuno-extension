@@ -11,7 +11,7 @@ export function ProBadge({ show = false, className }: ProBadgeProps) {
   return (
     <span
       className={cn(
-        "absolute -top-0.5 -right-0.5 z-10 flex h-3.5 w-3.5 items-center justify-center rounded-full !bg-primary !text-primary-foreground shadow-sm !ring-1 !ring-background pointer-events-none",
+        "absolute -top-0.5 -right-0.5 z-10 flex h-3.5 w-3.5 items-center justify-center rounded-full !bg-amber-500 !text-white dark:!bg-amber-400 dark:!text-slate-950 shadow-sm !ring-1 !ring-background pointer-events-none",
         className
       )}
       aria-hidden

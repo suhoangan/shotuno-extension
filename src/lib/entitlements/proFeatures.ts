@@ -219,8 +219,6 @@ export function toolProFeatureId(
       return 'window_border';
     case 'resize':
       return 'resize';
-    case 'stickers':
-      return 'stickers';
     default:
       return null;
   }

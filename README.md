@@ -11,11 +11,12 @@ npm run dev
 
 Load unpacked from `dist/` (or follow Vite + CRX HMR on port 5173) at `chrome://extensions`.
 
-## Production build / Chrome Web Store
+## Production build & Release packaging
 
 ```bash
-npm run build
-npm run package:store
+# Build and package zip to release/shotuno-<version>.zip
+npm run publish
+# or npm run release
 ```
 
 Store listing copy, privacy policy text, permission justifications, and asset checklist live in [`store-listing/`](./store-listing/PUBLISH.md).

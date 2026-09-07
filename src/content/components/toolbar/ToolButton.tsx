@@ -53,7 +53,7 @@ export function ToolButton({ tool, activeTool, icon: Icon, label, onSelect, onCl
         }
       />
       <TooltipContent side="bottom" sideOffset={8} className="z-[99999999]">
-        {label} {isPro && <span className="ml-1 text-primary font-bold">PRO</span>}
+        {label} {isPro && <span className="ml-1 text-amber-600 dark:text-amber-400 font-bold">PRO</span>}
       </TooltipContent>
     </Tooltip>
   );

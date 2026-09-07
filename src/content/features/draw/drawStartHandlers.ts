@@ -26,8 +26,11 @@ export function startOcr(_tool: ToolType, ctx: StartDrawContext): boolean {
 export function startCounter(_tool: ToolType, ctx: StartDrawContext): boolean {
   const id = Date.now().toString();
   const store = useEditorStore.getState();
+  const continueCount = store.continueCounter ?? true;
   const existing = store.shapes.filter((s) => s.type === 'counter') as { count: number }[];
-  const nextCount = existing.length > 0 ? Math.max(...existing.map((c) => c.count)) + 1 : 1;
+  const nextCount = continueCount && existing.length > 0
+    ? Math.max(...existing.map((c) => c.count)) + 1
+    : 1;
   const settings = store.toolSettings.counter;
   ctx.addShape({
     id,

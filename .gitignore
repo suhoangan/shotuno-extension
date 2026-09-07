@@ -19,6 +19,8 @@ store-listing/*.zip
 store-listing/assets/*.png
 store-listing/assets/*.jpg
 store-listing/assets/*.jpeg
+release/
+
 
 # Editor directories and files
 .vscode/*

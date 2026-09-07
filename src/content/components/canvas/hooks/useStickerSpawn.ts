@@ -3,7 +3,6 @@ import { useEditorStore } from '../../../../store/useEditorStore';
 import { STICKER_SIZE } from '../../../../store/editorDefaults';
 import { editorActions } from '../../../editorActions';
 import { toImageAnnotationSize } from '../annotationSize';
-import { useProGate } from '../../hooks/useProGate';
 
 /** Listen for toolbar add-sticker actions and spawn a sticker in view. */
 export function useStickerSpawn(
@@ -12,13 +11,10 @@ export function useStickerSpawn(
   scale: number,
   bounds: { x: number; y: number; width: number; height: number },
 ) {
-  const { runPro } = useProGate();
-
   useEffect(() => {
     return editorActions.onAddSticker((emoji) => {
-      void runPro('stickers', () => {
-        const state = useEditorStore.getState();
-        const size = toImageAnnotationSize(STICKER_SIZE);
+      const state = useEditorStore.getState();
+      const size = toImageAnnotationSize(STICKER_SIZE);
 
       let spawnX = bounds.x + bounds.width / 2 - size / 2;
       let spawnY = bounds.y + bounds.height / 2 - size / 2;
@@ -52,7 +48,6 @@ export function useStickerSpawn(
       });
       state.setSelectedShapeIds([id]);
       state.saveHistory();
-      });
     });
-  }, [bounds, scale, containerRef, stageRef, runPro]);
+  }, [bounds, scale, containerRef, stageRef]);
 }

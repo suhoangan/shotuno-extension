@@ -14,7 +14,7 @@ async function blobToDataUrl(blob: Blob): Promise<string> {
 /**
  * Small JPEG for local list UI.
  */
-export async function makePinThumbnail(dataUrl: string, maxEdge = 200): Promise<string> {
+export async function makePinThumbnail(dataUrl: string, maxEdge = 600): Promise<string> {
   if (!dataUrl.startsWith('data:') && dataUrl.length < 80_000) return dataUrl;
   if (dataUrl.startsWith('data:') && dataUrl.length < 80_000) return dataUrl;
 
@@ -33,7 +33,7 @@ export async function makePinThumbnail(dataUrl: string, maxEdge = 200): Promise<
     }
     ctx.drawImage(bitmap, 0, 0, w, h);
     bitmap.close();
-    const out = await canvas.convertToBlob({ type: 'image/jpeg', quality: 0.7 });
+    const out = await canvas.convertToBlob({ type: 'image/jpeg', quality: 0.85 });
     return blobToDataUrl(out);
   } catch {
     return PLACEHOLDER;
