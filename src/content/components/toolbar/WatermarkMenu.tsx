@@ -116,7 +116,7 @@ export function WatermarkMenu({
                 placeholder={t('watermark.textPlaceholder')}
                 className="h-8 text-sm"
               />
-              <p className="text-[10px] text-muted-foreground">Repeats diagonally across the image.</p>
+              <p className="text-[10px] text-muted-foreground">{t('watermark.repeatsDiagonally')}</p>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
@@ -130,7 +130,7 @@ export function WatermarkMenu({
                   />
                 </div>
               ) : (
-                <p className="text-xs text-muted-foreground">Choose a logo from your desktop. It stays until you clear it.</p>
+                <p className="text-xs text-muted-foreground">{t('watermark.chooseLogoHint')}</p>
               )}
               <div className="flex gap-2">
                 <input
@@ -154,7 +154,7 @@ export function WatermarkMenu({
                     className="text-destructive"
                     onClick={() => setWatermarkImageUrl(null)}
                   >
-                    Clear
+                    {t('watermark.clearLogo')}
                   </Button>
                 )}
               </div>

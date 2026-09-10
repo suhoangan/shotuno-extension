@@ -35,7 +35,7 @@ export function CounterStyleControls({
         <Circle size={ICON} />
       </StyleToggle>
       <StyleToggle
-        label="Square Style"
+        label={t('toolbar.styles.squareBadge')}
         active={counterStyle === 'square'}
         onClick={() => {
           setCounterStyle('square', persistOpts);

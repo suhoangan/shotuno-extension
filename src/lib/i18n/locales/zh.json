@@ -55,7 +55,9 @@
       "singleArrow": "单向箭头",
       "dashedLine": "虚线 / 直线",
       "solidFill": "纯色填充",
-      "borderOnly": "仅边框"
+      "borderOnly": "仅边框",
+      "squareBadge": "方形标记",
+      "dimBackground": "暗化背景"
     },
     "undoTooltip": "撤销 (Ctrl+Z)",
     "redoTooltip": "重做 (Ctrl+Y)",
@@ -82,7 +84,20 @@
     "redo": "重做",
     "clear": "清除全部",
     "export": "导出图片",
-    "close": "关闭编辑器"
+    "close": "关闭编辑器",
+    "pan": "平移画布 (H)",
+    "brush": "画笔 (B)",
+    "magnifier": "放大镜 (Z)",
+    "ocr": "OCR 文字识别 (E)",
+    "measure": "像素测量尺 (M)",
+    "resize": "调整画布大小",
+    "sendToAI": "发送至 AI 与 SaaS",
+    "shapesTooltip": "形状与贴纸",
+    "shapes": {
+      "rectangle": "矩形 (R)",
+      "circle": "圆形 (O)",
+      "triangle": "三角形 (Y)"
+    }
   },
   "dialogs": {
     "cancel": "取消",
@@ -103,7 +118,14 @@
   "sidepanel": {
     "galleryTitle": "固定图库",
     "noItems": "暂无截图记录",
-    "dragTip": "直接拖拽截图到网页中"
+    "dragTip": "直接拖拽截图到网页中",
+    "pins": "图钉",
+    "downloads": "下载",
+    "openImage": "打开图片进行编辑",
+    "emptyHint": "保存的下载将显示在此处。多选后可将其拖入编辑器或网页输入框中。",
+    "preview": "预览",
+    "expand": "放大至全屏",
+    "loadingImage": "正在加载图片..."
   },
   "onboarding": {
     "welcome": "欢迎使用 SHOTUNO",
@@ -156,7 +178,10 @@
     "opacity": "不透明度",
     "position": "显示位置",
     "text": "水印文本",
-    "placeholder": "例如：机密 / Confidential"
+    "placeholder": "例如：机密 / Confidential",
+    "repeatsDiagonally": "在整个图像上沿对角线重复。",
+    "chooseLogoHint": "从电脑中选择徽标，它将一直保留直到您清除它。",
+    "clearLogo": "清除"
   },
   "common": {
     "loading": "加载中...",
@@ -170,7 +195,12 @@
     "padding": "画布内边距",
     "shadow": "投影阴影",
     "radius": "圆角半径",
-    "gradient": "渐变背景色"
+    "gradient": "渐变背景色",
+    "urlTop": "URL 顶部",
+    "urlBottom": "URL 底部",
+    "includeUrl": "包含网址",
+    "includeDate": "包含日期",
+    "enableToChangeSize": "启用边框以调整大小"
   },
   "resize": {
     "title": "调整画布尺寸",
@@ -178,7 +208,13 @@
     "height": "高度 (px)",
     "maintainAspect": "锁定宽高比例",
     "presets": "常用分辨率预设",
-    "apply": "应用新尺寸"
+    "apply": "应用新尺寸",
+    "freeLimit": "免费版限制：全高清 (1920 × 1080)",
+    "proLimit": "Pro 版限制：高达 4K 超高清 (3840 × 2160)",
+    "requiresPro": "分辨率超过全高清 (1920×1080) 需要 Shotuno Pro。",
+    "exceedsMax": "画布尺寸超过了支持的最大 4K 分辨率 (3840×2160)。",
+    "upgradeToPro": "升级至 Pro 以解锁 4K",
+    "currentDimensions": "当前尺寸"
   },
   "capture": {
     "dragToSelect": "按住鼠标左键拖拽选择截图区域",

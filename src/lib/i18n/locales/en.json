@@ -55,7 +55,9 @@
       "singleArrow": "Single Arrow",
       "dashedLine": "Dashed / Arrow Line",
       "solidFill": "Solid Fill",
-      "borderOnly": "Border Only"
+      "borderOnly": "Border Only",
+      "squareBadge": "Square Badge",
+      "dimBackground": "Dim Background"
     },
     "undoTooltip": "Undo (Ctrl+Z)",
     "redoTooltip": "Redo (Ctrl+Y)",
@@ -89,7 +91,13 @@
     "redo": "Redo",
     "clear": "Clear All",
     "export": "Export Image",
-    "close": "Close Editor"
+    "close": "Close Editor",
+    "shapesTooltip": "Shapes & Stickers",
+    "shapes": {
+      "rectangle": "Rectangle (R)",
+      "circle": "Circle (O)",
+      "triangle": "Triangle (Y)"
+    }
   },
   "dialogs": {
     "cancel": "Cancel",
@@ -170,7 +178,10 @@
     "opacity": "Opacity",
     "position": "Position",
     "text": "Watermark Text",
-    "placeholder": "e.g., Confidential"
+    "placeholder": "e.g., Confidential",
+    "repeatsDiagonally": "Repeats diagonally across the image.",
+    "chooseLogoHint": "Choose a logo from your desktop. It stays until you clear it.",
+    "clearLogo": "Clear"
   },
   "common": {
     "loading": "Loading...",
@@ -184,7 +195,12 @@
     "padding": "Canvas Padding",
     "shadow": "Drop Shadow",
     "radius": "Corner Radius",
-    "gradient": "Background Gradient"
+    "gradient": "Background Gradient",
+    "urlTop": "URL Top",
+    "urlBottom": "URL Bottom",
+    "includeUrl": "Include URL",
+    "includeDate": "Include Date",
+    "enableToChangeSize": "Enable Border to change size"
   },
   "resize": {
     "title": "Resize Canvas",

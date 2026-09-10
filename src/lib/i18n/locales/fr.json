@@ -55,7 +55,9 @@
       "singleArrow": "Flèche simple",
       "dashedLine": "Ligne pointillée",
       "solidFill": "Remplissage plein",
-      "borderOnly": "Bordure seule"
+      "borderOnly": "Bordure seule",
+      "squareBadge": "Badge carré",
+      "dimBackground": "Assombrir l'arrière-plan"
     },
     "undoTooltip": "Annuler (Ctrl+Z)",
     "redoTooltip": "Rétablir (Ctrl+Y)",
@@ -82,7 +84,20 @@
     "redo": "Rétablir",
     "clear": "Tout effacer",
     "export": "Exporter l'image",
-    "close": "Fermer l'éditeur"
+    "close": "Fermer l'éditeur",
+    "pan": "Déplacer le canevas (H)",
+    "brush": "Pinceau (B)",
+    "magnifier": "Loupe de zoom (Z)",
+    "ocr": "Extraction de texte OCR (E)",
+    "measure": "Règle de mesure en pixels (M)",
+    "resize": "Redimensionner le canevas",
+    "sendToAI": "Envoyer vers l'IA et SaaS",
+    "shapesTooltip": "Formes et autocollants",
+    "shapes": {
+      "rectangle": "Rectangle (R)",
+      "circle": "Cercle (O)",
+      "triangle": "Triangle (Y)"
+    }
   },
   "dialogs": {
     "cancel": "Annuler",
@@ -103,7 +118,14 @@
   "sidepanel": {
     "galleryTitle": "Épingles & Galerie",
     "noItems": "Aucune capture pour le moment",
-    "dragTip": "Glisser les captures sur les pages web"
+    "dragTip": "Glisser les captures sur les pages web",
+    "pins": "Épingles",
+    "downloads": "Téléchargements",
+    "openImage": "Ouvrir l'image à modifier",
+    "emptyHint": "Les téléchargements enregistrés apparaissent ici. Sélectionnez-en plusieurs et glissez-les dans l'éditeur.",
+    "preview": "Aperçu",
+    "expand": "Agrandir en plein écran",
+    "loadingImage": "Chargement de l'image..."
   },
   "onboarding": {
     "welcome": "BIENVENUE SUR SHOTUNO",
@@ -156,7 +178,10 @@
     "opacity": "Opacité",
     "position": "Position",
     "text": "Texte du filigrane",
-    "placeholder": "Ex. Confidentiel"
+    "placeholder": "Ex. Confidentiel",
+    "repeatsDiagonally": "Se répète en diagonale sur toute l'image.",
+    "chooseLogoHint": "Choisissez un logo sur votre ordinateur. Il restera jusqu'à ce que vous l'effaciez.",
+    "clearLogo": "Effacer"
   },
   "common": {
     "loading": "Chargement...",
@@ -170,7 +195,12 @@
     "padding": "Marge interne",
     "shadow": "Ombre portée",
     "radius": "Rayon des coins",
-    "gradient": "Arrière-plan dégradé"
+    "gradient": "Arrière-plan dégradé",
+    "urlTop": "URL en haut",
+    "urlBottom": "URL en bas",
+    "includeUrl": "Inclure l'URL",
+    "includeDate": "Inclure la date",
+    "enableToChangeSize": "Activer la bordure pour changer la taille"
   },
   "resize": {
     "title": "Redimensionner le canevas",
@@ -178,7 +208,13 @@
     "height": "Hauteur (px)",
     "maintainAspect": "Conserver les proportions",
     "presets": "Résolutions prédéfinies",
-    "apply": "Appliquer"
+    "apply": "Appliquer",
+    "freeLimit": "Limite de l'offre gratuite : Full HD (1920 × 1080)",
+    "proLimit": "Limite de l'offre Pro : Jusqu'à 4K UHD (3840 × 2160)",
+    "requiresPro": "Les résolutions supérieures à Full HD (1920×1080) nécessitent Shotuno Pro.",
+    "exceedsMax": "La taille du canevas dépasse la résolution 4K maximale prise en charge (3840×2160).",
+    "upgradeToPro": "Passer à Pro pour la 4K",
+    "currentDimensions": "Taille actuelle"
   },
   "capture": {
     "dragToSelect": "Cliquez et glissez pour sélectionner la zone",

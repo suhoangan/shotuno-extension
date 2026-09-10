@@ -56,5 +56,34 @@ describe('Multi-Language (i18n) - Translation Lookup & Completeness', () => {
         }
       }
     });
+
+    it('ensures all leaf keys in en.json exist and are non-empty across all 8 locales', () => {
+      function getLeafKeys(obj: Record<string, any>, prefix = ''): string[] {
+        let keys: string[] = [];
+        for (const k of Object.keys(obj)) {
+          const full = prefix ? `${prefix}.${k}` : k;
+          if (typeof obj[k] === 'object' && obj[k] !== null && !Array.isArray(obj[k])) {
+            keys = keys.concat(getLeafKeys(obj[k], full));
+          } else {
+            keys.push(full);
+          }
+        }
+        return keys;
+      }
+
+      function getVal(obj: Record<string, any>, path: string): unknown {
+        return path.split('.').reduce((o, k) => o?.[k], obj);
+      }
+
+      const enLeafKeys = getLeafKeys(en);
+      for (const [code, dict] of Object.entries(locales)) {
+        for (const key of enLeafKeys) {
+          const val = getVal(dict, key);
+          expect(val, `Locale "${code}" is missing leaf key "${key}"`).toBeDefined();
+          expect(typeof val, `Locale "${code}" key "${key}" must be a string`).toBe('string');
+          expect((val as string).length, `Locale "${code}" key "${key}" cannot be empty`).toBeGreaterThan(0);
+        }
+      }
+    });
   });
 });

@@ -5,6 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../../../components/ui/
 import { ICON, ICON_SM, ICON_XS } from './toolbarUi';
 import { StickerPicker } from './StickerMenu';
 import { useUIStore } from '../../../store/useUIStore';
+import { useTranslation } from '../../../lib/i18n';
 
 const SHAPE_TOOLS: ToolType[] = ['rect', 'circle', 'triangle'];
 
@@ -21,6 +22,7 @@ export function ShapeToolMenu({
   onAddSticker,
   isVertical,
 }: ShapeToolMenuProps) {
+  const { t } = useTranslation();
   const { activeMenu, setActiveMenu } = useUIStore();
   const open = activeMenu === 'shape';
   const isShape = SHAPE_TOOLS.includes(activeTool);
@@ -51,7 +53,7 @@ export function ShapeToolMenu({
           <ActiveIcon size={ICON} />
         </TooltipTrigger>
         <TooltipContent side="bottom" sideOffset={8}>
-          Shapes & Stickers
+          {t('toolbar.shapesTooltip')}
         </TooltipContent>
       </Tooltip>
       <Button
@@ -71,9 +73,9 @@ export function ShapeToolMenu({
         <div className={`absolute bg-background border border-border rounded-lg shadow-xl p-0.5 flex flex-col gap-0.5 z-[9999] w-44 overflow-hidden ${isVertical ? 'top-0 left-full ml-1.5' : 'top-full mt-1.5 left-0'}`}>
           {(
             [
-              ['rect', Square, 'Rectangle (R)'],
-              ['circle', Circle, 'Circle (O)'],
-              ['triangle', Triangle, 'Triangle (Y)'],
+              ['rect', Square, t('toolbar.shapes.rectangle')],
+              ['circle', Circle, t('toolbar.shapes.circle')],
+              ['triangle', Triangle, t('toolbar.shapes.triangle')],
             ] as const
           ).map(([tool, Icon, label]) => (
             <Button

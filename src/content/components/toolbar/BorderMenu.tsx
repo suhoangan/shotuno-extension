@@ -110,7 +110,7 @@ export function BorderMenu({
               onClick={() => { setUrlPosition('top'); }}
               className={urlPosition === 'top' ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'}
             >
-              URL Top
+              {t('border.urlTop')}
             </Button>
             <Button
               variant={urlPosition === 'bottom' ? 'secondary' : 'ghost'}
@@ -118,13 +118,13 @@ export function BorderMenu({
               onClick={() => { setUrlPosition('bottom'); }}
               className={urlPosition === 'bottom' ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'}
             >
-              URL Bottom
+              {t('border.urlBottom')}
             </Button>
           </div>
 
           <div className="flex flex-col gap-3 pt-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="include-url" className="text-sm font-normal text-foreground cursor-pointer">Include URL</Label>
+              <Label htmlFor="include-url" className="text-sm font-normal text-foreground cursor-pointer">{t('border.includeUrl')}</Label>
               <Checkbox
                 id="include-url"
                 checked={includeUrl}
@@ -132,7 +132,7 @@ export function BorderMenu({
               />
             </div>
             <div className="flex items-center justify-between">
-              <Label htmlFor="include-date" className="text-sm font-normal text-foreground cursor-pointer">Include Date</Label>
+              <Label htmlFor="include-date" className="text-sm font-normal text-foreground cursor-pointer">{t('border.includeDate')}</Label>
               <Checkbox
                 id="include-date"
                 checked={includeDate}

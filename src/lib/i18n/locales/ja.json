@@ -55,7 +55,9 @@
       "singleArrow": "片方向矢印",
       "dashedLine": "破線 / 直線",
       "solidFill": "塗りつぶし",
-      "borderOnly": "枠線のみ"
+      "borderOnly": "枠線のみ",
+      "squareBadge": "四角バッジ",
+      "dimBackground": "背景を暗くする"
     },
     "undoTooltip": "元に戻す (Ctrl+Z)",
     "redoTooltip": "やり直し (Ctrl+Y)",
@@ -82,7 +84,20 @@
     "redo": "やり直す",
     "clear": "すべて消去",
     "export": "画像をエクスポート",
-    "close": "エディタを閉じる"
+    "close": "エディタを閉じる",
+    "pan": "キャンバスを移動 (H)",
+    "brush": "ブラシ (B)",
+    "magnifier": "拡大鏡ルーペ (Z)",
+    "ocr": "OCRテキスト抽出 (E)",
+    "measure": "ピクセル測定定規 (M)",
+    "resize": "キャンバスサイズ変更",
+    "sendToAI": "AIとSaaSに送信",
+    "shapesTooltip": "図形とステッカー",
+    "shapes": {
+      "rectangle": "長方形 (R)",
+      "circle": "円 (O)",
+      "triangle": "三角形 (Y)"
+    }
   },
   "dialogs": {
     "cancel": "キャンセル",
@@ -103,7 +118,14 @@
   "sidepanel": {
     "galleryTitle": "ピン ＆ ギャラリー",
     "noItems": "キャプチャ画像がまだありません",
-    "dragTip": "画像をウェブページにドラッグ＆ドロップ"
+    "dragTip": "画像をウェブページにドラッグ＆ドロップ",
+    "pins": "ピン",
+    "downloads": "ダウンロード",
+    "openImage": "編集する画像を開く",
+    "emptyHint": "保存されたダウンロードがここに表示されます。複数選択して、エディタまたはWebページにドラッグできます。",
+    "preview": "プレビュー",
+    "expand": "全画面に拡大",
+    "loadingImage": "画像を読み込み中..."
   },
   "onboarding": {
     "welcome": "SHOTUNO へようこそ",
@@ -156,7 +178,10 @@
     "opacity": "不透明度",
     "position": "配置位置",
     "text": "透かしテキスト",
-    "placeholder": "例：社外秘 / Confidential"
+    "placeholder": "例：社外秘 / Confidential",
+    "repeatsDiagonally": "画像全体に斜めに繰り返し配置されます。",
+    "chooseLogoHint": "PCからロゴを選択してください。削除するまで保持されます。",
+    "clearLogo": "クリア"
   },
   "common": {
     "loading": "読み込み中...",
@@ -170,7 +195,12 @@
     "padding": "余白サイズ",
     "shadow": "ドロップシャドウ",
     "radius": "角の丸み",
-    "gradient": "グラデーション背景"
+    "gradient": "グラデーション背景",
+    "urlTop": "URL 上部",
+    "urlBottom": "URL 下部",
+    "includeUrl": "URLを含める",
+    "includeDate": "日付を含める",
+    "enableToChangeSize": "枠線を有効にしてサイズを変更"
   },
   "resize": {
     "title": "キャンバスサイズの変更",
@@ -178,7 +208,13 @@
     "height": "高さ (px)",
     "maintainAspect": "縦横比を維持",
     "presets": "プリセット解像度",
-    "apply": "リサイズを適用"
+    "apply": "リサイズを適用",
+    "freeLimit": "無料プランの上限: Full HD (1920 × 1080)",
+    "proLimit": "Proプランの上限: 最大4K UHD (3840 × 2160)",
+    "requiresPro": "Full HD (1920×1080) を超える解像度には Shotuno Pro が必要です。",
+    "exceedsMax": "キャンバスサイズがサポートされている最大4K解像度 (3840×2160) を超えています。",
+    "upgradeToPro": "4K向けにアップグレード",
+    "currentDimensions": "現在のサイズ"
   },
   "capture": {
     "dragToSelect": "ドラッグしてキャプチャ領域を選択",

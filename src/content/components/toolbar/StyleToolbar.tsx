@@ -52,10 +52,8 @@ export function StyleToolbar() {
     setOpacity: state.setOpacity
   })));
 
-  if (!(
-    ['arrow', 'measure', 'rect', 'circle', 'triangle', 'text', 'brush', 'highlight', 'highlight-area', 'blur', 'callout', 'magnifier', 'counter'].includes(activeTool) ||
-    selectedShapeIds.length > 0
-  )) {
+  const allowedTools = ['arrow', 'measure', 'rect', 'circle', 'triangle', 'text', 'brush', 'highlight', 'highlight-area', 'blur', 'callout', 'magnifier', 'counter'];
+  if (!allowedTools.includes(activeTool) && selectedShapeIds.length === 0) {
     return null;
   }
 
@@ -77,8 +75,7 @@ export function StyleToolbar() {
     types.includes(activeTool) || selection.some(s => types.includes(s.type));
 
   const isBlur = appliesTo('blur');
-  const isSolidRedact = (activeTool === 'blur' && blurType === 'solid') ||
-    selection.some(s => s.type === 'blur' && s.blurType === 'solid');
+  const isSolidRedact = (activeTool === 'blur' && blurType === 'solid') || selection.some(s => s.type === 'blur' && s.blurType === 'solid');
 
   const borderStrokeOnly =
     (selection.length === 0 && (activeTool === 'magnifier' || activeTool === 'image')) ||
@@ -184,7 +181,7 @@ export function StyleToolbar() {
       {appliesTo('highlight-area') && (
         <>
           <StyleToggle
-            label="Dim Background"
+            label={t('toolbar.styles.dimBackground')}
             active={!isSolid}
             onClick={() => { setIsSolid(!isSolid, persistOpts); applyToSelection({ isSolid: !isSolid }); }}
           >
@@ -223,7 +220,7 @@ export function StyleToolbar() {
           <div
             className={borderStyleLocked ? 'pointer-events-none opacity-40' : undefined}
             aria-disabled={borderStyleLocked || undefined}
-            title={borderStyleLocked ? 'Enable Border to change size' : undefined}
+            title={borderStyleLocked ? t('border.enableToChangeSize') : undefined}
           >
             <StrokeWidthControl
               value={strokeWidth}

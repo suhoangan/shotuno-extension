@@ -55,7 +55,9 @@
       "singleArrow": "Mũi tên 1 chiều",
       "dashedLine": "Nét đứt / Thẳng",
       "solidFill": "Tô màu kín",
-      "borderOnly": "Chỉ viền ngoài"
+      "borderOnly": "Chỉ viền ngoài",
+      "squareBadge": "Huy hiệu vuông",
+      "dimBackground": "Làm tối nền"
     },
     "undoTooltip": "Hoàn tác (Ctrl+Z)",
     "redoTooltip": "Làm lại (Ctrl+Y)",
@@ -89,7 +91,13 @@
     "redo": "Làm lại",
     "clear": "Xóa tất cả",
     "export": "Xuất hình ảnh",
-    "close": "Đóng trình chỉnh sửa"
+    "close": "Đóng trình chỉnh sửa",
+    "shapesTooltip": "Hình dạng & Nhãn dán",
+    "shapes": {
+      "rectangle": "Hình chữ nhật (R)",
+      "circle": "Hình tròn (O)",
+      "triangle": "Hình tam giác (Y)"
+    }
   },
   "dialogs": {
     "cancel": "Hủy bỏ",
@@ -170,7 +178,10 @@
     "opacity": "Độ mờ đục",
     "position": "Vị trí",
     "text": "Nội dung đóng dấu",
-    "placeholder": "Ví dụ: Bảo mật / Confidential"
+    "placeholder": "Ví dụ: Bảo mật / Confidential",
+    "repeatsDiagonally": "Lặp lại theo đường chéo trên toàn bộ ảnh.",
+    "chooseLogoHint": "Chọn logo từ máy tính. Logo sẽ được lưu cho đến khi bạn xóa.",
+    "clearLogo": "Xóa"
   },
   "common": {
     "loading": "Đang tải...",
@@ -184,7 +195,12 @@
     "padding": "Khoảng đệm khung",
     "shadow": "Đổ bóng",
     "radius": "Bo góc",
-    "gradient": "Màu nền chuyển sắc"
+    "gradient": "Màu nền chuyển sắc",
+    "urlTop": "URL ở trên",
+    "urlBottom": "URL ở dưới",
+    "includeUrl": "Bao gồm URL",
+    "includeDate": "Bao gồm ngày tháng",
+    "enableToChangeSize": "Bật viền để thay đổi kích thước"
   },
   "resize": {
     "title": "Thay đổi kích thước ảnh",

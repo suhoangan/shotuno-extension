@@ -55,7 +55,9 @@
       "singleArrow": "Einfacher Pfeil",
       "dashedLine": "Gestrichelte Linie",
       "solidFill": "Ausgefüllt",
-      "borderOnly": "Nur Rahmen"
+      "borderOnly": "Nur Rahmen",
+      "squareBadge": "Quadratisches Abzeichen",
+      "dimBackground": "Hintergrund abdunkeln"
     },
     "undoTooltip": "Rückgängig (Ctrl+Z)",
     "redoTooltip": "Wiederholen (Ctrl+Y)",
@@ -82,7 +84,20 @@
     "redo": "Wiederholen",
     "clear": "Alles löschen",
     "export": "Bild exportieren",
-    "close": "Editor schließen"
+    "close": "Editor schließen",
+    "pan": "Leinwand verschieben (H)",
+    "brush": "Pinsel (B)",
+    "magnifier": "Zoom-Lupe (Z)",
+    "ocr": "OCR-Textextraktion (E)",
+    "measure": "Pixel-Messlineal (M)",
+    "resize": "Leinwandgröße ändern",
+    "sendToAI": "An KI & SaaS senden",
+    "shapesTooltip": "Formen & Sticker",
+    "shapes": {
+      "rectangle": "Rechteck (R)",
+      "circle": "Kreis (O)",
+      "triangle": "Dreieck (Y)"
+    }
   },
   "dialogs": {
     "cancel": "Abbrechen",
@@ -103,7 +118,14 @@
   "sidepanel": {
     "galleryTitle": "Pins & Galerie",
     "noItems": "Noch keine Screenshots",
-    "dragTip": "Screenshots in Webseiten ziehen"
+    "dragTip": "Screenshots in Webseiten ziehen",
+    "pins": "Pins",
+    "downloads": "Downloads",
+    "openImage": "Bild zum Bearbeiten öffnen",
+    "emptyHint": "Gespeicherte Downloads erscheinen hier. Mehrfachauswahl und Drag & Drop in den Editor oder Webinhalte.",
+    "preview": "Vorschau",
+    "expand": "Auf Vollbild erweitern",
+    "loadingImage": "Bild wird geladen..."
   },
   "onboarding": {
     "welcome": "WILLKOMMEN BEI SHOTUNO",
@@ -156,7 +178,10 @@
     "opacity": "Deckkraft",
     "position": "Position",
     "text": "Wasserzeichen-Text",
-    "placeholder": "Z.B. Vertraulich"
+    "placeholder": "Z.B. Vertraulich",
+    "repeatsDiagonally": "Wiederholt sich diagonal über das gesamte Bild.",
+    "chooseLogoHint": "Wähle ein Logo von deinem Computer. Es bleibt gespeichert, bis du es löschst.",
+    "clearLogo": "Löschen"
   },
   "common": {
     "loading": "Laden...",
@@ -170,7 +195,12 @@
     "padding": "Leinwand-Abstand",
     "shadow": "Schlagschatten",
     "radius": "Eckenradius",
-    "gradient": "Farbverlauf-Hintergrund"
+    "gradient": "Farbverlauf-Hintergrund",
+    "urlTop": "URL oben",
+    "urlBottom": "URL unten",
+    "includeUrl": "URL einschließen",
+    "includeDate": "Datum einschließen",
+    "enableToChangeSize": "Rahmen aktivieren, um Größe zu ändern"
   },
   "resize": {
     "title": "Leinwandgröße anpassen",
@@ -178,7 +208,13 @@
     "height": "Höhe (px)",
     "maintainAspect": "Seitenverhältnis beibehalten",
     "presets": "Vordefinierte Auflösungen",
-    "apply": "Größe anwenden"
+    "apply": "Größe anwenden",
+    "freeLimit": "Kostenloses Limit: Full HD (1920 × 1080)",
+    "proLimit": "Pro-Limit: Bis zu 4K UHD (3840 × 2160)",
+    "requiresPro": "Auflösungen über Full HD (1920×1080) erfordern Shotuno Pro.",
+    "exceedsMax": "Die Leinwandgröße überschreitet die maximal unterstützte 4K-Auflösung (3840×2160).",
+    "upgradeToPro": "Auf Pro für 4K upgraden",
+    "currentDimensions": "Aktuelle Größe"
   },
   "capture": {
     "dragToSelect": "Klicken und ziehen, um Bereich auszuwählen",
