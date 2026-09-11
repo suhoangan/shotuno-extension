@@ -72,16 +72,15 @@ export function useToolbarState(onClose: () => void) {
     const catalogId = toolFeatureId(tool);
     if (catalogId && !featureEnabled(catalogId)) return;
 
-    if (isUserFreeTier && toolProFeatureId(tool)) {
-      useEditorStore.getState().setShowUpgradeModal(true);
-      return;
+    if (toolProFeatureId(tool)) {
+      const allowed = await checkProAccess();
+      if (!allowed) return;
     }
-
 
     requestEndTextEdit();
     setActiveTool(tool);
     setSelectedShapeIds([]);
-  }, [isUserFreeTier, featureEnabled, setActiveTool, setSelectedShapeIds]);
+  }, [featureEnabled, checkProAccess, setActiveTool, setSelectedShapeIds]);
 
 
   useToolHotkeys(handleToolSelect);

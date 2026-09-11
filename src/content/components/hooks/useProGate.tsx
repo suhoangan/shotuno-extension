@@ -46,7 +46,7 @@ export function useProGate() {
       console.error('checkProAccess error:', err);
       return false;
     }
-  }, []);
+  }, [setShowSubscriptionPopup]);
 
   const runPro = useCallback(
     async (featureId: ProFeatureId, action: () => void | Promise<void>) => {
@@ -97,7 +97,7 @@ export function useProGate() {
         return false;
       }
     },
-    [],
+    [setShowSubscriptionPopup],
   );
 
   return {

@@ -1,5 +1,6 @@
 import { Crown, Sparkles, ShieldAlert, Image, CheckCircle2 } from 'lucide-react';
 import { webUrl } from '../../../lib/api';
+import { storage } from '../../../lib/chromeStorage';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,8 +23,14 @@ export function ProSubscriptionModal({
   onOpenChange,
   message,
 }: ProSubscriptionModalProps) {
-  const handleUpgradeClick = () => {
-    window.open(webUrl('/auth'), '_blank');
+  const handleUpgradeClick = async () => {
+    try {
+      const data = await storage.local.get('authToken');
+      const target = data.authToken ? '/pricing' : '/auth';
+      window.open(webUrl(target), '_blank');
+    } catch {
+      window.open(webUrl('/auth'), '_blank');
+    }
   };
 
   return (
