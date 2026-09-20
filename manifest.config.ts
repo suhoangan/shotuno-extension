@@ -57,7 +57,7 @@ export default defineManifest(async (env) => {
     name: 'Shotuno',
     short_name: 'Shotuno',
     default_locale: 'en',
-    version: '1.0.0',
+    version: '1.0.1',
     description:
       'Capture visible, area, or full-page screenshots and annotate them in-tab - arrows, blur, OCR, pins, and more.',
     ...(webUrl && isPublicWebOrigin(webUrl)

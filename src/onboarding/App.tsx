@@ -1,16 +1,37 @@
+import { useState, useEffect } from 'react';
 import { OnboardingHero } from './components/OnboardingHero';
 import { OnboardingSteps } from './components/OnboardingSteps';
 import { OnboardingFeatureCards } from './components/OnboardingFeatureCards';
 import { OnboardingShortcuts } from './components/OnboardingShortcuts';
+import { SettingsView } from './components/SettingsView';
 import { useTranslation } from '@/lib/i18n';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { Camera } from 'lucide-react';
+import { Camera, Settings, BookOpen } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Toaster } from '@/components/ui/sonner';
 
 export default function App() {
   const { t } = useTranslation();
+  const [tab, setTab] = useState<'guide' | 'settings'>(() => {
+    return window.location.hash === '#settings' ? 'settings' : 'guide';
+  });
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setTab(window.location.hash === '#settings' ? 'settings' : 'guide');
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const selectTab = (nextTab: 'guide' | 'settings') => {
+    setTab(nextTab);
+    window.location.hash = nextTab === 'settings' ? '#settings' : '#guide';
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <Toaster position="top-right" />
       {/* Top Header Bar */}
       <header className="border-b border-border/80 bg-card/60 backdrop-blur-md sticky top-0 z-10 px-6 sm:px-10 py-3.5">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -23,33 +44,59 @@ export default function App() {
                 Shotuno
               </span>
               <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                v1.0.0
+                v1.0.1
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-xl border border-border/50 mr-2">
+              <Button
+                variant={tab === 'guide' ? 'default' : 'ghost'}
+                size="sm"
+                className="h-7 px-3 text-xs gap-1.5 rounded-lg"
+                onClick={() => selectTab('guide')}
+              >
+                <BookOpen className="size-3.5" />
+                Guide
+              </Button>
+              <Button
+                variant={tab === 'settings' ? 'default' : 'ghost'}
+                size="sm"
+                className="h-7 px-3 text-xs gap-1.5 rounded-lg"
+                onClick={() => selectTab('settings')}
+              >
+                <Settings className="size-3.5" />
+                {t('settings.title')}
+              </Button>
+            </div>
             <LanguageSwitcher />
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="py-12 px-6 sm:px-10 space-y-16 max-w-6xl mx-auto">
-        {/* Hero Section */}
-        <OnboardingHero />
+      <main className="py-12 px-6 sm:px-10 max-w-6xl mx-auto">
+        {tab === 'settings' ? (
+          <SettingsView />
+        ) : (
+          <div className="space-y-16">
+            {/* Hero Section */}
+            <OnboardingHero />
 
-        {/* Getting Started 4-Step Guide */}
-        <OnboardingSteps />
+            {/* Getting Started 4-Step Guide */}
+            <OnboardingSteps />
 
-        {/* Core Tools & Capabilities Grid */}
-        <OnboardingFeatureCards />
+            {/* Core Tools & Capabilities Grid */}
+            <OnboardingFeatureCards />
 
-        {/* Keyboard Shortcuts */}
-        <OnboardingShortcuts />
+            {/* Keyboard Shortcuts */}
+            <OnboardingShortcuts />
+          </div>
+        )}
 
         {/* Footer */}
-        <footer className="text-center text-xs text-muted-foreground border-t border-border/60 pt-8 pb-12">
+        <footer className="text-center text-xs text-muted-foreground border-t border-border/60 pt-8 pb-12 mt-16">
           {t('onboarding.footer')}
         </footer>
       </main>

@@ -79,10 +79,11 @@ export function handleGalleryMessage(
   sendResponse: (r: unknown) => void,
 ): boolean {
   if (message.type === 'DOWNLOAD_AND_SAVE_IMAGE') {
-    const { dataUrl, filename, thumbnailUrl } = message.payload as {
+    const { dataUrl, filename, thumbnailUrl, format } = message.payload as {
       dataUrl: string;
       filename: string;
       thumbnailUrl?: string;
+      format?: string;
     };
     const now = Date.now();
 
@@ -93,8 +94,10 @@ export function handleGalleryMessage(
       }
 
       storage.local.set({ lastDownloadTime: now }, () => {
+        const ext = format === 'jpg' || format === 'jpeg' ? 'jpg' : format === 'webp' ? 'webp' : 'png';
+        const cleanBase = filename.replace(/\.(png|jpg|jpeg|webp)$/i, '');
         chrome.downloads.download(
-          { url: dataUrl, filename: `${filename}.png`, saveAs: false },
+          { url: dataUrl, filename: `${cleanBase}.${ext}`, saveAs: false },
           (downloadId?: number) => {
             if (chrome.runtime.lastError || !downloadId) {
               sendResponse({

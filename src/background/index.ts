@@ -9,6 +9,9 @@ import { bindCookieAuthListener } from './auth-sync';
 import { storage } from '../lib/chromeStorage';
 import { LANGUAGE_STORAGE_KEY } from '../lib/i18n';
 
+import { bindActionIconListeners, syncActionPopup } from './action-icon-handler';
+import { handleAutoPinSave } from './auto-pin-handler';
+
 function routeMessage(
   message: any,
   sendResponse: (r: any) => void,
@@ -17,6 +20,7 @@ function routeMessage(
   if (handleSidePanelMessage(message, sender, sendResponse)) return true;
   if (handleCaptureMessage(message, sendResponse, sender)) return true;
   if (handleGalleryMessage(message, sendResponse)) return true;
+  if (handleAutoPinSave(message, sendResponse)) return true;
   if (handlePinMessage(message, sendResponse)) return true;
   return false;
 }
@@ -25,6 +29,7 @@ bindGalleryDownloadListeners();
 bindSidePanelLifecycle();
 bindCookieAuthListener();
 bindContextMenuClick();
+bindActionIconListeners();
 // Menus persist across SW sleeps — only re-register on install/startup (see below).
 void initTelemetry();
 
@@ -87,6 +92,7 @@ chrome.runtime.onMessageExternal.addListener((message, _sender, sendResponse) =>
 
 chrome.runtime.onInstalled.addListener((details: any) => {
   registerContextMenus();
+  void syncActionPopup();
   if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
     chrome.tabs.create({
       url: chrome.runtime.getURL('src/onboarding/index.html'),
@@ -96,4 +102,5 @@ chrome.runtime.onInstalled.addListener((details: any) => {
 
 chrome.runtime.onStartup.addListener(() => {
   registerContextMenus();
+  void syncActionPopup();
 });

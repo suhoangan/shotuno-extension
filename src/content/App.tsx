@@ -1,23 +1,19 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { HardLoadingHost } from './components/HardLoadingHost';
-import { Toaster } from '../components/ui/sonner';
 import { useEditorStore } from '../store/useEditorStore';
 import { useHardLoadingStore } from '../store/useHardLoadingStore';
 import { prepareScreenshot } from './capture/openScreenshot';
 import { captureAreaCrop, finishAreaAsPin } from './capture/finishArea';
 import { finishGridCapture } from './capture/finishGrid';
+import { routePostCapture } from './capture/postCaptureRouting';
 import type { CaptureMode } from './capture/types';
+import {
+  type BootstrapMessage,
+  captureModeFromBootstrap,
+  screenshotFromBootstrap,
+} from './bootstrapTypes';
+import { ShellChrome, ChunkFallback } from './components/ShellChrome';
 
-
-
-export type BootstrapMessage =
-  | { type: 'TOGGLE_EDITOR'; payload?: string }
-  | { type: 'TOGGLE_PREVIEW'; payload?: string }
-  | { type: 'START_AREA_SELECTION' }
-  | { type: 'START_PIN_AREA_SELECTION' }
-  | { type: 'START_FULL_PAGE_CAPTURE' }
-  | { type: 'START_GRID_CAPTURE' }
-  | { type: 'START_SCROLL_AREA_CAPTURE' };
+export type { BootstrapMessage };
 
 /** Capture / editor chunks — validated under `vite build` (CRX dynamic import). */
 const AreaCaptureOverlay = lazy(() => import('./components/AreaCaptureOverlay'));
@@ -26,38 +22,6 @@ const GridCaptureOverlay = lazy(() => import('./components/grid-capture/GridCapt
 const ScrollAreaCaptureOverlay = lazy(() => import('./components/ScrollAreaCaptureOverlay'));
 const EditorShell = lazy(() => import('./components/EditorShell'));
 const PreviewOverlay = lazy(() => import('./components/PreviewOverlay'));
-
-function captureModeFromBootstrap(message: BootstrapMessage | null): CaptureMode {
-  if (!message) return null;
-  if (message.type === 'START_AREA_SELECTION') return 'area';
-  if (message.type === 'START_PIN_AREA_SELECTION') return 'pin_area';
-  if (message.type === 'START_FULL_PAGE_CAPTURE') return 'full';
-  if (message.type === 'START_GRID_CAPTURE') return 'grid';
-  if (message.type === 'START_SCROLL_AREA_CAPTURE') return 'scroll_area';
-  return null;
-}
-
-function screenshotFromBootstrap(message: BootstrapMessage | null): string | null {
-  if (message?.type === 'TOGGLE_EDITOR' || message?.type === 'TOGGLE_PREVIEW') return message.payload ?? null;
-  return null;
-}
-
-function ShellChrome({ children }: { children?: React.ReactNode }) {
-  return (
-    <>
-      <Toaster position="top-center" theme="light" />
-      <HardLoadingHost />
-      {children}
-    </>
-  );
-}
-
-/** Blocks page interaction while a lazy capture/editor chunk loads. */
-function ChunkFallback() {
-  return (
-    <div className="fixed inset-0 z-[999998] pointer-events-auto bg-foreground/20" aria-hidden />
-  );
-}
 
 export default function App({
   bootstrap,
@@ -90,7 +54,15 @@ export default function App({
   useEffect(() => {
     if (!bootstrap) return;
     if (bootstrap.type === 'TOGGLE_EDITOR') {
-      void openScreenshot(bootstrap.payload ?? null);
+      const payload = bootstrap.payload ?? null;
+      if (!payload) {
+        void openScreenshot(null);
+      } else {
+        void routePostCapture(payload).then((res) => {
+          if (res === 'handled') onCloseEditor?.();
+          else void openScreenshot(payload);
+        });
+      }
     } else if (bootstrap.type === 'TOGGLE_PREVIEW') {
       setCaptureMode('preview');
       setScreenshot(bootstrap.payload ?? null);
@@ -105,7 +77,7 @@ export default function App({
     } else if (bootstrap.type === 'START_SCROLL_AREA_CAPTURE') {
       setCaptureMode('scroll_area');
     }
-  }, [bootstrap]);
+  }, [bootstrap, onCloseEditor]);
 
   useEffect(() => {
     const onReplace = (e: Event) => {
@@ -129,6 +101,11 @@ export default function App({
     try {
       const cropped = await captureAreaCrop(rect);
       if (!cropped) {
+        onCloseEditor?.();
+        return;
+      }
+      const action = await routePostCapture(cropped);
+      if (action === 'handled') {
         onCloseEditor?.();
         return;
       }
@@ -156,10 +133,18 @@ export default function App({
     }
   };
 
-  const handleFullPageCapture = (dataUrl: string | null) => {
+  const handleFullPageCapture = async (dataUrl: string | null) => {
     setCaptureMode(null);
-    if (dataUrl) void openScreenshot(dataUrl);
-    else onCloseEditor?.();
+    if (!dataUrl) {
+      onCloseEditor?.();
+      return;
+    }
+    const action = await routePostCapture(dataUrl);
+    if (action === 'handled') {
+      onCloseEditor?.();
+      return;
+    }
+    void openScreenshot(dataUrl);
   };
 
   if (!screenshot && !captureMode && !hardLoading) return null;

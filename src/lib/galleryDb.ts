@@ -44,10 +44,11 @@ export async function saveGalleryImage(
   url: string,
   filename: string,
   thumbnailUrl?: string,
+  format?: string,
 ): Promise<GalleryImage> {
   const response = await sendRuntimeMessage({
     type: 'DOWNLOAD_AND_SAVE_IMAGE',
-    payload: { dataUrl: url, filename, thumbnailUrl },
+    payload: { dataUrl: url, filename, thumbnailUrl, format },
   });
   if (response?.success && response.image) {
     return response.image;

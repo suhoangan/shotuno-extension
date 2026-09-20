@@ -39,16 +39,6 @@ interface I18nState {
 }
 
 export function detectDefaultLanguage(): Language {
-  if (typeof window !== 'undefined' && window.navigator?.language) {
-    const navLang = window.navigator.language.toLowerCase();
-    if (navLang.startsWith('vi')) return 'vi';
-    if (navLang.startsWith('ja')) return 'ja';
-    if (navLang.startsWith('es')) return 'es';
-    if (navLang.startsWith('fr')) return 'fr';
-    if (navLang.startsWith('de')) return 'de';
-    if (navLang.startsWith('ko')) return 'ko';
-    if (navLang.startsWith('zh')) return 'zh';
-  }
   return 'en';
 }
 

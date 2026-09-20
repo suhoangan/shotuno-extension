@@ -12,6 +12,7 @@ export type PinImage = {
   batchId?: string;
   cloudUrl?: string;
   shareId?: string;
+  isAutoPin?: boolean;
 };
 
 type MessageResponse = {
@@ -45,6 +46,15 @@ export async function savePinImage(dataUrl: string, filename?: string): Promise<
   });
   if (response?.success && response.image) return response.image;
   throw new Error(response?.error || 'Failed to save pin');
+}
+
+export async function saveAutoPinImage(dataUrl: string, filename?: string): Promise<PinImage> {
+  const response = await sendRuntimeMessage({
+    type: 'SAVE_AUTO_PIN_IMAGE',
+    payload: { dataUrl, filename },
+  });
+  if (response?.success && response.image) return response.image;
+  throw new Error(response?.error || 'Failed to save auto-pin');
 }
 
 export async function savePinImagesBatch(dataUrls: string[], batchId: string): Promise<PinImage[]> {

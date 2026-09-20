@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Maximize, Crop, AlignVerticalSpaceAround, Images, FolderOpen, Loader2, LayoutGrid } from 'lucide-react';
+import { Maximize, Crop, AlignVerticalSpaceAround, Images, FolderOpen, Loader2, LayoutGrid, Settings } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Separator } from '../components/ui/separator';
 import { UserAccountHeader } from '../components/UserAccountHeader';
@@ -130,11 +130,25 @@ export default function App() {
     reader.readAsDataURL(file);
   };
 
+  const openSettings = () => {
+    chrome.tabs.create({ url: chrome.runtime.getURL('src/onboarding/index.html#settings') });
+    window.close();
+  };
+
   return (
     <div className="w-72 p-4 bg-background text-foreground font-sans flex flex-col gap-3">
       <div className="flex items-center justify-between gap-2">
         <h1 className="text-sm font-bold text-foreground tracking-tight">{t('popup.title')}</h1>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-7 text-muted-foreground hover:text-foreground"
+            onClick={openSettings}
+            title={t('settings.title')}
+          >
+            <Settings size={14} />
+          </Button>
           <LanguageSwitcher />
           <UserAccountHeader compact />
         </div>

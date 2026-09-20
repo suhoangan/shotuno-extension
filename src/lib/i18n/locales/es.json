@@ -221,5 +221,30 @@
     "pressEsc": "Presiona ESC para cancelar",
     "scrollCapture": "Desplázate para capturar más o haz clic para terminar",
     "capturing": "Capturando..."
+  },
+  "settings": {
+    "title": "Configuración de captura",
+    "iconActionTitle": "Acción del icono de extensión",
+    "iconActionDesc": "Elige qué sucede al hacer clic en el icono de la barra de herramientas.",
+    "actionPopup": "Abrir menú emergente (por defecto)",
+    "actionVisible": "Captura rápida: Contenido visible",
+    "actionArea": "Captura rápida: Área seleccionada",
+    "actionFull": "Captura rápida: Página completa",
+    "actionGrid": "Captura rápida: Cuadrícula",
+    "actionPinArea": "Captura rápida: Fijar área",
+    "postCaptureTitle": "Después de capturar",
+    "postCaptureDesc": "Elige la acción inmediata tras tomar una captura.",
+    "postCaptureEdit": "Abrir editor de lienzo (por defecto)",
+    "postCaptureCopy": "Copiar al portapapeles de inmediato",
+    "autoPinTitle": "Guardado automático en Pines rápidos",
+    "autoPinDesc": "Guarda automáticamente las capturas en Pines sin abrir el editor. Almacena hasta 3 capturas (FIFO).",
+    "autoPinLimit": "Capturas máximas: 3",
+    "downloadFormatTitle": "Formato de archivo de descarga",
+    "downloadFormatDesc": "Elige el formato de imagen al guardar capturas en el disco.",
+    "formatPng": "PNG (Sin pérdida, transparente)",
+    "formatJpg": "JPEG (Menor tamaño de archivo)",
+    "formatWebp": "WebP (Moderno, alta compresión)",
+    "saveSuccess": "Configuración guardada",
+    "copiedToClipboard": "¡Captura copiada al portapapeles!"
   }
 }

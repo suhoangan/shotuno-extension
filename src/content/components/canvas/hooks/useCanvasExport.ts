@@ -7,7 +7,7 @@ import { editorActions } from '../../../editorActions';
 import { copyImageAndTextToClipboard } from '../../../utils/clipboardUtils';
 import { exportStageToPng } from '../exportStageToPng';
 import { storage } from '../../../../lib/chromeStorage';
-
+import { getCaptureSettings, type DownloadImageFormat } from '../../../../lib/captureSettings';
 
 const AI_URLS: Record<string, string> = {
   ChatGPT: 'https://chatgpt.com/',
@@ -20,10 +20,12 @@ export function useCanvasExport(stageRef: React.RefObject<any>) {
     let lastSaveTime = 0;
     const timeouts = new Set<ReturnType<typeof setTimeout>>();
 
-    const runExport = (): { uri: string; blobPromise: Promise<Blob> } | null => {
+    const runExport = (
+      format: DownloadImageFormat = 'png',
+    ): { uri: string; blobPromise: Promise<Blob> } | null => {
       const stage = stageRef.current;
       if (!stage) return null;
-      return exportStageToPng(stage);
+      return exportStageToPng(stage, format);
     };
 
     const handleSave = (type: string, filename: string = 'screenshot', options?: any) => {
@@ -59,7 +61,9 @@ export function useCanvasExport(stageRef: React.RefObject<any>) {
       const timeoutId = setTimeout(async () => {
         timeouts.delete(timeoutId);
         try {
-          const exported = runExport();
+          const settings = await getCaptureSettings();
+          const exportFormat: DownloadImageFormat = type === 'download' ? settings.downloadFormat : 'png';
+          const exported = runExport(exportFormat);
           if (!exported) {
             rejectBlob(new Error('Stage not ready'));
             toast.error('Export failed');
@@ -75,6 +79,7 @@ export function useCanvasExport(stageRef: React.RefObject<any>) {
                 uri,
                 filename,
                 stageRef.current.toDataURL({ pixelRatio: 0.2 }),
+                exportFormat,
               );
               toast.success('Saved and downloaded');
             } catch (err) {

@@ -221,5 +221,30 @@
     "pressEsc": "ESCキーでキャンセル",
     "scrollCapture": "下にスクロールして追加キャプチャ、またはクリックで完了",
     "capturing": "キャプチャ処理中..."
+  },
+  "settings": {
+    "title": "キャプチャ設定",
+    "iconActionTitle": "拡張機能アイコンのアクション",
+    "iconActionDesc": "ツールバーのアイコンをクリックした時の動作を設定します。",
+    "actionPopup": "ポップアップメニューを開く（デフォルト）",
+    "actionVisible": "クイックキャプチャ: 表示領域",
+    "actionArea": "クイックキャプチャ: 選択エリア",
+    "actionFull": "クイックキャプチャ: ページ全体",
+    "actionGrid": "クイックキャプチャ: グリッド",
+    "actionPinArea": "クイックキャプチャ: ピン留めエリア",
+    "postCaptureTitle": "キャプチャ後の動作",
+    "postCaptureDesc": "スクリーンショットを撮影した直後の動作を選択します。",
+    "postCaptureEdit": "キャンバスエディタを開く（デフォルト）",
+    "postCaptureCopy": "即座にクリップボードにコピー",
+    "autoPinTitle": "クイックピンへの自動保存",
+    "autoPinDesc": "エディタを開かずにクイックピンへ自動保存します。最新3件まで保持（FIFO）。",
+    "autoPinLimit": "最大保存数: 3枚",
+    "downloadFormatTitle": "ダウンロードファイル形式",
+    "downloadFormatDesc": "スクリーンショットをディスクに保存する際の画像形式を選択します。",
+    "formatPng": "PNG（可逆圧縮・透明度保持）",
+    "formatJpg": "JPEG（軽量ファイルサイズ）",
+    "formatWebp": "WebP（高圧縮・モダン形式）",
+    "saveSuccess": "設定を保存しました",
+    "copiedToClipboard": "スクリーンショットをクリップボードにコピーしました！"
   }
 }

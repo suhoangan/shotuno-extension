@@ -117,8 +117,8 @@
   },
   "sidepanel": {
     "galleryTitle": "Pins & Gallery",
-    "pins": "Pins",
-    "downloads": "Downloads",
+    "pins": "Quick Pins",
+    "downloads": "Saved",
     "openImage": "Open image to edit",
     "emptyHint": "Saved downloads appear here. Multi-select, then drag into the editor or a page input.",
     "preview": "Preview",
@@ -221,5 +221,30 @@
     "pressEsc": "Press ESC to cancel",
     "scrollCapture": "Scroll down to capture more, or click to finish",
     "capturing": "Capturing..."
+  },
+  "settings": {
+    "title": "Capture Settings",
+    "iconActionTitle": "Extension Icon Action",
+    "iconActionDesc": "Choose what happens when you click the Shotuno icon in your browser toolbar.",
+    "actionPopup": "Open Popup Menu (Default)",
+    "actionVisible": "Quick Capture: Visible Content",
+    "actionArea": "Quick Capture: Selected Area",
+    "actionFull": "Quick Capture: Full Page",
+    "actionGrid": "Quick Capture: Grid Capture",
+    "actionPinArea": "Quick Capture: Pin Area",
+    "postCaptureTitle": "After Capturing",
+    "postCaptureDesc": "Choose what to do immediately after a screenshot is taken.",
+    "postCaptureEdit": "Open Canvas Editor (Default)",
+    "postCaptureCopy": "Copy to Clipboard Immediately",
+    "autoPinTitle": "Auto-Save to Quick Pins",
+    "autoPinDesc": "Automatically save screenshots to Quick Pins without opening the editor. Stores up to 3 recent screenshots (FIFO).",
+    "autoPinLimit": "Max Stored Screenshots: 3",
+    "downloadFormatTitle": "Download File Format",
+    "downloadFormatDesc": "Choose the image format when saving screenshots to disk.",
+    "formatPng": "PNG (Lossless, Transparent)",
+    "formatJpg": "JPEG (Smaller File Size)",
+    "formatWebp": "WebP (Modern, High Compression)",
+    "saveSuccess": "Settings saved successfully",
+    "copiedToClipboard": "Screenshot copied to clipboard!"
   }
 }

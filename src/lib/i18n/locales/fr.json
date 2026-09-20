@@ -221,5 +221,30 @@
     "pressEsc": "Appuyez sur Échap pour annuler",
     "scrollCapture": "Faites défiler pour capturer plus, ou cliquez pour terminer",
     "capturing": "Capture en cours..."
+  },
+  "settings": {
+    "title": "Paramètres de capture",
+    "iconActionTitle": "Action de l'icône d'extension",
+    "iconActionDesc": "Choisissez ce qui se passe lorsque vous cliquez sur l'icône dans la barre d'outils.",
+    "actionPopup": "Ouvrir le menu popup (par défaut)",
+    "actionVisible": "Capture rapide : Contenu visible",
+    "actionArea": "Capture rapide : Zone sélectionnée",
+    "actionFull": "Capture rapide : Page entière",
+    "actionGrid": "Capture rapide : Grille",
+    "actionPinArea": "Capture rapide : Épingler la zone",
+    "postCaptureTitle": "Après la capture",
+    "postCaptureDesc": "Choisissez l'action immédiate après la capture d'écran.",
+    "postCaptureEdit": "Ouvrir l'éditeur de canevas (par défaut)",
+    "postCaptureCopy": "Copier immédiatement dans le presse-papiers",
+    "autoPinTitle": "Enregistrement automatique dans Épingles rapides",
+    "autoPinDesc": "Enregistre automatiquement les captures sans ouvrir l'éditeur. Stocke jusqu'à 3 captures (FIFO).",
+    "autoPinLimit": "Captures max : 3",
+    "downloadFormatTitle": "Format de fichier de téléchargement",
+    "downloadFormatDesc": "Choisissez le format d'image lors de l'enregistrement sur le disque.",
+    "formatPng": "PNG (Sans perte, transparent)",
+    "formatJpg": "JPEG (Fichier plus léger)",
+    "formatWebp": "WebP (Moderne, haute compression)",
+    "saveSuccess": "Paramètres enregistrés avec succès",
+    "copiedToClipboard": "Capture d'écran copiée dans le presse-papiers !"
   }
 }

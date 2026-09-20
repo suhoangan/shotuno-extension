@@ -117,8 +117,8 @@
   },
   "sidepanel": {
     "galleryTitle": "Thư viện Ghim & Ảnh",
-    "pins": "Ghim",
-    "downloads": "Tải xuống",
+    "pins": "Ghim tạm",
+    "downloads": "Đã lưu",
     "openImage": "Mở ảnh để chỉnh sửa",
     "emptyHint": "Ảnh tải xuống sẽ hiển thị tại đây. Chọn nhiều ảnh và kéo thả vào trình chỉnh sửa hoặc trang web.",
     "preview": "Xem trước",
@@ -221,5 +221,30 @@
     "pressEsc": "Nhấn phím ESC để hủy",
     "scrollCapture": "Cuộn xuống để chụp tiếp hoặc nhấp để hoàn tất",
     "capturing": "Đang chụp..."
+  },
+  "settings": {
+    "title": "Cài đặt chụp màn hình",
+    "iconActionTitle": "Thao tác khi click Icon tiện ích",
+    "iconActionDesc": "Chọn hành động khi bạn bấm vào biểu tượng Shotuno trên thanh công cụ.",
+    "actionPopup": "Mở Menu Popup (Mặc định)",
+    "actionVisible": "Chụp nhanh: Toàn bộ màn hình hiển thị",
+    "actionArea": "Chụp nhanh: Vùng được chọn",
+    "actionFull": "Chụp nhanh: Toàn bộ trang dài",
+    "actionGrid": "Chụp nhanh: Lưới nhiều vùng",
+    "actionPinArea": "Chụp nhanh: Ghim vùng",
+    "postCaptureTitle": "Sau khi chụp xong",
+    "postCaptureDesc": "Chọn hành động thực hiện ngay sau khi ảnh được chụp.",
+    "postCaptureEdit": "Mở giao diện chỉnh sửa Canvas (Mặc định)",
+    "postCaptureCopy": "Tự động sao chép vào Clipboard",
+    "autoPinTitle": "Tự động lưu vào Ghim tạm",
+    "autoPinDesc": "Tự động lưu ảnh chụp vào Ghim tạm mà không mở trình chỉnh sửa. Lưu tối đa 3 ảnh chụp gần nhất (xoay vòng).",
+    "autoPinLimit": "Số lượng lưu tối đa: 3 ảnh",
+    "downloadFormatTitle": "Định dạng file khi tải về",
+    "downloadFormatDesc": "Chọn định dạng hình ảnh khi lưu ảnh chụp màn hình về máy tính.",
+    "formatPng": "PNG (Chất lượng gốc, hỗ trợ nền trong suốt)",
+    "formatJpg": "JPEG (Dung lượng nhẹ)",
+    "formatWebp": "WebP (Hiện đại, độ nén cao)",
+    "saveSuccess": "Đã lưu cài đặt thành công",
+    "copiedToClipboard": "Đã sao chép ảnh vào khay nhớ tạm!"
   }
 }
