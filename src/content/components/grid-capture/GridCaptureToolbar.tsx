@@ -37,7 +37,7 @@ export function GridCaptureToolbar({
         Clear All
       </Button>
       <Button
-        variant="destructive"
+        variant="outline"
         size="sm"
         onClick={onCancel}
       >

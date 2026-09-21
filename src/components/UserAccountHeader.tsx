@@ -1,4 +1,4 @@
-import { LogIn, Sparkles, ExternalLink, LogOut, Crown, ChevronDown, Check, Globe, BookOpen } from 'lucide-react';
+import { LogIn, Sparkles, ExternalLink, LogOut, Crown, ChevronDown, Check, Globe, BookOpen, Settings } from 'lucide-react';
 import { useAuthUser } from '../lib/useAuthUser';
 import { webUrl } from '../lib/api';
 import { useTranslation, SUPPORTED_LANGUAGES } from '../lib/i18n';
@@ -22,6 +22,17 @@ import {
   DropdownMenuSubContent,
 } from './ui/dropdown-menu';
 
+function openSettingsPage() {
+  const url = chrome.runtime.getURL('src/onboarding/index.html#settings');
+  try {
+    if (chrome.tabs?.create) {
+      void chrome.tabs.create({ url });
+      return;
+    }
+  } catch { /* fall through */ }
+  window.open(url, '_blank');
+}
+
 export function UserAccountHeader({ compact = false }: { compact?: boolean }) {
   const { t, language, setLanguage } = useTranslation();
   const { authUser, loading, loginViaWeb, logout } = useAuthUser();
@@ -35,10 +46,21 @@ export function UserAccountHeader({ compact = false }: { compact?: boolean }) {
   if (!authUser) {
     if (compact) {
       return (
-        <Button size="sm" variant="outline" className="h-8 gap-1.5 text-xs" onClick={loginViaWeb}>
-          <LogIn size={14} />
-          {t('userAccount.login')}
-        </Button>
+        <div className="flex items-center gap-1.5">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="size-8 text-muted-foreground hover:text-foreground"
+            onClick={openSettingsPage}
+            title={t('settings.title')}
+          >
+            <Settings size={14} />
+          </Button>
+          <Button size="sm" variant="outline" className="h-8 gap-1.5 text-xs" onClick={loginViaWeb}>
+            <LogIn size={14} />
+            {t('userAccount.login')}
+          </Button>
+        </div>
       );
     }
     return (
@@ -54,6 +76,10 @@ export function UserAccountHeader({ compact = false }: { compact?: boolean }) {
           <LogIn size={14} />
           {t('userAccount.loginViaWeb')}
           <ExternalLink size={12} className="opacity-70" />
+        </Button>
+        <Button size="sm" variant="outline" className="w-full gap-2 text-xs" onClick={openSettingsPage}>
+          <Settings size={14} />
+          {t('settings.title')}
         </Button>
       </div>
     );
@@ -83,7 +109,7 @@ export function UserAccountHeader({ compact = false }: { compact?: boolean }) {
             {avatarChar}
           </AvatarFallback>
           {license === 'PRO' && (
-            <AvatarBadge className="bg-amber-500 text-white dark:bg-amber-400 dark:text-slate-950 ring-background">
+            <AvatarBadge className="bg-amber-500 text-primary-foreground dark:bg-amber-400 dark:text-foreground ring-background">
               <Crown className="fill-current" />
             </AvatarBadge>
           )}
@@ -123,6 +149,14 @@ export function UserAccountHeader({ compact = false }: { compact?: boolean }) {
         <DropdownMenuSeparator className="my-1 bg-border/40" />
 
         <DropdownMenuItem
+          onClick={openSettingsPage}
+          className="flex items-center gap-2 text-xs font-medium cursor-pointer p-2 rounded-lg"
+        >
+          <Settings size={14} className="text-primary" />
+          <span>{t('settings.title')}</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem
           onClick={() => window.open(webUrl('/dashboard'), '_blank')}
           className="flex items-center gap-2 text-xs font-medium cursor-pointer p-2 rounded-lg"
         >
@@ -137,7 +171,7 @@ export function UserAccountHeader({ compact = false }: { compact?: boolean }) {
                 chrome.tabs.create({ url: chrome.runtime.getURL('src/onboarding/index.html') });
                 return;
               }
-            } catch {}
+            } catch { /* ignore */ }
             const url = typeof chrome !== 'undefined' && chrome.runtime?.getURL
               ? chrome.runtime.getURL('src/onboarding/index.html')
               : '/src/onboarding/index.html';

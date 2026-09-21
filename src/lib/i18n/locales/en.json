@@ -237,7 +237,7 @@
     "postCaptureEdit": "Open Canvas Editor (Default)",
     "postCaptureCopy": "Copy to Clipboard Immediately",
     "autoPinTitle": "Auto-Save to Quick Pins",
-    "autoPinDesc": "Automatically save screenshots to Quick Pins without opening the editor. Stores up to 3 recent screenshots (FIFO).",
+    "autoPinDesc": "Also save captures to Quick Pins (up to 3, FIFO) while copying to clipboard.",
     "autoPinLimit": "Max Stored Screenshots: 3",
     "downloadFormatTitle": "Download File Format",
     "downloadFormatDesc": "Choose the image format when saving screenshots to disk.",

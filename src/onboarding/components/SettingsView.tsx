@@ -57,9 +57,14 @@ export function SettingsView() {
     toast.success(t('settings.saveSuccess'));
   };
 
+  const selectPostCapture = (action: PostCaptureAction) => {
+    const patch: Partial<CaptureSettings> = { postCaptureAction: action };
+    if (action !== 'copy_clipboard') patch.autoPinEnabled = false;
+    void update(patch);
+  };
+
   return (
     <div className="space-y-8 max-w-3xl mx-auto py-2">
-      {/* Extension Icon Action */}
       <section className="p-6 rounded-2xl border border-border bg-card shadow-xs space-y-4">
         <div className="flex items-center gap-3">
           <div className="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
@@ -97,7 +102,6 @@ export function SettingsView() {
         </div>
       </section>
 
-      {/* Post-Capture Action */}
       <section className="p-6 rounded-2xl border border-border bg-card shadow-xs space-y-4">
         <div className="flex items-center gap-3">
           <div className="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
@@ -109,69 +113,80 @@ export function SettingsView() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
-          {[
-            { id: 'open_editor' as PostCaptureAction, labelKey: 'settings.postCaptureEdit', icon: Pencil },
-            { id: 'copy_clipboard' as PostCaptureAction, labelKey: 'settings.postCaptureCopy', icon: Clipboard },
-          ].map((opt) => {
-            const Icon = opt.icon;
-            const isSelected = settings.postCaptureAction === opt.id;
-            return (
-              <button
-                key={opt.id}
-                type="button"
-                onClick={() => void update({ postCaptureAction: opt.id })}
-                className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${
-                  isSelected
-                    ? 'border-primary bg-primary/5 text-foreground ring-1 ring-primary'
-                    : 'border-border bg-background hover:bg-muted/50 text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Icon className={`size-4 shrink-0 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
-                  <span className="text-xs font-medium">{t(opt.labelKey)}</span>
+        <div className="grid grid-cols-1 gap-2.5 pt-2">
+          <button
+            type="button"
+            onClick={() => selectPostCapture('open_editor')}
+            className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${
+              settings.postCaptureAction === 'open_editor'
+                ? 'border-primary bg-primary/5 text-foreground ring-1 ring-primary'
+                : 'border-border bg-background hover:bg-muted/50 text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <Pencil className={`size-4 shrink-0 ${settings.postCaptureAction === 'open_editor' ? 'text-primary' : 'text-muted-foreground'}`} />
+              <span className="text-xs font-medium">{t('settings.postCaptureEdit')}</span>
+            </div>
+            {settings.postCaptureAction === 'open_editor' && <Check className="size-4 text-primary shrink-0" />}
+          </button>
+
+          <div
+            className={`rounded-xl border transition-all ${
+              settings.postCaptureAction === 'copy_clipboard'
+                ? 'border-primary bg-primary/5 ring-1 ring-primary'
+                : 'border-border bg-background'
+            }`}
+          >
+            <button
+              type="button"
+              onClick={() => selectPostCapture('copy_clipboard')}
+              className={`flex w-full items-center justify-between p-3.5 text-left transition-all rounded-xl ${
+                settings.postCaptureAction === 'copy_clipboard'
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <Clipboard className={`size-4 shrink-0 ${settings.postCaptureAction === 'copy_clipboard' ? 'text-primary' : 'text-muted-foreground'}`} />
+                <span className="text-xs font-medium">{t('settings.postCaptureCopy')}</span>
+              </div>
+              {settings.postCaptureAction === 'copy_clipboard' && <Check className="size-4 text-primary shrink-0" />}
+            </button>
+
+            {settings.postCaptureAction === 'copy_clipboard' && (
+              <div className="mx-3 mb-3 p-3 rounded-lg border border-border/60 bg-background space-y-2">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-start gap-2.5 min-w-0">
+                    <Archive className="size-4 shrink-0 text-primary mt-0.5" />
+                    <div className="min-w-0">
+                      <Label htmlFor="auto-pin-toggle" className="text-xs font-medium text-foreground cursor-pointer">
+                        {t('settings.autoPinTitle')}
+                      </Label>
+                      <p className="text-[11px] text-muted-foreground pt-0.5 leading-snug">
+                        {t('settings.autoPinDesc')}
+                      </p>
+                    </div>
+                  </div>
+                  <Switch
+                    id="auto-pin-toggle"
+                    checked={settings.autoPinEnabled}
+                    onCheckedChange={(checked) => void update({ autoPinEnabled: checked })}
+                  />
                 </div>
-                {isSelected && <Check className="size-4 text-primary shrink-0" />}
-              </button>
-            );
-          })}
+                {settings.autoPinEnabled && (
+                  <div className="flex items-center justify-between text-[11px] pl-6">
+                    <span className="text-muted-foreground">{t('settings.autoPinLimit')}</span>
+                    <span className="font-semibold text-foreground px-2 py-0.5 bg-muted rounded-md border border-border">
+                      3 / 3 (FIFO)
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* Auto-Pin Buffer (Max 3 screenshots) */}
-      <section className="p-6 rounded-2xl border border-border bg-card shadow-xs space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-              <Archive className="size-5" />
-            </div>
-            <div>
-              <Label htmlFor="auto-pin-toggle" className="text-base font-semibold text-foreground cursor-pointer">
-                {t('settings.autoPinTitle')}
-              </Label>
-              <p className="text-xs text-muted-foreground max-w-md pt-0.5">
-                {t('settings.autoPinDesc')}
-              </p>
-            </div>
-          </div>
-          <Switch
-            id="auto-pin-toggle"
-            checked={settings.autoPinEnabled}
-            onCheckedChange={(checked) => void update({ autoPinEnabled: checked })}
-          />
-        </div>
-
-        {settings.autoPinEnabled && (
-          <div className="flex items-center justify-between p-3 bg-muted/40 rounded-xl border border-border/50 text-xs">
-            <span className="text-muted-foreground">{t('settings.autoPinLimit')}</span>
-            <span className="font-semibold text-foreground px-2 py-0.5 bg-background rounded-md border border-border">
-              3 / 3 (FIFO)
-            </span>
-          </div>
-        )}
-      </section>
-
-      {/* Download File Format */}
       <section className="p-6 rounded-2xl border border-border bg-card shadow-xs space-y-4">
         <div className="flex items-center gap-3">
           <div className="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">

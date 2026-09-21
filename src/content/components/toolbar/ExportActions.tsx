@@ -88,7 +88,7 @@ export function ExportActions({
               size="icon"
               onClick={onClose}
               disabled={busy}
-              className={`h-8 w-8 bg-destructive hover:bg-destructive/80 text-primary-foreground shadow ${isVertical ? 'mt-1' : 'ml-1'}`}
+              className={`h-8 w-8 bg-destructive hover:bg-destructive/80 text-destructive-foreground shadow ${isVertical ? 'mt-1' : 'ml-1'}`}
             />
           }
         >

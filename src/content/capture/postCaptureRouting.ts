@@ -13,6 +13,10 @@ export async function routePostCapture(
 ): Promise<'open_editor' | 'handled'> {
   const settings = await getCaptureSettings();
 
+  if (settings.postCaptureAction !== 'copy_clipboard') {
+    return 'open_editor';
+  }
+
   if (settings.autoPinEnabled && !options?.skipAutoPin) {
     try {
       await saveAutoPinImage(dataUrl);
@@ -22,15 +26,11 @@ export async function routePostCapture(
     }
   }
 
-  if (settings.postCaptureAction === 'copy_clipboard') {
-    const success = await copyImageAndTextToClipboard(dataUrl);
-    if (success) {
-      toast.success('Screenshot copied to clipboard!');
-    } else {
-      toast.error('Failed to copy to clipboard');
-    }
-    return 'handled';
+  const success = await copyImageAndTextToClipboard(dataUrl);
+  if (success) {
+    toast.success('Screenshot copied to clipboard!');
+  } else {
+    toast.error('Failed to copy to clipboard');
   }
-
-  return 'open_editor';
+  return 'handled';
 }

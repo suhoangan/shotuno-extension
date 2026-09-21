@@ -25,6 +25,7 @@
     --color-input: var(--input);
     --color-border: var(--border);
     --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
     --color-accent-foreground: var(--accent-foreground);
     --color-accent: var(--accent);
     --color-muted-foreground: var(--muted-foreground);
@@ -67,6 +68,7 @@
     --accent: #ecfdf5;
     --accent-foreground: #047857;
     --destructive: #dc2626;
+    --destructive-foreground: #ffffff;
     --border: #e2e8f0;
     --input: #cbd5e1;
     --ring: #047857;
@@ -169,6 +171,7 @@
     --accent: #0d2818;
     --accent-foreground: #34d399;
     --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
     --border: #1e293b;
     --input: #334155;
     --ring: #10b981;

@@ -237,7 +237,7 @@
     "postCaptureEdit": "Mở giao diện chỉnh sửa Canvas (Mặc định)",
     "postCaptureCopy": "Tự động sao chép vào Clipboard",
     "autoPinTitle": "Tự động lưu vào Ghim tạm",
-    "autoPinDesc": "Tự động lưu ảnh chụp vào Ghim tạm mà không mở trình chỉnh sửa. Lưu tối đa 3 ảnh chụp gần nhất (xoay vòng).",
+    "autoPinDesc": "Đồng thời lưu ảnh vào Ghim tạm (tối đa 3 ảnh, xoay vòng) khi sao chép vào clipboard.",
     "autoPinLimit": "Số lượng lưu tối đa: 3 ảnh",
     "downloadFormatTitle": "Định dạng file khi tải về",
     "downloadFormatDesc": "Chọn định dạng hình ảnh khi lưu ảnh chụp màn hình về máy tính.",
