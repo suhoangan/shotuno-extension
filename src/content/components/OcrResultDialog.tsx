@@ -75,15 +75,11 @@ export function OcrResultDialog({ open, onOpenChange, text, loading }: OcrResult
         </div>
 
         <AlertDialogFooter>
-          {!loading && (
-            <>
-              <AlertDialogCancel>{t('dialogs.close')}</AlertDialogCancel>
-              {text && (
-                <AlertDialogAction onClick={handleCopy}>
-                  {copied ? t('dialogs.copied') : t('dialogs.copyToClipboard')}
-                </AlertDialogAction>
-              )}
-            </>
+          <AlertDialogCancel>{t('dialogs.close')}</AlertDialogCancel>
+          {!loading && text && (
+            <AlertDialogAction onClick={handleCopy}>
+              {copied ? t('dialogs.copied') : t('dialogs.copyToClipboard')}
+            </AlertDialogAction>
           )}
         </AlertDialogFooter>
       </AlertDialogContent>

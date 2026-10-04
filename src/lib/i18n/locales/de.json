@@ -155,12 +155,34 @@
   },
   "modals": {
     "sendToAI": {
-      "title": "Screenshot an KI senden",
+      "title": "An KI senden",
       "subtitle": "Automatisch formatieren und in Ihren Lieblings-KI-Assistenten einfügen",
+      "promptLabel": "Prompt",
+      "promptPlaceholder": "Was soll die KI mit diesem Screenshot tun? (z. B. erklären, zusammenfassen, Text kopieren…)",
+      "selectAssistant": "KI-Assistent wählen",
       "chatgpt": "ChatGPT",
       "claude": "Claude",
       "gemini": "Gemini",
-      "copyPrompt": "Prompt & Bild kopieren"
+      "openai": "OpenAI",
+      "anthropic": "Anthropic",
+      "google": "Google",
+      "copyPrompt": "Prompt & Bild kopieren",
+      "copyImageTitle": "Bild & Prompt kopieren",
+      "copyImageHint": "Für andere KI-Tools",
+      "presets": {
+        "explain": {
+          "label": "Erklären",
+          "text": "Look at this screenshot and explain it in plain language. Say what it is, what each main part is for, and anything important a non-expert should notice. If something is unclear in the image, say so instead of guessing."
+        },
+        "summarize": {
+          "label": "Zusammenfassen",
+          "text": "Summarize this screenshot in 3–5 short bullet points. Focus on the main message or task, not every tiny detail. Use simple words."
+        },
+        "extractText": {
+          "label": "Text extrahieren",
+          "text": "Extract all readable text from this image. Preserve wording, line breaks, and order as closely as possible. If text is unreadable, mark it as [unclear]."
+        }
+      }
     },
     "proUpgrade": {
       "title": "Auf Shotuno Pro upgraden",

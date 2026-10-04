@@ -5,6 +5,7 @@ export type HardLoadingPayload = {
   message?: string;
   /** 0–100 shows a progress bar; omit for indeterminate spinner-only. */
   progress?: number | null;
+  onCancel?: () => void;
 };
 
 type HardLoadingState = {

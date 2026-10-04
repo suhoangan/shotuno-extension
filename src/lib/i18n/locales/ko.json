@@ -155,12 +155,34 @@
   },
   "modals": {
     "sendToAI": {
-      "title": "AI로 스크린샷 전송",
+      "title": "AI로 보내기",
       "subtitle": "자동으로 서식을 지정하여 선호하는 AI 어시스턴트에 붙여넣기",
+      "promptLabel": "프롬프트",
+      "promptPlaceholder": "이 스크린샷으로 AI가 무엇을 하면 될까요? (예: 설명, 요약, 글자 복사…)",
+      "selectAssistant": "AI 어시스턴트 선택",
       "chatgpt": "ChatGPT",
       "claude": "Claude",
       "gemini": "Gemini",
-      "copyPrompt": "프롬프트 및 이미지 복사"
+      "openai": "OpenAI",
+      "anthropic": "Anthropic",
+      "google": "Google",
+      "copyPrompt": "프롬프트 및 이미지 복사",
+      "copyImageTitle": "이미지 및 프롬프트 복사",
+      "copyImageHint": "다른 AI 도구와 함께 사용",
+      "presets": {
+        "explain": {
+          "label": "설명",
+          "text": "Look at this screenshot and explain it in plain language. Say what it is, what each main part is for, and anything important a non-expert should notice. If something is unclear in the image, say so instead of guessing."
+        },
+        "summarize": {
+          "label": "요약",
+          "text": "Summarize this screenshot in 3–5 short bullet points. Focus on the main message or task, not every tiny detail. Use simple words."
+        },
+        "extractText": {
+          "label": "텍스트 추출",
+          "text": "Extract all readable text from this image. Preserve wording, line breaks, and order as closely as possible. If text is unreadable, mark it as [unclear]."
+        }
+      }
     },
     "proUpgrade": {
       "title": "Shotuno Pro로 업그레이드",

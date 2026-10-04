@@ -155,12 +155,34 @@
   },
   "modals": {
     "sendToAI": {
-      "title": "发送截图至 AI",
+      "title": "发送至 AI",
       "subtitle": "自动格式化并一键粘贴至您喜爱的 AI 助手",
+      "promptLabel": "提示词",
+      "promptPlaceholder": "希望 AI 如何处理这张截图？（例如：解释、总结、复制文字…）",
+      "selectAssistant": "选择 AI 助手",
       "chatgpt": "ChatGPT",
       "claude": "Claude",
       "gemini": "Gemini",
-      "copyPrompt": "复制提示词与图片"
+      "openai": "OpenAI",
+      "anthropic": "Anthropic",
+      "google": "Google",
+      "copyPrompt": "复制提示词与图片",
+      "copyImageTitle": "复制图片与提示词",
+      "copyImageHint": "用于其他 AI 工具",
+      "presets": {
+        "explain": {
+          "label": "解释",
+          "text": "Look at this screenshot and explain it in plain language. Say what it is, what each main part is for, and anything important a non-expert should notice. If something is unclear in the image, say so instead of guessing."
+        },
+        "summarize": {
+          "label": "总结",
+          "text": "Summarize this screenshot in 3–5 short bullet points. Focus on the main message or task, not every tiny detail. Use simple words."
+        },
+        "extractText": {
+          "label": "提取文字",
+          "text": "Extract all readable text from this image. Preserve wording, line breaks, and order as closely as possible. If text is unreadable, mark it as [unclear]."
+        }
+      }
     },
     "proUpgrade": {
       "title": "升级至 Shotuno Pro",

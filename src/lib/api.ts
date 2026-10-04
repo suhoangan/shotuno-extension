@@ -1,72 +1,21 @@
-import axios, { type AxiosInstance, type AxiosResponse, type AxiosError } from 'axios';
-import { storage } from './chromeStorage';
+/**
+ * Project and open-source external links and constants.
+ * Shotuno is 100% offline-first and client-side with zero backend server dependencies.
+ */
 
-const env = import.meta.env;
+export const GITHUB_REPO_URL = 'https://github.com/suhoangan/shotuno-extension';
+export const GITHUB_ISSUES_URL = 'https://github.com/suhoangan/shotuno-extension/issues';
+export const DEVELOPER_PROFILE_URL = 'https://github.com/suhoangan';
+export const DEVELOPER_NAME = 'Hoang An Su';
+export const DEVELOPER_HANDLE = '@suhoangan';
+export const PROJECT_LICENSE = 'MIT';
 
-/** Marketing site — Buy me a coffee / support links only. */
-export const WEB_BASE =
-  (typeof env !== 'undefined' && env.VITE_WEB_URL) || 'http://localhost:3001';
-
-export function webUrl(path = '/') {
-  const base = WEB_BASE.replace(/\/$/, '');
-  const normalized = path.startsWith('/') ? path : `/${path}`;
-  return `${base}${normalized}`;
+/** Fallback web URL resolver pointing to open source repo */
+export function webUrl(_path = '/'): string {
+  return GITHUB_REPO_URL;
 }
 
-export const API_BASE = 
-  (typeof env !== 'undefined' && env.VITE_API_URL) || 'http://localhost:3000';
-
-export function apiUrl(path = '/') {
-  const base = API_BASE.replace(/\/$/, '');
-  const normalized = path.startsWith('/') ? path : `/${path}`;
-  return `${base}${normalized}`;
+/** Fallback api URL resolver (Shotuno is fully offline) */
+export function apiUrl(_path = '/'): string {
+  return '';
 }
-
-// Create centralized Axios instance
-export const apiClient: AxiosInstance = axios.create({
-  baseURL: API_BASE,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Request interceptor to attach token
-apiClient.interceptors.request.use(async (config) => {
-  try {
-    const data = await storage.local.get('authToken');
-    if (data.authToken && !config.headers.Authorization) {
-      config.headers.Authorization = `Bearer ${data.authToken}`;
-    }
-  } catch (err) {
-    console.error('Failed to get auth token from storage:', err);
-  }
-  return config;
-});
-
-// Response interceptor to unwrap data and handle global errors
-apiClient.interceptors.response.use(
-  (response: AxiosResponse) => {
-    // If the backend wraps data in { success, data }, unwrap it
-    if (response.data && typeof response.data === 'object' && 'success' in response.data) {
-      return response.data.data;
-    }
-    return response.data;
-  },
-  (error: AxiosError) => {
-    let message = 'An unknown error occurred';
-    
-    if (error.response?.data) {
-       const data = error.response.data as any;
-       if (data.message) {
-         message = Array.isArray(data.message) ? data.message[0] : data.message;
-       } else if (data.data?.message) {
-         message = data.data.message;
-       }
-    } else if (error.message) {
-       message = error.message;
-    }
-    
-    error.message = message;
-    return Promise.reject(error);
-  }
-);

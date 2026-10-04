@@ -5,10 +5,8 @@ import { handleExternalGalleryMessage } from './gallery-meta-bridge';
 import { handlePinMessage } from './pin-handlers';
 import { bindSidePanelLifecycle, handleSidePanelMessage } from './side-panel-handlers';
 import { initTelemetry } from '../lib/telemetry';
-import { bindCookieAuthListener } from './auth-sync';
 import { storage } from '../lib/chromeStorage';
 import { LANGUAGE_STORAGE_KEY } from '../lib/i18n';
-
 import { bindActionIconListeners, syncActionPopup } from './action-icon-handler';
 import { handleAutoPinSave } from './auto-pin-handler';
 
@@ -27,32 +25,16 @@ function routeMessage(
 
 bindGalleryDownloadListeners();
 bindSidePanelLifecycle();
-bindCookieAuthListener();
 bindContextMenuClick();
 bindActionIconListeners();
-// Menus persist across SW sleeps — only re-register on install/startup (see below).
 void initTelemetry();
+
+// Clean up any legacy auth keys from storage
+void storage.local.remove(['authToken', 'authUser']);
 
 chrome.runtime.onMessage.addListener((message: any, sender: any, sendResponse: any) => {
   if (message.type === 'SYNC_LANGUAGE' && message.payload?.language) {
     storage.local.set({ [LANGUAGE_STORAGE_KEY]: message.payload.language }).then(() => {
-      sendResponse({ success: true });
-    });
-    return true;
-  }
-  if (message.type === 'LOGIN_SYNC' && message.token) {
-    storage.local
-      .set({
-        authToken: message.token,
-        authUser: message.user,
-      })
-      .then(() => {
-        sendResponse({ success: true });
-      });
-    return true;
-  }
-  if (message.type === 'LOGOUT_SYNC') {
-    storage.local.remove(['authToken', 'authUser']).then(() => {
       sendResponse({ success: true });
     });
     return true;
@@ -63,23 +45,6 @@ chrome.runtime.onMessage.addListener((message: any, sender: any, sendResponse: a
 chrome.runtime.onMessageExternal.addListener((message, _sender, sendResponse) => {
   if (message.type === 'SYNC_LANGUAGE' && message.payload?.language) {
     storage.local.set({ [LANGUAGE_STORAGE_KEY]: message.payload.language }).then(() => {
-      sendResponse({ success: true });
-    });
-    return true;
-  }
-  if (message.type === 'LOGIN_SYNC' && message.token) {
-    storage.local
-      .set({
-        authToken: message.token,
-        authUser: message.user,
-      })
-      .then(() => {
-        sendResponse({ success: true });
-      });
-    return true;
-  }
-  if (message.type === 'LOGOUT_SYNC') {
-    storage.local.remove(['authToken', 'authUser']).then(() => {
       sendResponse({ success: true });
     });
     return true;

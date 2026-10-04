@@ -9,6 +9,11 @@ import {
   waitForAttachment,
   waitForElement,
 } from './aiInjectShared';
+import {
+  findDynamicComposer,
+  findDynamicFileInput,
+  waitForDynamicComposer,
+} from './dynamicComposer';
 
 function bridge(type: 'patch-file-click' | 'restore-file-click') {
   window.postMessage({ source: 'shotuno-bridge', type }, 'https://gemini.google.com');
@@ -48,8 +53,11 @@ function findToolsButton(): HTMLElement | null {
 }
 
 function findGeminiEditor(): HTMLElement | null {
-  return document.querySelector(
-    '.ql-editor[contenteditable="true"], rich-textarea .ql-editor, .ql-editor',
+  return (
+    findDynamicComposer('gemini') ||
+    document.querySelector(
+      '.ql-editor[contenteditable="true"], rich-textarea .ql-editor, .ql-editor',
+    )
   );
 }
 
@@ -89,7 +97,9 @@ async function uploadViaMenu(file: File): Promise<boolean> {
         'input[name="Filedata"]',
         'images-files-uploader input[type="file"]',
         'input[type="file"]',
-      ]) || ((await waitForElement('input[type="file"]', 6000)) as HTMLInputElement);
+      ]) ||
+      findDynamicFileInput() ||
+      ((await waitForElement('input[type="file"]', 6000)) as HTMLInputElement);
 
     if (!assignFileToInput(fileInput, file)) return false;
     await sleep(800);
@@ -106,10 +116,15 @@ async function uploadViaMenu(file: File): Promise<boolean> {
 export async function injectGemini(text: string, dataUrl: string) {
   const file = await dataUrlToFile(dataUrl, 'screenshot.png');
 
-  const editor = await waitForElement(
-    '.ql-editor[contenteditable="true"], .ql-editor, rich-textarea .ql-editor',
-    20000,
-  );
+  let editor: HTMLElement;
+  try {
+    editor = await waitForDynamicComposer({ provider: 'gemini', timeoutMs: 20000 });
+  } catch {
+    editor = await waitForElement(
+      '.ql-editor[contenteditable="true"], .ql-editor, rich-textarea .ql-editor',
+      10000,
+    );
+  }
   await sleep(800);
   editor.focus();
 

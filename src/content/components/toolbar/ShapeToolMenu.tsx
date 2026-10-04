@@ -42,7 +42,7 @@ export function ShapeToolMenu({
                 if (isShape) setActiveMenu(open ? null : 'shape');
                 else onSelect('rect');
               }}
-              className={`h-8 w-8 transition-colors flex items-center justify-center ${isVertical ? 'rounded-b-none' : 'rounded-r-none'} ${
+              className={`h-8 w-8 flex items-center justify-center ${isVertical ? 'rounded-b-none' : 'rounded-r-none'} ${
                 isShape
                   ? 'bg-primary text-primary-foreground hover:bg-primary/80'
                   : 'text-muted-foreground hover:bg-accent hover:text-foreground'
@@ -60,7 +60,7 @@ export function ShapeToolMenu({
         data-tool="shape-toggle"
         variant={isShape ? 'default' : 'ghost'}
         onClick={() => setActiveMenu(open ? null : 'shape')}
-        className={`px-0 transition-colors flex items-center justify-center ${isVertical ? 'h-4 w-8 rounded-t-none border-t' : 'h-8 w-6 rounded-l-none border-l'} ${
+        className={`px-0 flex items-center justify-center ${isVertical ? 'h-4 w-8 rounded-t-none border-t' : 'h-8 w-6 rounded-l-none border-l'} ${
           isShape
             ? 'bg-primary text-primary-foreground hover:bg-primary/80 border-primary/50'
             : 'text-muted-foreground hover:bg-accent hover:text-foreground border-border'

@@ -5,10 +5,7 @@ import { ExportActions } from './toolbar/ExportActions';
 import { DeleteControls } from './toolbar/DeleteControls';
 import { BAR, BAR_GAP, CHROME } from './toolbar/toolbarUi';
 import { TooltipProvider } from '../../components/ui/tooltip';
-import { ProSubscriptionModal } from './toolbar/ProSubscriptionModal';
-import { ProUpgradeModal } from './ProUpgradeModal';
 import { FilenameInput } from './toolbar/FilenameInput';
-import { CreditsBadge } from './toolbar/CreditsBadge';
 import { ClearAllDialog } from './toolbar/ClearAllDialog';
 import { useToolbarState } from './toolbar/hooks/useToolbarState';
 import { ToolbarToolGroup, ToolDivider } from './toolbar/ToolbarToolGroup';
@@ -19,13 +16,13 @@ const SendToAIModal = lazy(() => import('./SendToAIModal'));
 export default function Toolbar({ onClose }: { onClose: () => void }) {
   const {
     setSelectedShapeIds, setShapes, saveHistory,
-    historyStep, history, shapes, selectedShapeIds, undo, redo, runPro, checkProAccess,
-    exportBusy, isUserFreeTier, featureEnabled, creditsRemaining,
+    historyStep, history, shapes, selectedShapeIds, undo, redo,
+    exportBusy, featureEnabled,
     throttle, handleSave, handleToolSelect, handleClose,
   } = useToolbarState(onClose);
 
   const {
-    filename, setFilename, showSubscriptionPopup, setShowSubscriptionPopup, subscriptionMessage,
+    filename, setFilename,
     isAIModalOpen, setIsAIModalOpen, isClearAllOpen, setIsClearAllOpen
   } = useUIStore();
 
@@ -42,9 +39,6 @@ export default function Toolbar({ onClose }: { onClose: () => void }) {
           <ToolbarToolGroup
             handleToolSelect={handleToolSelect}
             featureEnabled={featureEnabled}
-            isUserFreeTier={isUserFreeTier}
-            runPro={runPro}
-            checkProAccess={checkProAccess}
           />
 
           <DeleteControls
@@ -69,9 +63,6 @@ export default function Toolbar({ onClose }: { onClose: () => void }) {
       </div>
 
       <FilenameInput filename={filename} onChange={setFilename} />
-      <CreditsBadge creditsRemaining={creditsRemaining} />
-      <ProSubscriptionModal open={showSubscriptionPopup} onOpenChange={(open) => setShowSubscriptionPopup(open)} message={subscriptionMessage} />
-      <ProUpgradeModal />
       {isAIModalOpen && (
         <Suspense fallback={null}>
           <SendToAIModal isOpen={isAIModalOpen} onClose={() => setIsAIModalOpen(false)} />

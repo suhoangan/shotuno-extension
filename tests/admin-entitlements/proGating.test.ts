@@ -9,7 +9,6 @@ import {
   toolProFeatureId,
 } from '@/lib/entitlements/proFeatures';
 import { loadProFeatures } from '@/lib/entitlements/fetchProFeatures';
-import { apiClient } from '@/lib/api';
 
 describe('Admin & Entitlements - Pro Feature Gating & Flags', () => {
   beforeEach(() => {
@@ -113,19 +112,10 @@ describe('Admin & Entitlements - Pro Feature Gating & Flags', () => {
     });
   });
 
-  describe('loadProFeatures API & caching', () => {
-    it('returns default features if API fails', async () => {
-      vi.spyOn(apiClient, 'get').mockRejectedValue(new Error('Network error'));
+  describe('loadProFeatures offline static', () => {
+    it('returns default features offline without network calls', async () => {
       const features = await loadProFeatures(true);
       expect(features).toEqual(defaultProFeatures());
-    });
-
-    it('fetches from API and updates local storage cache', async () => {
-      const mockApiFeatures = { ...defaultProFeatures(), watermark: false };
-      vi.spyOn(apiClient, 'get').mockResolvedValue({ features: mockApiFeatures });
-
-      const result = await loadProFeatures(true);
-      expect(result.watermark).toBe(false);
     });
   });
 });

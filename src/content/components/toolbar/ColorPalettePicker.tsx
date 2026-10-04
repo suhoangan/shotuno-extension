@@ -36,9 +36,9 @@ export function ColorPalettePicker({
           size="icon"
           disabled={disabled}
           onClick={() => onColorChange(c)}
-          className={`w-5 h-5 rounded-full border-2 p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-transform ${
-            disabled ? 'cursor-not-allowed' : 'hover:scale-110'
-          } ${selectedColor === c ? 'border-foreground scale-110 shadow-sm' : 'border-border hover:border-foreground/40'}`}
+          className={`w-5 h-5 rounded-full border-2 p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+            disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+          } ${selectedColor === c ? 'border-foreground ring-2 ring-foreground/30 shadow-sm' : 'border-border hover:border-foreground/60'}`}
           style={{ backgroundColor: c }}
         />
       ))}

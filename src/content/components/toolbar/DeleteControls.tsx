@@ -34,7 +34,7 @@ export function DeleteControls({
               size="icon"
               onClick={onDeleteSelected}
               disabled={!canDeleteSelected}
-              className={`h-8 w-8 transition-colors ${isVertical ? 'rounded-b-none' : 'rounded-r-none'} ${
+              className={`h-8 w-8 ${isVertical ? 'rounded-b-none' : 'rounded-r-none'} ${
                 !canDeleteSelected
                   ? 'text-muted-foreground/50'
                   : 'text-destructive hover:bg-destructive/20'
@@ -51,7 +51,7 @@ export function DeleteControls({
       <Button
         variant="ghost"
         onClick={() => setActiveMenu(menuOpen ? null : 'delete')}
-        className={`px-0 transition-colors flex items-center justify-center text-destructive hover:bg-destructive/20 ${isVertical ? 'h-4 w-8 rounded-t-none border-t border-destructive/20' : 'h-8 w-6 rounded-l-none border-l border-destructive/20'}`}
+        className={`px-0 flex items-center justify-center text-destructive hover:bg-destructive/20 ${isVertical ? 'h-4 w-8 rounded-t-none border-t border-destructive/20' : 'h-8 w-6 rounded-l-none border-l border-destructive/20'}`}
       >
         <ChevronDown size={ICON_XS} />
       </Button>

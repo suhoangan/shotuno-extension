@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
-import { X, Lock, Unlock, AlertTriangle, AlertCircle } from 'lucide-react';
+import { X, Lock, Unlock, AlertCircle } from 'lucide-react';
 import { useEditorStore } from '../../../store/useEditorStore';
 import { Button } from '../../../components/ui/button';
-import { useProGate } from '../hooks/useProGate';
-import { useToolbarEntitlements } from './hooks/useToolbarEntitlements';
 import { validateResolution } from '../canvas/resolutionLimits';
 import { useTranslation } from '../../../lib/i18n';
-import { ProBadge } from './ProBadge';
 
 interface ResizeModalProps {
   isOpen: boolean;
@@ -21,8 +18,6 @@ export const ResizeModal = ({ isOpen, onClose, image, setImage }: ResizeModalPro
   const [height, setHeight] = useState(0);
   const [keepAspectRatio, setKeepAspectRatio] = useState(true);
   const { shapes, setShapes, saveHistory } = useEditorStore();
-  const { runPro } = useProGate();
-  const { isUserFreeTier } = useToolbarEntitlements();
 
   useEffect(() => {
     if (isOpen && image) {
@@ -33,10 +28,8 @@ export const ResizeModal = ({ isOpen, onClose, image, setImage }: ResizeModalPro
 
   if (!isOpen || !image) return null;
 
-  const isPro = !isUserFreeTier;
-  const validation = validateResolution(width, height, isPro);
+  const validation = validateResolution(width, height);
   const isExceedingMax = validation.status === 'exceeds_max';
-  const isRequiresPro = validation.status === 'requires_pro';
   const isInvalid = validation.status === 'invalid_dimensions';
 
   const handleWidthChange = (val: string) => {
@@ -97,7 +90,7 @@ export const ResizeModal = ({ isOpen, onClose, image, setImage }: ResizeModalPro
 
   const handleResize = () => {
     if (isInvalid || isExceedingMax) return;
-    void runPro('resize', performScale);
+    performScale();
   };
 
   return (
@@ -155,16 +148,9 @@ export const ResizeModal = ({ isOpen, onClose, image, setImage }: ResizeModalPro
 
           <div className="space-y-2">
             <div className="text-xs text-muted-foreground bg-card/60 p-2.5 rounded-lg border border-border/40 flex items-center justify-between">
-              <span>{isUserFreeTier ? t('resize.freeLimit') : t('resize.proLimit')}</span>
-              <span className="font-semibold text-primary">{isUserFreeTier ? '1080p' : '4K UHD'}</span>
+              <span>{t('resize.presets')}</span>
+              <span className="font-semibold text-primary">Up to 4K UHD</span>
             </div>
-
-            {isRequiresPro && (
-              <div className="text-xs text-amber-500 bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-lg flex items-center gap-2">
-                <AlertTriangle size={14} className="shrink-0" />
-                <span>{t('resize.requiresPro')}</span>
-              </div>
-            )}
 
             {isExceedingMax && (
               <div className="text-xs text-destructive bg-destructive/10 border border-destructive/20 p-2.5 rounded-lg flex items-center gap-2">
@@ -186,7 +172,6 @@ export const ResizeModal = ({ isOpen, onClose, image, setImage }: ResizeModalPro
             className="relative"
           >
             {t('resize.apply')}
-            {isRequiresPro && <ProBadge show className="-top-1.5 -right-1.5" />}
           </Button>
         </div>
       </div>

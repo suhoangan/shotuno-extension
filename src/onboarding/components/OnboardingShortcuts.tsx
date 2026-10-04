@@ -9,10 +9,18 @@ export function OnboardingShortcuts() {
     { key: 'Esc', mac: 'Esc', action: 'Cancel selection / Close canvas editor' },
     { key: 'Ctrl + Z', mac: 'Cmd + Z', action: 'Undo last annotation step' },
     { key: 'Ctrl + Shift + Z', mac: 'Cmd + Shift + Z', action: 'Redo annotation step' },
+    { key: 'V', mac: 'V', action: 'Select & Move Tool' },
+    { key: 'A', mac: 'A', action: 'Arrow Tool' },
+    { key: 'T', mac: 'T', action: 'Text Callout Tool' },
+    { key: 'B', mac: 'B', action: 'Brush Drawing Tool' },
+    { key: 'S', mac: 'S', action: 'Blur & Redact Tool' },
+    { key: 'C', mac: 'C', action: 'Step Counter Badge' },
+    { key: 'Shift + H', mac: 'Shift + H', action: 'Area Highlighter' },
+    { key: 'Shift + C', mac: 'Shift + C', action: 'Crop Canvas Tool' },
   ];
 
   return (
-    <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-2xs space-y-4">
+    <div id="shortcuts" className="rounded-2xl border border-border/80 bg-card p-6 shadow-2xs space-y-4">
       <div className="flex items-center gap-2 border-b border-border/50 pb-3">
         <div className="size-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
           <Command className="size-4" />

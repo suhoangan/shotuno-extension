@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useEditorStore } from '../../../../store/useEditorStore';
 import { extractTextFromImage } from '../../../utils/extractText';
-import { useProGate } from '../../hooks/useProGate';
-
 /** Run OCR when an extract-text drag finishes (isDrawing → false with an ocrRect). */
 export function useOcrExtract(image: HTMLImageElement | null, isDrawing: boolean) {
-  const { runPro } = useProGate();
   const ocrRect = useEditorStore((s) => s.ocrRect);
   const setOcrRect = useEditorStore((s) => s.setOcrRect);
   const [isOcrOpen, setIsOcrOpen] = useState(false);
@@ -20,7 +17,7 @@ export function useOcrExtract(image: HTMLImageElement | null, isDrawing: boolean
 
     if (rect.width <= 0 || rect.height <= 0) return;
 
-    void runPro('ocr', async () => {
+    void (async () => {
       setIsOcrOpen(true);
       setIsOcrLoading(true);
       setOcrText('');
@@ -33,8 +30,8 @@ export function useOcrExtract(image: HTMLImageElement | null, isDrawing: boolean
       } finally {
         setIsOcrLoading(false);
       }
-    });
-  }, [isDrawing, ocrRect, image, setOcrRect, isOcrLoading, runPro]);
+    })();
+  }, [isDrawing, ocrRect, image, setOcrRect, isOcrLoading]);
 
   return { isOcrOpen, setIsOcrOpen, ocrText, isOcrLoading };
 }

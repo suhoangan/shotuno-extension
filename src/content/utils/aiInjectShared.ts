@@ -29,13 +29,33 @@ export async function dataUrlToFile(dataUrl: string, filename: string): Promise<
   return new File([blob], filename, { type: blob.type || 'image/png' });
 }
 
-/** ProseMirror / TipTap / Quill-safe text insert. */
+/** ProseMirror / TipTap / Quill / Native textarea-safe text insert. */
 export function insertEditorText(element: HTMLElement, text: string) {
   element.focus();
-  element.classList.remove('ql-blank');
 
-  const selection = window.getSelection();
-  if (selection) {
+  const isTextInput =
+    (typeof HTMLTextAreaElement !== 'undefined' && element instanceof HTMLTextAreaElement) ||
+    (typeof HTMLInputElement !== 'undefined' && element instanceof HTMLInputElement) ||
+    element.tagName === 'TEXTAREA' ||
+    element.tagName === 'INPUT';
+
+  if (isTextInput) {
+    const proto = Object.getPrototypeOf(element);
+    const setter = Object.getOwnPropertyDescriptor(proto, 'value')?.set;
+    if (setter) {
+      setter.call(element, text);
+    } else {
+      (element as HTMLTextAreaElement).value = text;
+    }
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+    element.dispatchEvent(new Event('change', { bubbles: true }));
+    return;
+  }
+
+  element.classList?.remove?.('ql-blank');
+
+  const selection = window.getSelection?.();
+  if (selection && document.createRange) {
     const range = document.createRange();
     range.selectNodeContents(element);
     range.collapse(false);
@@ -43,7 +63,7 @@ export function insertEditorText(element: HTMLElement, text: string) {
     selection.addRange(range);
   }
 
-  if (document.execCommand('insertText', false, text)) {
+  if (document.execCommand?.('insertText', false, text)) {
     element.dispatchEvent(new InputEvent('input', { bubbles: true, data: text, inputType: 'insertText' }));
     return;
   }

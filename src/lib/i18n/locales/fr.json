@@ -155,12 +155,34 @@
   },
   "modals": {
     "sendToAI": {
-      "title": "Envoyer la capture à l'IA",
+      "title": "Envoyer à l'IA",
       "subtitle": "Formatez et collez automatiquement dans votre assistant IA préféré",
+      "promptLabel": "Prompt",
+      "promptPlaceholder": "Que doit faire l'IA avec cette capture ? (p. ex. expliquer, résumer, copier le texte…)",
+      "selectAssistant": "Choisir un assistant IA",
       "chatgpt": "ChatGPT",
       "claude": "Claude",
       "gemini": "Gemini",
-      "copyPrompt": "Copier le prompt et l'image"
+      "openai": "OpenAI",
+      "anthropic": "Anthropic",
+      "google": "Google",
+      "copyPrompt": "Copier le prompt et l'image",
+      "copyImageTitle": "Copier l'image et le prompt",
+      "copyImageHint": "Pour d'autres outils IA",
+      "presets": {
+        "explain": {
+          "label": "Expliquer",
+          "text": "Look at this screenshot and explain it in plain language. Say what it is, what each main part is for, and anything important a non-expert should notice. If something is unclear in the image, say so instead of guessing."
+        },
+        "summarize": {
+          "label": "Résumer",
+          "text": "Summarize this screenshot in 3–5 short bullet points. Focus on the main message or task, not every tiny detail. Use simple words."
+        },
+        "extractText": {
+          "label": "Extraire le texte",
+          "text": "Extract all readable text from this image. Preserve wording, line breaks, and order as closely as possible. If text is unreadable, mark it as [unclear]."
+        }
+      }
     },
     "proUpgrade": {
       "title": "Passer à Shotuno Pro",

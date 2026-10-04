@@ -22,7 +22,7 @@ export const RightSidebar: React.FC = React.memo(() => {
         aria-label={open ? 'Close pins & gallery side panel' : 'Open pins & gallery side panel'}
         aria-pressed={open}
         title={open ? 'Close side panel' : 'Open side panel'}
-        className="w-full h-16 bg-card border border-r-0 border-border rounded-l-md rounded-r-none flex items-center justify-center cursor-pointer shadow-[-4px_0_10px_rgba(0,0,0,0.08)] hover:bg-muted transition-colors text-muted-foreground hover:text-foreground p-0 active:translate-y-0"
+        className="w-full h-16 bg-card border border-r-0 border-border rounded-l-md rounded-r-none flex items-center justify-center cursor-pointer shadow-[-4px_0_10px_rgba(0,0,0,0.08)] hover:bg-muted text-muted-foreground hover:text-foreground p-0"
         onClick={toggle}
       >
         {open ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}

@@ -79,7 +79,7 @@ export async function loadGalleryImages(): Promise<GalleryImage[]> {
       const cleaned = raw.map((img) => {
         if (img.expiresAt && img.expiresAt < now) {
           changed = true;
-          const { cloudUrl, shareId, expiresAt, ...rest } = img;
+          const { cloudUrl: _c, shareId: _s, expiresAt: _e, ...rest } = img;
           return rest as GalleryImage;
         }
         return img;
@@ -154,14 +154,4 @@ export async function openGalleryOnDesktop(id: string): Promise<void> {
 /** Prefetch full images so dragstart can attach Files synchronously. */
 export function createFullImageCache() {
   return createPrefetchedFileCache(getFullImage);
-}
-export async function shareGalleryImage(id: string): Promise<{ url: string; id: string }> {
-  const response = await sendRuntimeMessage({
-    type: 'SHARE_GALLERY_IMAGE',
-    payload: { id },
-  });
-  if (!response?.success) {
-    throw new Error(response?.error || 'Failed to share image');
-  }
-  return { url: response.url as string, id: response.id as string };
 }

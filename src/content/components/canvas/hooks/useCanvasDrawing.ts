@@ -8,8 +8,6 @@ import { getStagePointerPos } from '../pointerPos';
 import { toImageAnnotationSize } from '../annotationSize';
 import { startDrawingShape } from './drawingStart';
 import { updateDrawingOnMove } from './drawingMove';
-import { useProGate } from '../../hooks/useProGate';
-import { toolProFeatureId } from '../../../../lib/entitlements/proFeatures';
 
 interface UseCanvasDrawingProps {
   stageRef: React.RefObject<any>;
@@ -44,7 +42,6 @@ export function useCanvasDrawing({
     activeTool, shapes, addShape, updateShape, saveHistory,
     toolSettings, setSelectedShapeIds,
   } = useEditorStore();
-  const { runPro } = useProGate();
 
   const [selectionBox, setSelectionBox] = useState({
     x: 0, y: 0, width: 0, height: 0, visible: false,
@@ -144,10 +141,6 @@ export function useCanvasDrawing({
       setEditingText,
       pendingTextEditTimer,
     });
-
-    if (activeTool === 'counter') {
-      void runPro('counter', () => {});
-    }
   };
 
   const handleMouseMove = (e: any) => {
@@ -182,11 +175,6 @@ export function useCanvasDrawing({
     if (finishedId) setSelectedShapeIds([finishedId]);
     setCurrentShapeId(null);
     saveHistory();
-
-    const proId = toolProFeatureId(activeTool);
-    if (proId && finishedId && proId !== 'counter' && proId !== 'ocr') {
-      void runPro(proId, () => {});
-    }
   };
 
   drawingMoveRef.current = handleMouseMove;

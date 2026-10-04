@@ -3,30 +3,38 @@ import { OnboardingHero } from './components/OnboardingHero';
 import { OnboardingSteps } from './components/OnboardingSteps';
 import { OnboardingFeatureCards } from './components/OnboardingFeatureCards';
 import { OnboardingShortcuts } from './components/OnboardingShortcuts';
+import { OnboardingAbout } from './components/OnboardingAbout';
 import { SettingsView } from './components/SettingsView';
 import { useTranslation } from '@/lib/i18n';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { Camera, Settings, BookOpen } from 'lucide-react';
+import { Camera, Settings, BookOpen, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
 
+type ActiveTab = 'guide' | 'settings' | 'about';
+
+function resolveTabFromHash(): ActiveTab {
+  const hash = typeof window !== 'undefined' ? window.location.hash : '';
+  if (hash === '#settings') return 'settings';
+  if (hash === '#about') return 'about';
+  return 'guide';
+}
+
 export default function App() {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<'guide' | 'settings'>(() => {
-    return window.location.hash === '#settings' ? 'settings' : 'guide';
-  });
+  const [tab, setTab] = useState<ActiveTab>(resolveTabFromHash);
 
   useEffect(() => {
     const handleHashChange = () => {
-      setTab(window.location.hash === '#settings' ? 'settings' : 'guide');
+      setTab(resolveTabFromHash());
     };
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const selectTab = (nextTab: 'guide' | 'settings') => {
+  const selectTab = (nextTab: ActiveTab) => {
     setTab(nextTab);
-    window.location.hash = nextTab === 'settings' ? '#settings' : '#guide';
+    window.location.hash = `#${nextTab}`;
   };
 
   return (
@@ -44,7 +52,7 @@ export default function App() {
                 Shotuno
               </span>
               <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                v1.0.1
+                v1.0.2 • Free & OSS
               </span>
             </div>
           </div>
@@ -59,6 +67,15 @@ export default function App() {
               >
                 <BookOpen className="size-3.5" />
                 Guide
+              </Button>
+              <Button
+                variant={tab === 'about' ? 'default' : 'ghost'}
+                size="sm"
+                className="h-7 px-3 text-xs gap-1.5 rounded-lg"
+                onClick={() => selectTab('about')}
+              >
+                <User className="size-3.5" />
+                About Developer
               </Button>
               <Button
                 variant={tab === 'settings' ? 'default' : 'ghost'}
@@ -77,27 +94,23 @@ export default function App() {
 
       {/* Main Content */}
       <main className="py-12 px-6 sm:px-10 max-w-6xl mx-auto">
-        {tab === 'settings' ? (
-          <SettingsView />
-        ) : (
+        {tab === 'settings' && <SettingsView />}
+        {tab === 'about' && <OnboardingAbout />}
+        {tab === 'guide' && (
           <div className="space-y-16">
-            {/* Hero Section */}
             <OnboardingHero />
-
-            {/* Getting Started 4-Step Guide */}
             <OnboardingSteps />
-
-            {/* Core Tools & Capabilities Grid */}
             <OnboardingFeatureCards />
-
-            {/* Keyboard Shortcuts */}
             <OnboardingShortcuts />
           </div>
         )}
 
         {/* Footer */}
-        <footer className="text-center text-xs text-muted-foreground border-t border-border/60 pt-8 pb-12 mt-16">
-          {t('onboarding.footer')}
+        <footer className="text-center text-xs text-muted-foreground border-t border-border/60 pt-8 pb-12 mt-16 space-y-1">
+          <p>{t('onboarding.footer')}</p>
+          <p className="text-[11px] opacity-80">
+            Open Source under MIT License • Built by Hoang An Su (@suhoangan)
+          </p>
         </footer>
       </main>
     </div>

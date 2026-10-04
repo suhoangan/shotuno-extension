@@ -60,7 +60,7 @@ export function ClearToolButton({
               variant="ghost"
               size="sm"
               onClick={handleClear}
-              className="h-7 px-2 text-xs gap-1.5 text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors shrink-0"
+              className="h-7 px-2 text-xs gap-1.5 text-destructive hover:bg-destructive/10 hover:text-destructive shrink-0"
             >
               <Trash2 size={ICON_SM} />
               <span className="whitespace-nowrap font-medium">Clear {label}</span>

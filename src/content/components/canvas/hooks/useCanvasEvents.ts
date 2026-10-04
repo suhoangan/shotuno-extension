@@ -1,13 +1,9 @@
 import { useEffect } from 'react';
-import { toast } from 'sonner';
 import { useEditorStore } from '../../../../store/useEditorStore';
 import { imageShapeStyleFromTool } from '../../../../store/editorDefaults';
 import { toImageAnnotationSize } from '../annotationSize';
 import { isEditableKeyboardTarget } from '../isEditableKeyboardTarget';
-import { limitImageResolution, MAX_IMPORT_EDGE, FREE_MAX_IMPORT_EDGE } from '../../../../lib/limitImageResolution';
-import { isUserFreeTier } from '../../../../lib/entitlements/license';
-import { storage } from '../../../../lib/chromeStorage';
-import { webUrl } from '../../../../lib/api';
+import { limitImageResolution, MAX_IMPORT_EDGE } from '../../../../lib/limitImageResolution';
 
 
 
@@ -45,23 +41,9 @@ export function useCanvasEvents({ bounds, editingText }: UseCanvasEventsProps) {
         const src = e.target?.result as string;
         if (!src) return;
         
-        const { authUser } = await storage.local.get(['authUser']);
-        const isFree = isUserFreeTier(authUser as any);
-        const maxEdge = isFree ? FREE_MAX_IMPORT_EDGE : MAX_IMPORT_EDGE;
-        
-        // Pasted at most 600px wide, so keeping the pasted source at full resolution just
-        // pins a large data URL in the store for as long as any undo step references it.
-        const sized = await limitImageResolution(src, { maxEdge }).catch(() => null);
+        // Pasted at most 600px wide, keep at MAX_IMPORT_EDGE for hygiene
+        const sized = await limitImageResolution(src, { maxEdge: MAX_IMPORT_EDGE }).catch(() => null);
         if (!sized) return;
-        
-        if (isFree && sized.dataUrl !== src) {
-          toast.info('Pasted image resolution limited on Free tier.', {
-            action: {
-              label: 'Upgrade',
-              onClick: () => window.open(webUrl('#pricing'), '_blank')
-            }
-          });
-        }
 
         let w = sized.width;
         let h = sized.height;

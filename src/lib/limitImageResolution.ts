@@ -1,8 +1,8 @@
 /** Longest edge kept for an imported screenshot or image, in image pixels ("2K"). */
 export const MAX_IMPORT_EDGE = 2560;
 
-/** Longest edge kept for a Free tier user (720p equivalent) to encourage Pro upgrades. */
-export const FREE_MAX_IMPORT_EDGE = 1280;
+/** Full resolution edge kept for all users under Free Forever model. */
+export const FREE_MAX_IMPORT_EDGE = MAX_IMPORT_EDGE;
 
 export interface SizedImage {
   dataUrl: string;

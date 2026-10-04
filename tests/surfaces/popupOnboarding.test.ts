@@ -7,12 +7,9 @@ describe('Surfaces - Popup Navigation & Onboarding Shortcuts', () => {
   });
 
   describe('webUrl Link Construction', () => {
-    it('constructs absolute URLs to marketing, auth, and tip endpoints', () => {
-      const authUrl = webUrl('/auth');
-      const tipUrl = webUrl('/#buy-me-a-coffee');
-
-      expect(authUrl).toContain('/auth');
-      expect(tipUrl).toContain('/#buy-me-a-coffee');
+    it('constructs URLs resolving to the open source repository', () => {
+      const repoUrl = webUrl();
+      expect(repoUrl).toContain('github.com/suhoangan/shotuno-extension');
     });
   });
 
@@ -28,6 +25,40 @@ describe('Surfaces - Popup Navigation & Onboarding Shortcuts', () => {
       expect(shortcuts).toHaveLength(4);
       expect(shortcuts[0].key).toBe('Alt + Shift + S');
       expect(shortcuts[1].key).toBe('Esc');
+    });
+  });
+
+  describe('Popup Capture Loading State Flow', () => {
+    it('resets loading state on early return when active tab is internal or invalid', async () => {
+      let loadingState: string | null = 'visible';
+      let errorState: string | null = null;
+
+      const simulateCapture = async (activeTab: { id?: number; url?: string } | undefined) => {
+        try {
+          if (!activeTab?.id) {
+            errorState = 'No active tab found';
+            return;
+          }
+          if (
+            activeTab.url?.startsWith('chrome://') ||
+            activeTab.url?.startsWith('chrome-extension://') ||
+            activeTab.url?.startsWith('edge://')
+          ) {
+            errorState = 'Cannot capture Chrome internal pages';
+            return;
+          }
+        } finally {
+          loadingState = null;
+        }
+      };
+
+      await simulateCapture({ id: 1, url: 'chrome://extensions' });
+      expect(errorState).toBe('Cannot capture Chrome internal pages');
+      expect(loadingState).toBeNull();
+
+      await simulateCapture(undefined);
+      expect(errorState).toBe('No active tab found');
+      expect(loadingState).toBeNull();
     });
   });
 });

@@ -18,16 +18,25 @@ export function SidePanelImagePreview({
 }: SidePanelImagePreviewProps) {
 	const { t } = useTranslation();
 	const [dataUrl, setDataUrl] = useState<string | null>(null);
+	const [hasError, setHasError] = useState(false);
 
 	useEffect(() => {
 		let isMounted = true;
+		setHasError(false);
 		async function fetchUrl() {
-			let url = await getFullImage(imageId);
-			if (!url) {
-				url = await getPinFullImage(imageId);
-			}
-			if (isMounted && url) {
-				setDataUrl(url);
+			try {
+				let url = await getFullImage(imageId);
+				if (!url) {
+					url = await getPinFullImage(imageId);
+				}
+				if (!isMounted) return;
+				if (url) {
+					setDataUrl(url);
+				} else {
+					setHasError(true);
+				}
+			} catch {
+				if (isMounted) setHasError(true);
 			}
 		}
 		void fetchUrl();
@@ -70,6 +79,10 @@ export function SidePanelImagePreview({
 							alt={t('sidepanel.preview')}
 							className='max-w-full max-h-full object-contain rounded-md shadow-sm border border-border'
 						/>
+					) : hasError ? (
+						<div className='text-destructive text-sm font-medium'>
+							Image not found
+						</div>
 					) : (
 						<div className='text-muted-foreground text-sm animate-pulse'>
 							{t('sidepanel.loadingImage')}

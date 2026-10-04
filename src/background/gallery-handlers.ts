@@ -3,7 +3,6 @@ import { handleGalleryDesktopMessage } from './gallery-desktop-handlers';
 import { ensureImageExt } from '../lib/imageNames';
 import { GALLERY_RETENTION_MS, partitionExpired } from './retention';
 import { storage } from '../lib/chromeStorage';
-import { apiClient, webUrl } from '../lib/api';
 
 
 const GALLERY_KEY = 'canvas_gallery_images';
@@ -153,7 +152,7 @@ export function handleGalleryMessage(
       currentImages = currentImages.map((img) => {
         if (img.expiresAt && img.expiresAt < now) {
           cleanedShares = true;
-          const { cloudUrl, shareId, expiresAt, ...rest } = img as any;
+          const { cloudUrl: _c, shareId: _s, expiresAt: _e, ...rest } = img as any;
           return rest as GalleryImage;
         }
         return img;
@@ -215,44 +214,6 @@ export function handleGalleryMessage(
       storage.local.set({ [GALLERY_KEY]: updated }, () => {
         sendResponse({ success: true });
       });
-    });
-    return true;
-  }
-
-  if (message.type === 'SHARE_GALLERY_IMAGE') {
-    const { id } = message.payload as { id: string };
-    idbGet(`gallery_full_${id}`).then(async (dataUrl) => {
-      if (!dataUrl) {
-        sendResponse({ success: false, error: 'Local image not found' });
-        return;
-      }
-      try {
-        const res = await fetch(dataUrl);
-        const blob = await res.blob();
-        
-        const formData = new FormData();
-        formData.append('file', blob, 'screenshot.webp');
-        
-        const json = await apiClient.post<any, { id: string; url?: string; expiresAt?: string }>('/screenshots/upload', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        
-        const shortId = json.id;
-        const publicShareUrl = webUrl(`/s/${shortId}`);
-        const expiresAt = json.expiresAt ? new Date(json.expiresAt).getTime() : undefined;
-        
-        storage.local.get([GALLERY_KEY], (result) => {
-          const images = (result[GALLERY_KEY] as GalleryImage[] | undefined) || [];
-          const updated = images.map((img) => 
-            img.id === id ? { ...img, cloudUrl: publicShareUrl, shareId: shortId, expiresAt } : img
-          );
-          storage.local.set({ [GALLERY_KEY]: updated }, () => {
-            sendResponse({ success: true, url: publicShareUrl, id: shortId });
-          });
-        });
-      } catch (err: any) {
-        sendResponse({ success: false, error: err.message || 'Share failed' });
-      }
     });
     return true;
   }

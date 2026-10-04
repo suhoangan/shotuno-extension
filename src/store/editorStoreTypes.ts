@@ -87,10 +87,4 @@ export interface EditorState {
   setWatermarkMode: (mode: WatermarkMode) => void;
   watermarkImageUrl: string | null;
   setWatermarkImageUrl: (url: string | null) => void;
-
-  // Pro License & Paywall Gating
-  proLicenseStatus: 'free' | 'pro';
-  setProLicenseStatus: (status: 'free' | 'pro') => void;
-  showUpgradeModal: boolean;
-  setShowUpgradeModal: (show: boolean) => void;
 }

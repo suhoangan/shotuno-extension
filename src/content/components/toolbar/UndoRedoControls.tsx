@@ -21,7 +21,7 @@ export function UndoRedoControls({ canUndo, canRedo, onUndo, onRedo }: UndoRedoC
               size="icon"
               onClick={onUndo}
               disabled={!canUndo}
-              className={`h-8 w-8 rounded-lg transition-colors flex items-center justify-center ${
+              className={`h-8 w-8 rounded-lg flex items-center justify-center ${
                 !canUndo
                   ? 'text-muted-foreground/50'
                   : 'text-muted-foreground hover:bg-accent hover:text-foreground'
@@ -44,7 +44,7 @@ export function UndoRedoControls({ canUndo, canRedo, onUndo, onRedo }: UndoRedoC
               size="icon"
               onClick={onRedo}
               disabled={!canRedo}
-              className={`h-8 w-8 rounded-lg transition-colors flex items-center justify-center ${
+              className={`h-8 w-8 rounded-lg flex items-center justify-center ${
                 !canRedo
                   ? 'text-muted-foreground/50'
                   : 'text-muted-foreground hover:bg-accent hover:text-foreground'

@@ -9,17 +9,10 @@ import { Switch } from '../../../components/ui/switch';
 import { Label } from '../../../components/ui/label';
 import { Input } from '../../../components/ui/input';
 import { BTN, ICON } from './toolbarUi';
-import { ProBadge } from './ProBadge';
 import { useUIStore } from '../../../store/useUIStore';
 import { useTranslation } from '../../../lib/i18n';
 
-export function WatermarkMenu({
-  isPro,
-  runPro,
-}: {
-  isPro?: boolean;
-  runPro: (featureId: import('../../../lib/entitlements/proFeatures').ProFeatureId, action: () => void | Promise<void>) => Promise<boolean>;
-}) {
+export function WatermarkMenu() {
   const { t } = useTranslation();
   const {
     watermarkEnabled, setWatermarkEnabled,
@@ -55,21 +48,20 @@ export function WatermarkMenu({
                 <Button
                   variant={isActive ? 'default' : 'ghost'}
                   size="icon"
-                  className={`${BTN} relative overflow-visible rounded-lg transition-colors flex items-center justify-center ${
+                  className={`${BTN} relative overflow-visible rounded-lg flex items-center justify-center ${
                     isActive
                       ? 'bg-primary text-primary-foreground hover:bg-primary/80'
                       : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                   }`}
                 >
                   <Stamp size={ICON} className="size-5" />
-                  <ProBadge show={isPro} />
                 </Button>
               }
             />
           }
         />
         <TooltipContent side="bottom" sideOffset={8} className="z-[99999999]">
-          {t('watermark.title')} {isPro && <span className="ml-1 text-amber-600 dark:text-amber-400 font-bold">PRO</span>}
+          {t('watermark.title')}
         </TooltipContent>
       </Tooltip>
 
@@ -78,13 +70,7 @@ export function WatermarkMenu({
           <Label className="text-foreground font-medium">{t('watermark.enable')}</Label>
           <Switch
             checked={watermarkEnabled}
-            onCheckedChange={(checked) => {
-              if (checked) {
-                void runPro('watermark', () => setWatermarkEnabled(true));
-              } else {
-                setWatermarkEnabled(false);
-              }
-            }}
+            onCheckedChange={setWatermarkEnabled}
           />
         </div>
 

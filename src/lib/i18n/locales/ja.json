@@ -155,12 +155,34 @@
   },
   "modals": {
     "sendToAI": {
-      "title": "AI にスクリーンショットを送信",
+      "title": "AI に送信",
       "subtitle": "お気に入りの AI アシスタントに整形して自動貼り付け",
+      "promptLabel": "プロンプト",
+      "promptPlaceholder": "このスクリーンショットで AI に何をしてほしいですか？（例：説明、要約、文字を写す…）",
+      "selectAssistant": "AI アシスタントを選択",
       "chatgpt": "ChatGPT",
       "claude": "Claude",
       "gemini": "Gemini",
-      "copyPrompt": "プロンプト ＆ 画像をコピー"
+      "openai": "OpenAI",
+      "anthropic": "Anthropic",
+      "google": "Google",
+      "copyPrompt": "プロンプト ＆ 画像をコピー",
+      "copyImageTitle": "画像とプロンプトをコピー",
+      "copyImageHint": "他の AI ツールで使う",
+      "presets": {
+        "explain": {
+          "label": "説明する",
+          "text": "Look at this screenshot and explain it in plain language. Say what it is, what each main part is for, and anything important a non-expert should notice. If something is unclear in the image, say so instead of guessing."
+        },
+        "summarize": {
+          "label": "要約",
+          "text": "Summarize this screenshot in 3–5 short bullet points. Focus on the main message or task, not every tiny detail. Use simple words."
+        },
+        "extractText": {
+          "label": "文字を抽出",
+          "text": "Extract all readable text from this image. Preserve wording, line breaks, and order as closely as possible. If text is unreadable, mark it as [unclear]."
+        }
+      }
     },
     "proUpgrade": {
       "title": "Shotuno Pro にアップグレード",

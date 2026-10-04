@@ -1,6 +1,9 @@
 import { injectGemini } from './geminiInject';
 import { storage } from '../../lib/chromeStorage';
-
+import {
+  findDynamicFileInput,
+  waitForDynamicComposer,
+} from './dynamicComposer';
 import {
   assignFileToInput,
   dataUrlToFile,
@@ -10,15 +13,7 @@ import {
   insertEditorText,
   sleep,
   waitForAttachment,
-  waitForElement,
 } from './aiInjectShared';
-
-const COMPOSER_SELECTORS: Record<string, string> = {
-  chatgpt:
-    '#prompt-textarea, div.ProseMirror#prompt-textarea, div.ProseMirror[contenteditable="true"][role="textbox"]',
-  claude:
-    '[data-testid="chat-input"], div.ProseMirror[contenteditable="true"], div[aria-label*="Claude" i][contenteditable="true"]',
-};
 
 const FILE_INPUT_SELECTORS: Record<string, string[]> = {
   chatgpt: [
@@ -35,17 +30,21 @@ const FILE_INPUT_SELECTORS: Record<string, string[]> = {
 };
 
 function resolveEditor(element: HTMLElement): HTMLElement {
-  if (element.isContentEditable || element.classList.contains('ProseMirror')) return element;
-  return (
-    (element.querySelector(
-      '.ProseMirror[contenteditable="true"], [contenteditable="true"]',
-    ) as HTMLElement) || element
+  if (element instanceof HTMLTextAreaElement || element instanceof HTMLInputElement) {
+    return element;
+  }
+  if (element.isContentEditable || element.classList.contains('ProseMirror')) {
+    return element;
+  }
+  const child = element.querySelector<HTMLElement>(
+    '.ProseMirror[contenteditable="true"], [contenteditable="true"], textarea',
   );
+  return child || element;
 }
 
-async function attachImage(provider: string, file: File): Promise<boolean> {
+async function attachImage(provider: string, file: File, composerEl: HTMLElement): Promise<boolean> {
   const preferred = FILE_INPUT_SELECTORS[provider] || [];
-  const input = findFileInput(preferred);
+  const input = findFileInput(preferred) || findDynamicFileInput(composerEl);
   if (!input) return false;
   if (!assignFileToInput(input, file)) return false;
   return waitForAttachment(4500);
@@ -58,7 +57,7 @@ async function injectComposer(provider: string, element: HTMLElement, text: stri
   await sleep(200);
 
   // Attach image first — ChatGPT/Claude enable send after the chip appears.
-  let attached = await attachImage(provider, file);
+  let attached = await attachImage(provider, file, editor);
 
   if (!attached) {
     editor.focus();
@@ -116,10 +115,9 @@ export function initializeAIInjector() {
       }
 
       const provider = providerForHost(hostname);
-      const selector = provider ? COMPOSER_SELECTORS[provider] : '';
-      if (!provider || !selector) return;
+      if (!provider) return;
 
-      waitForElement(selector)
+      waitForDynamicComposer({ provider, timeoutMs: 20000 })
         .then((el) => {
           setTimeout(() => {
             injectComposer(provider, el, injection.prompt || '', injection.imageUri).catch((err) =>
@@ -127,7 +125,7 @@ export function initializeAIInjector() {
             );
           }, 800);
         })
-        .catch((err) => console.error('Shotuno: Injection failed', err));
+        .catch((err) => console.error('Shotuno: Dynamic composer detection failed', err));
     } else if (injection) {
       storage.local.remove(['pendingAIInjection']);
     }

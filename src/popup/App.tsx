@@ -1,10 +1,9 @@
 import { useRef, useState } from 'react';
-import { Maximize, Crop, AlignVerticalSpaceAround, Images, FolderOpen, Loader2, LayoutGrid, Settings } from 'lucide-react';
+import { Maximize, Crop, AlignVerticalSpaceAround, Images, FolderOpen, Loader2, LayoutGrid } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Separator } from '../components/ui/separator';
 import { UserAccountHeader } from '../components/UserAccountHeader';
 import { useTranslation } from '../lib/i18n';
-import { LanguageSwitcher } from '../components/LanguageSwitcher';
 
 const CAPTURE_OPTIONS = [
   { type: 'visible', icon: Maximize, titleKey: 'popup.visibleContent.title', descKey: 'popup.visibleContent.description' },
@@ -71,28 +70,33 @@ export default function App() {
         return;
       }
 
-      chrome.runtime.sendMessage(
-        {
-          type: 'INITIATE_CAPTURE',
-          payload: { captureType: type, tabId: activeTab.id },
-        },
-        (response) => {
-          setLoading(null);
-          if (chrome.runtime.lastError) {
-            setError(chrome.runtime.lastError.message || t('popup.extensionError'));
-            return;
-          }
-          if (response && response.success === false) {
-            setError(response.error || t('popup.captureFailed'));
-            return;
-          }
-          window.close();
-        },
-      );
+      await new Promise<void>((resolve) => {
+        chrome.runtime.sendMessage(
+          {
+            type: 'INITIATE_CAPTURE',
+            payload: { captureType: type, tabId: activeTab.id },
+          },
+          (response) => {
+            if (chrome.runtime.lastError) {
+              setError(chrome.runtime.lastError.message || t('popup.extensionError'));
+              resolve();
+              return;
+            }
+            if (response && response.success === false) {
+              setError(response.error || t('popup.captureFailed'));
+              resolve();
+              return;
+            }
+            resolve();
+            window.close();
+          },
+        );
+      });
     } catch (e) {
-      setLoading(null);
       console.error('Failed to initiate capture', e);
       setError(e instanceof Error ? e.message : t('popup.captureFailed'));
+    } finally {
+      setLoading(null);
     }
   };
 
@@ -130,28 +134,11 @@ export default function App() {
     reader.readAsDataURL(file);
   };
 
-  const openSettings = () => {
-    chrome.tabs.create({ url: chrome.runtime.getURL('src/onboarding/index.html#settings') });
-    window.close();
-  };
-
   return (
     <div className="w-72 p-4 bg-background text-foreground font-sans flex flex-col gap-3">
       <div className="flex items-center justify-between gap-2">
         <h1 className="text-sm font-bold text-foreground tracking-tight">{t('popup.title')}</h1>
-        <div className="flex items-center gap-1.5">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-7 text-muted-foreground hover:text-foreground"
-            onClick={openSettings}
-            title={t('settings.title')}
-          >
-            <Settings size={14} />
-          </Button>
-          <LanguageSwitcher />
-          <UserAccountHeader compact />
-        </div>
+        <UserAccountHeader compact />
       </div>
 
       <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-0.5">
@@ -175,7 +162,12 @@ export default function App() {
 
       <Separator className="bg-border/40" />
 
-      <Button variant="outline" className="justify-start gap-2 h-auto py-2.5" onClick={() => void openGallery()}>
+      <Button
+        variant="outline"
+        className="justify-start gap-2 h-auto py-2.5"
+        onClick={() => void openGallery()}
+        disabled={loading !== null}
+      >
         <Images size={16} className="shrink-0" />
         <div className="flex flex-col items-start">
           <span className="text-sm font-medium">{t('popup.openGallery.title')}</span>
@@ -200,6 +192,7 @@ export default function App() {
         variant="outline"
         className="justify-start gap-2 h-auto py-2.5"
         onClick={() => fileRef.current?.click()}
+        disabled={loading !== null}
       >
         <FolderOpen size={16} className="shrink-0" />
         <div className="flex flex-col items-start">

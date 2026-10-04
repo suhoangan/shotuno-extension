@@ -155,12 +155,34 @@
   },
   "modals": {
     "sendToAI": {
-      "title": "Gửi ảnh chụp tới AI",
+      "title": "Gửi tới AI",
       "subtitle": "Tự động định dạng và dán trực tiếp vào trợ lý AI yêu thích",
+      "promptLabel": "Prompt",
+      "promptPlaceholder": "Bạn muốn AI làm gì với ảnh chụp này? (ví dụ: giải thích, tóm tắt, sao chép chữ…)",
+      "selectAssistant": "Chọn trợ lý AI",
       "chatgpt": "ChatGPT",
       "claude": "Claude",
       "gemini": "Gemini",
-      "copyPrompt": "Sao chép Prompt & Ảnh"
+      "openai": "OpenAI",
+      "anthropic": "Anthropic",
+      "google": "Google",
+      "copyPrompt": "Sao chép Prompt & Ảnh",
+      "copyImageTitle": "Sao chép ảnh & prompt",
+      "copyImageHint": "Dùng với công cụ AI khác",
+      "presets": {
+        "explain": {
+          "label": "Giải thích",
+          "text": "Look at this screenshot and explain it in plain language. Say what it is, what each main part is for, and anything important a non-expert should notice. If something is unclear in the image, say so instead of guessing."
+        },
+        "summarize": {
+          "label": "Tóm tắt",
+          "text": "Summarize this screenshot in 3–5 short bullet points. Focus on the main message or task, not every tiny detail. Use simple words."
+        },
+        "extractText": {
+          "label": "Trích xuất chữ",
+          "text": "Extract all readable text from this image. Preserve wording, line breaks, and order as closely as possible. If text is unreadable, mark it as [unclear]."
+        }
+      }
     },
     "proUpgrade": {
       "title": "Nâng cấp lên Shotuno Pro",

@@ -10,6 +10,7 @@ export function HardLoadingHost() {
       title={loading.title}
       message={loading.message}
       progress={loading.progress}
+      onCancel={loading.onCancel}
     />
   );
 }

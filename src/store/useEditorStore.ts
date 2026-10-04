@@ -184,28 +184,5 @@ export const useEditorStore = create<EditorState>((set) => ({
   setWatermarkMode: (mode) => set({ watermarkMode: mode }),
   watermarkImageUrl: null as string | null,
   setWatermarkImageUrl: (url) => set({ watermarkImageUrl: url }),
-
-  proLicenseStatus: 'free',
-  setProLicenseStatus: (status) => set({ proLicenseStatus: status }),
-  showUpgradeModal: false,
-  setShowUpgradeModal: (show) => set({ showUpgradeModal: show }),
 }));
-
-// Initialize Pro license status from storage.local if available
-if (typeof chrome !== 'undefined' && chrome.storage?.local) {
-  chrome.storage.local.get(['pro_license_status'], (res) => {
-    if (res?.pro_license_status === 'pro' || res?.pro_license_status === 'free') {
-      useEditorStore.getState().setProLicenseStatus(res.pro_license_status);
-    }
-  });
-
-  chrome.storage.onChanged.addListener((changes, areaName) => {
-    if (areaName === 'local' && changes.pro_license_status) {
-      const nextStatus = changes.pro_license_status.newValue;
-      if (nextStatus === 'pro' || nextStatus === 'free') {
-        useEditorStore.getState().setProLicenseStatus(nextStatus);
-      }
-    }
-  });
-}
 

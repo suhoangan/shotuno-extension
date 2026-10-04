@@ -1,5 +1,6 @@
 import Toolbar from './Toolbar';
 import CanvasEditor from './CanvasEditor';
+import { GuideFloatingButton } from './GuideFloatingButton';
 import { ErrorBoundary } from '../../components/ErrorBoundary';
 
 /** Editor UI chunk — imported lazily so capture modes do not pull Konva. */
@@ -17,6 +18,7 @@ export default function EditorShell({
       onKeyUp={(e) => e.stopPropagation()}
     >
       <Toolbar onClose={onClose} />
+      <GuideFloatingButton />
       <div className="w-full h-full">
         <ErrorBoundary fallbackTitle="Canvas crashed">
           <CanvasEditor screenshotUrl={screenshotUrl} />
