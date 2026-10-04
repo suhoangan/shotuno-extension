@@ -15,7 +15,7 @@ export function useScrollCapture({
   
   const lastScrollY = useRef(window.scrollY);
   const lastCaptureTime = useRef(0);
-  const speedWarningTimeout = useRef<NodeJS.Timeout | null>(null);
+  const speedWarningTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const captureQueued = useRef(false);
 
   useEffect(() => {

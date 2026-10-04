@@ -1,4 +1,5 @@
 import { test as base, chromium, type BrowserContext, type Page } from '@playwright/test';
+import fs from 'fs';
 import path from 'path';
 import { STORAGE_PRESETS, type AuthTierPreset } from './storagePresets';
 
@@ -17,9 +18,9 @@ const DUMMY_IMAGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAA
 
 export const test = base.extend<ExtensionFixtures>({
   extensionContext: async ({}, use) => {
-    const dynamicUserDataDir = path.resolve(process.cwd(), `.playwright-user-data-${Math.random().toString(36).substring(7)}`);
+    fs.rmSync(userDataDir, { recursive: true, force: true });
     console.log('[E2E Path To Extension]:', pathToExtension);
-    const context = await chromium.launchPersistentContext(dynamicUserDataDir, {
+    const context = await chromium.launchPersistentContext(userDataDir, {
       headless: false,
       args: [
         '--headless=new',
@@ -29,10 +30,12 @@ export const test = base.extend<ExtensionFixtures>({
       ],
     });
 
-
-
-    await use(context);
-    await context.close();
+    try {
+      await use(context);
+    } finally {
+      await context.close();
+      fs.rmSync(userDataDir, { recursive: true, force: true });
+    }
   },
 
 
